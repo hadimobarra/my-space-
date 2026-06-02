@@ -1,0 +1,68 @@
+---
+title: "Front-End Performance Optimization Guide"
+description: "A comprehensive guide to optimizing front-end performance, covering Core Web Vitals, lazy loading, code splitting, and more."
+date: "2024-11-20"
+tags: ["Performance", "Web Development", "Optimization"]
+---
+
+## Introduction
+
+Performance is critical for user experience and SEO. Google's Core Web Vitals have made performance optimization more important than ever.
+
+## Core Web Vitals
+
+### Largest Contentful Paint (LCP)
+
+LCP measures loading performance. Aim for LCP under 2.5 seconds.
+
+- Optimize images with proper formats (WebP, AVIF)
+- Use CDN for static assets
+- Implement lazy loading
+
+### First Input Delay (FID)
+
+FID measures interactivity. Aim for FID under 100ms.
+
+- Code splitting
+- Reduce JavaScript execution time
+- Use web workers for heavy computations
+
+### Cumulative Layout Shift (CLS)
+
+CLS measures visual stability. Aim for CLS under 0.1.
+
+- Set explicit dimensions for images
+- Reserve space for dynamic content
+- Avoid inserting content above existing content
+
+## Image Optimization
+
+Images are often the largest assets on a page. Use the following strategies:
+
+```typescript
+import Image from 'next/image';
+
+<Image
+  src="/hero.jpg"
+  alt="Hero Image"
+  width={1200}
+  height={630}
+  priority
+/>
+```
+
+## Code Splitting
+
+Split your code into smaller chunks that load on demand:
+
+```typescript
+import dynamic from 'next/dynamic';
+
+const HeavyComponent = dynamic(() => import('./HeavyComponent'), {
+  loading: () => <p>Loading...</p>,
+});
+```
+
+## Conclusion
+
+Performance optimization is an ongoing process. Monitor your metrics regularly and make incremental improvements.

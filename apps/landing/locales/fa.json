@@ -1,0 +1,322 @@
+{
+  "nav": {
+    "home": "خانه",
+    "about": "درباره من",
+    "skills": "مهارت‌ها",
+    "projects": "پروژه‌ها",
+    "experience": "تجربیات",
+    "blog": "وبلاگ",
+    "contact": "ارتباط",
+    "letsTalk": "ارتباط با من"
+  },
+  "hero": {
+    "greeting": "سلام، من",
+    "name": "هادی مبرا",
+    "roles": ["توسعه‌دهنده فرانت‌اند", "توسعه‌دهنده React", "توسعه‌دهنده Next.js", "مهندس کامپیوتر"],
+    "description": "توسعه‌دهنده فرانت‌اند با مدرک کارشناسی ارشد مهندسی کامپیوتر. متخصص در ساخت برنامه‌های وب مقیاس‌پذیر و با عملکرد بالا با استفاده از فناوری‌های مدرن.",
+    "contactMe": "ارتباط با من",
+    "downloadResume": "دانلود رزومه",
+    "viewProjects": "مشاهده پروژه‌ها",
+    "scroll": "اسکرول"
+  },
+  "about": {
+    "title": "درباره من",
+    "subtitle": "علاقه‌مند به خلق تجربیات دیجیتال استثنایی",
+    "para1": "من یک <strong>توسعه‌دهنده فرانت‌اند</strong> با <strong>مدرک کارشناسی ارشد مهندسی کامپیوتر</strong> هستم و به ساخت برنامه‌های وب مدرن، مقیاس‌پذیر و با عملکرد بالا علاقه دارم.",
+    "para2": "با تخصص در <strong>React</strong>، <strong>Next.js</strong> و <strong>TypeScript</strong>، در تبدیل طرح‌های پیچیده به تجربیات کاربری بی‌نقص تخصص دارم. پیشینه من در مهندسی کامپیوتر، پایه‌ای قوی در الگوریتم‌ها، طراحی سیستم و معماری نرم‌افزار به من داده است.",
+    "para3": "من عمیقاً به بهینه‌سازی عملکرد، دسترسی‌پذیری و نوشتن کد تمیز و قابل نگهداری متعهد هستم. هر پروژه‌ای که روی آن کار می‌کنم فرصتی است برای پیش بردن مرزهای ممکن در وب.",
+    "stats": {
+      "projects": "پروژه انجام شده",
+      "technologies": "فناوری استفاده شده",
+      "experience": "سال تجربه",
+      "contributions": "مشارکت گیت‌هاب"
+    }
+  },
+  "education": {
+    "title": "تحصیلات",
+    "subtitle": "مسیر تحصیلی من",
+    "items": [
+      {
+        "degree": "کارشناسی ارشد مهندسی کامپیوتر",
+        "institution": "دانشگاه صنعتی",
+        "period": "۱۳۹۹ - ۱۴۰۱",
+        "description": "تخصص در مهندسی نرم‌افزار، سیستم‌های توزیع شده و الگوریتم‌های پیشرفته. پایان‌نامه متمرکز بر معماری برنامه‌های وب مدرن و بهینه‌سازی عملکرد."
+      },
+      {
+        "degree": "کارشناسی مهندسی کامپیوتر",
+        "institution": "دانشگاه صنعتی",
+        "period": "۱۳۹۵ - ۱۳۹۹",
+        "description": "بنیان جامع در علوم کامپیوتر، برنامه‌نویسی، ساختمان داده، الگوریتم‌ها و اصول مهندسی نرم‌افزار."
+      }
+    ]
+  },
+  "skillCategories": [
+    {
+      "title": "فرانت‌اند",
+      "skills": [
+        { "name": "HTML", "level": 95 },
+        { "name": "CSS", "level": 90 },
+        { "name": "JavaScript", "level": 90 },
+        { "name": "TypeScript", "level": 85 },
+        { "name": "React", "level": 90 },
+        { "name": "Next.js", "level": 85 },
+        { "name": "Zustand", "level": 80 },
+        { "name": "Tailwind CSS", "level": 90 }
+      ]
+    },
+    {
+      "title": "UI/UX",
+      "skills": [
+        { "name": "طراحی واکنش‌گرا", "level": 90 },
+        { "name": "دسترسی‌پذیری", "level": 80 },
+        { "name": "Figma", "level": 75 }
+      ]
+    },
+    {
+      "title": "ابزارها",
+      "skills": [
+        { "name": "Git", "level": 85 },
+        { "name": "GitHub", "level": 85 },
+        { "name": "VS Code", "level": 90 }
+      ]
+    }
+  ],
+  "skills": {
+    "title": "مهارت‌ها و فناوری‌ها",
+    "subtitle": "فناوری‌هایی که روزانه با آنها کار می‌کنم"
+  },
+  "projects": {
+    "title": "پروژه‌های شاخص",
+    "subtitle": "برخی از کارهای اخیر من",
+    "items": [
+      {
+        "title": "OpenMetadata",
+        "description": "یک پلتفرم متادیتای متن‌باز برای کشف داده، کیفیت داده، مشاهده‌پذیری، حاکمیت و همکاری تیمی. ساخته شده با فناوری‌های وب مدرن برای ارائه تجربه کاربری بی‌نقص برای حرفه‌ای‌های داده.",
+        "tags": ["React", "TypeScript", "Next.js", "Tailwind CSS"],
+        "liveUrl": "https://openmetadata.org",
+        "githubUrl": "https://github.com/open-metadata/OpenMetadata"
+      },
+      {
+        "title": "پلتفرم فروشگاهی",
+        "description": "یک پلتفرم فروشگاهی کامل با مدیریت موجودی بلادرنگ، پرداخت آنلاین و داشبورد مدیریتی بصری ساخته شده با Next.js.",
+        "tags": ["Next.js", "TypeScript", "React", "Node.js"],
+        "liveUrl": "https://example.com/ecommerce",
+        "githubUrl": "https://github.com/hadimobarra/ecommerce"
+      },
+      {
+        "title": "اپلیکیشن مدیریت وظایف",
+        "description": "یک اپلیکیشن مدیریت وظایف مشارکتی با رابط‌های کشیدن و رها کردن، به‌روزرسانی بلادرنگ و قابلیت‌های جامع ردیابی پروژه.",
+        "tags": ["React", "TypeScript", "Tailwind CSS", "Node.js"],
+        "liveUrl": "https://example.com/tasks",
+        "githubUrl": "https://github.com/hadimobarra/task-manager"
+      }
+    ]
+  },
+  "experience": {
+    "title": "تجربیات کاری",
+    "subtitle": "مسیر حرفه‌ای من",
+    "items": [
+      {
+        "title": "توسعه‌دهنده ارشد فرانت‌اند",
+        "company": "شرکت فناوری",
+        "period": "۱۴۰۱ - اکنون",
+        "description": "رهبری توسعه فرانت‌اند برای چندین برنامه وب. معماری کتابخانه‌های کامپوننت مقیاس‌پذیر، پیاده‌سازی خطوط لوله CI/CD و منتورینگ توسعه‌دهندگان تازه‌کار.",
+        "tags": ["React", "Next.js", "TypeScript", "Tailwind CSS"]
+      },
+      {
+        "title": "توسعه‌دهنده فرانت‌اند",
+        "company": "آژانس دیجیتال",
+        "period": "۱۳۹۹ - ۱۴۰۱",
+        "description": "توسعه برنامه‌های وب واکنش‌گرا برای مشتریان متنوع. همکاری با تیم‌های طراحی برای پیاده‌سازی رابط‌های پیکسل‌کامل با فناوری‌های مدرن فرانت‌اند.",
+        "tags": ["React", "JavaScript", "CSS", "Figma"]
+      },
+      {
+        "title": "توسعه‌دهنده فرانت‌اند تازه‌کار",
+        "company": "استارتاپ اینک.",
+        "period": "۱۳۹۸ - ۱۳۹۹",
+        "description": "ساخت و نگهداری برنامه‌های وب با استفاده از React. شرکت در بازبینی‌های کد و کمک به بهبود گردش کار توسعه.",
+        "tags": ["React", "JavaScript", "Git"]
+      }
+    ]
+  },
+  "services": {
+    "title": "خدمات",
+    "subtitle": "آنچه می‌توانم برای شما انجام دهم",
+    "items": [
+      {
+        "title": "توسعه فرانت‌اند",
+        "description": "ساخت برنامه‌های وب واکنش‌گرا، با عملکرد بالا و قابل دسترس با استفاده از فریم‌ورک‌های مدرن و بهترین شیوه‌ها.",
+        "icon": "Code"
+      },
+      {
+        "title": "اپلیکیشن‌های Next.js",
+        "description": "توسعه برنامه‌های full-stack Next.js با رندر سمت سرور، تولید استاتیک و عملکرد بهینه.",
+        "icon": "Globe"
+      },
+      {
+        "title": "توسعه React",
+        "description": "ایجاد رابط‌های کاربری پویا و کامپوننت‌محور با React با استفاده از hooks، context و مدیریت state.",
+        "icon": "Code"
+      },
+      {
+        "title": "طراحی وب واکنش‌گرا",
+        "description": "طراحی وبسایت‌های mobile-first و سازگار با مرورگرهای مختلف که تجربه یکپارچه‌ای در تمام دستگاه‌ها ارائه می‌دهند.",
+        "icon": "Smartphone"
+      },
+      {
+        "title": "پیاده‌سازی UI",
+        "description": "تبدیل طرح‌های طراحی به رابط‌های پیکسل‌کامل و تعاملی با انیمیشن‌های روان و ترنزیشن‌های جذاب.",
+        "icon": "Palette"
+      },
+      {
+        "title": "بهینه‌سازی عملکرد",
+        "description": "بررسی و بهینه‌سازی برنامه‌های وب برای Core Web Vitals، بهبود زمان بارگذاری و افزایش تجربه کاربری.",
+        "icon": "Server"
+      }
+    ]
+  },
+  "techStack": {
+    "title": "تکنولوژی‌ها",
+    "subtitle": "فناوری‌هایی که استفاده می‌کنم و دوست دارم",
+    "groups": [
+      {
+        "title": "فریم‌ورک‌ها",
+        "items": [
+          { "name": "Next.js", "icon": "SiNextdotjs" },
+          { "name": "React", "icon": "SiReact" }
+        ]
+      },
+      {
+        "title": "زبان‌ها",
+        "items": [
+          { "name": "TypeScript", "icon": "SiTypescript" },
+          { "name": "Python", "icon": "SiPython" }
+        ]
+      },
+      {
+        "title": "استایل و دیتابیس",
+        "items": [
+          { "name": "Tailwind CSS", "icon": "SiTailwindcss" },
+          { "name": "PostgreSQL", "icon": "SiPostgresql" }
+        ]
+      },
+      {
+        "title": "دوآپس و ابزارها",
+        "items": [
+          { "name": "Docker", "icon": "SiDocker" },
+          { "name": "Git", "icon": "SiGit" }
+        ]
+      }
+    ]
+  },
+  "blog": {
+    "title": "وبلاگ",
+    "subtitle": "افکار و دیدگاه‌ها درباره توسعه وب",
+    "description": "افکار، آموزش‌ها و دیدگاه‌ها درباره توسعه فرانت‌اند، React، Next.js و فناوری‌های وب مدرن.",
+    "readMore": "ادامه مطلب",
+    "viewAll": "مشاهده همه نوشته‌ها",
+    "minRead": "دقیقه مطالعه",
+    "noPosts": "هنوز نوشته‌ای منتشر نشده. به زودی!",
+    "backToBlog": "بازگشت به وبلاگ",
+    "comingSoon": "به زودی!",
+    "previewPosts": [
+      {
+        "title": "ساخت معماری React مقیاس‌پذیر",
+        "description": "یاد بگیرید چگونه برنامه‌های React در مقیاس بزرگ را با تمرکز بر قابلیت نگهداری، عملکرد و تجربه توسعه‌دهنده ساختار دهید.",
+        "slug": "react-architecture",
+        "date": "۲۰۲۴-۰۱-۱۵"
+      },
+      {
+        "title": "بهینه‌سازی عملکرد فرانت‌اند",
+        "description": "یک راهنمای جامع برای بهینه‌سازی عملکرد فرانت‌اند، از Core Web Vitals تا تکنیک‌های پیشرفته مانند code splitting و lazy loading.",
+        "slug": "frontend-performance",
+        "date": "۲۰۲۴-۰۲-۲۰"
+      },
+      {
+        "title": "بهترین شیوه‌های Next.js",
+        "description": "الگوها و شیوه‌های ضروری برای ساخت برنامه‌های Next.js آماده تولید با TypeScript و Tailwind CSS.",
+        "slug": "nextjs-best-practices",
+        "date": "۲۰۲۴-۰۳-۱۰"
+      }
+    ]
+  },
+  "openSource": {
+    "title": "متن‌باز",
+    "subtitle": "مشارکت در جامعه توسعه‌دهندگان",
+    "repos": [
+      {
+        "name": "OpenMetadata",
+        "description": "یک پلتفرم متادیتای متن‌باز برای کشف داده، کیفیت داده، مشاهده‌پذیری، حاکمیت و همکاری تیمی.",
+        "stars": 4200,
+        "forks": 850,
+        "url": "https://github.com/open-metadata/OpenMetadata",
+        "language": "TypeScript",
+        "languageColor": "#3178c6"
+      },
+      {
+        "name": "react-query-builder",
+        "description": "یک کامپوننت سازنده پرس‌وجوی انعطاف‌پذیر و قابل توسعه برای React با پشتیبانی از کشیدن و رها کردن.",
+        "stars": 1200,
+        "forks": 180,
+        "url": "https://github.com/hadimobarra/react-query-builder",
+        "language": "TypeScript",
+        "languageColor": "#3178c6"
+      }
+    ]
+  },
+  "certifications": {
+    "title": "گواهینامه‌ها",
+    "subtitle": "گواهینامه‌ها و دستاوردهای حرفه‌ای",
+    "items": [
+      { "name": "گواهی توسعه‌دهنده فرانت‌اند Meta", "issuer": "Meta (Coursera)", "date": "۲۰۲۳" },
+      { "name": "AWS Cloud Practitioner", "issuer": "Amazon Web Services", "date": "۲۰۲۲" },
+      { "name": "گواهی طراحی UX گوگل", "issuer": "Google (Coursera)", "date": "۲۰۲۱" }
+    ]
+  },
+  "currentlyLearning": {
+    "title": "در حال یادگیری",
+    "subtitle": "فناوری‌ها و موضوعاتی که در حال کاوش هستم",
+    "items": [
+      { "name": "برنامه‌نویسی Rust", "description": "کاوش برنامه‌نویسی سیستمی با Rust برای کامپوننت‌های وب بحرانی از نظر عملکرد." },
+      { "name": "Three.js و WebGL", "description": "غواصی در گرافیک سه‌بعدی و تجربیات وب همه‌جانبه." },
+      { "name": "طراحی سیستم", "description": "مطالعه معماری سیستم‌های توزیع شده و الگوهای مقیاس‌پذیری." }
+    ]
+  },
+  "testimonials": {
+    "title": "نظرات همکاران",
+    "subtitle": "بازخورد همکاران و مشتریان",
+    "items": [
+      { "name": "سارا جانسون", "role": "CTO, TechStartup", "content": "هادی یک توسعه‌دهنده فرانت‌اند استثنایی است. درک عمیق او از React و Next.js برنامه وب ما را متحول کرد. کیفیت کد و بهبودهای عملکرد فوق‌العاده بود." },
+      { "name": "مایکل چن", "role": "مدیر محصول, DigitalCo", "content": "کار با هادی لذت‌بخش بود. او ترکیبی نادر از تخصص فنی و حس طراحی دارد. او پیاده‌سازی‌های پیکسل‌کامل را جلوتر از برنامه تحویل داد." },
+      { "name": "امیلی رودریگز", "role": "طراح ارشد, WebAgency", "content": "توانایی هادی در تبدیل طرح‌های پیچیده به رابط‌های روان و تعاملی چشمگیر است. او اولین انتخاب من برای پروژه‌هایی است که هم به عملکرد و هم به زیبایی‌شناسی نیاز دارند." }
+    ]
+  },
+  "contact": {
+    "title": "ارتباط با من",
+    "subtitle": "پروژه‌ای در نظر دارید؟ بیایید با هم کار کنیم",
+    "description": "من همیشه آماده پروژه‌ها و فرصت‌های جدید هستم. چه سوالی داشته باشید، چه پیشنهاد پروژه‌ای، یا فقط می‌خواهید سلام کنید، خوشحال می‌شوم از شما بشنوم.",
+    "email": "ایمیل",
+    "phone": "تلفن",
+    "location": "موقعیت",
+    "locationValue": "ایران",
+    "phoneValue": "+۹۸ ۹۰۰ ۰۰۰ ۰۰۰۰",
+    "form": {
+      "name": "نام شما",
+      "email": "ایمیل شما",
+      "subject": "موضوع",
+      "message": "پیام شما",
+      "send": "ارسال پیام",
+      "sent": "با موفقیت ارسال شد!",
+      "sending": "در حال ارسال..."
+    }
+  },
+  "footer": {
+    "madeWith": "ساخته شده با",
+    "using": "با Next.js",
+    "backToTop": "بازگشت به بالا"
+  },
+  "commandMenu": {
+    "placeholder": "یک دستور را تایپ کنید...",
+    "toggleTheme": "تغییر تم"
+  }
+}

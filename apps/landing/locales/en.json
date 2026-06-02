@@ -1,0 +1,322 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "skills": "Skills",
+    "projects": "Projects",
+    "experience": "Experience",
+    "blog": "Blog",
+    "contact": "Contact",
+    "letsTalk": "Let's Talk"
+  },
+  "hero": {
+    "greeting": "Hello, I'm",
+    "name": "Hadi Mobarra",
+    "roles": ["Front-End Developer", "React Developer", "Next.js Developer", "Computer Engineer"],
+    "description": "Front-End Developer with a Master's Degree in Computer Engineering. Specializing in building scalable, high-performance web applications with modern technologies.",
+    "contactMe": "Contact Me",
+    "downloadResume": "Download Resume",
+    "viewProjects": "View Projects",
+    "scroll": "Scroll"
+  },
+  "about": {
+    "title": "About Me",
+    "subtitle": "Passionate about creating exceptional digital experiences",
+    "para1": "I'm a <strong>Front-End Developer</strong> with a <strong>Master's Degree in Computer Engineering</strong>, passionate about building modern, scalable, and high-performance web applications.",
+    "para2": "With expertise in <strong>React</strong>, <strong>Next.js</strong>, and <strong>TypeScript</strong>, I specialize in translating complex designs into seamless user experiences. My background in computer engineering gives me a strong foundation in algorithms, system design, and software architecture.",
+    "para3": "I'm deeply committed to performance optimization, accessibility, and writing clean, maintainable code. Every project I work on is an opportunity to push the boundaries of what's possible on the web.",
+    "stats": {
+      "projects": "Projects Completed",
+      "technologies": "Technologies Used",
+      "experience": "Years of Experience",
+      "contributions": "GitHub Contributions"
+    }
+  },
+  "education": {
+    "title": "Education",
+    "subtitle": "My academic journey",
+    "items": [
+      {
+        "degree": "Master's Degree in Computer Engineering",
+        "institution": "University of Technology",
+        "period": "2020 - 2022",
+        "description": "Specialized in software engineering, distributed systems, and advanced algorithms. Thesis focused on modern web application architecture and performance optimization."
+      },
+      {
+        "degree": "Bachelor's Degree in Computer Engineering",
+        "institution": "University of Technology",
+        "period": "2016 - 2020",
+        "description": "Comprehensive foundation in computer science, programming, data structures, algorithms, and software engineering principles."
+      }
+    ]
+  },
+  "skillCategories": [
+    {
+      "title": "Frontend",
+      "skills": [
+        { "name": "HTML", "level": 95 },
+        { "name": "CSS", "level": 90 },
+        { "name": "JavaScript", "level": 90 },
+        { "name": "TypeScript", "level": 85 },
+        { "name": "React", "level": 90 },
+        { "name": "Next.js", "level": 85 },
+        { "name": "Zustand", "level": 80 },
+        { "name": "Tailwind CSS", "level": 90 }
+      ]
+    },
+    {
+      "title": "UI/UX",
+      "skills": [
+        { "name": "Responsive Design", "level": 90 },
+        { "name": "Accessibility", "level": 80 },
+        { "name": "Figma", "level": 75 }
+      ]
+    },
+    {
+      "title": "Tools",
+      "skills": [
+        { "name": "Git", "level": 85 },
+        { "name": "GitHub", "level": 85 },
+        { "name": "VS Code", "level": 90 }
+      ]
+    }
+  ],
+  "skills": {
+    "title": "Skills & Technologies",
+    "subtitle": "Technologies I work with on a daily basis"
+  },
+  "projects": {
+    "title": "Featured Projects",
+    "subtitle": "Some of my recent work",
+    "items": [
+      {
+        "title": "OpenMetadata",
+        "description": "An open-source metadata platform for data discovery, data quality, observability, governance, and team collaboration. Built with modern web technologies to provide a seamless user experience for data professionals.",
+        "tags": ["React", "TypeScript", "Next.js", "Tailwind CSS"],
+        "liveUrl": "https://openmetadata.org",
+        "githubUrl": "https://github.com/open-metadata/OpenMetadata"
+      },
+      {
+        "title": "E-Commerce Platform",
+        "description": "A full-featured e-commerce platform with real-time inventory management, payment processing, and an intuitive admin dashboard built with Next.js.",
+        "tags": ["Next.js", "TypeScript", "React", "Node.js"],
+        "liveUrl": "https://example.com/ecommerce",
+        "githubUrl": "https://github.com/hadimobarra/ecommerce"
+      },
+      {
+        "title": "Task Management App",
+        "description": "A collaborative task management application with drag-and-drop interfaces, real-time updates, and comprehensive project tracking capabilities.",
+        "tags": ["React", "TypeScript", "Tailwind CSS", "Node.js"],
+        "liveUrl": "https://example.com/tasks",
+        "githubUrl": "https://github.com/hadimobarra/task-manager"
+      }
+    ]
+  },
+  "experience": {
+    "title": "Work Experience",
+    "subtitle": "My professional journey",
+    "items": [
+      {
+        "title": "Senior Front-End Developer",
+        "company": "Tech Company",
+        "period": "2022 - Present",
+        "description": "Leading front-end development for multiple web applications. Architected scalable component libraries, implemented CI/CD pipelines, and mentored junior developers.",
+        "tags": ["React", "Next.js", "TypeScript", "Tailwind CSS"]
+      },
+      {
+        "title": "Front-End Developer",
+        "company": "Digital Agency",
+        "period": "2020 - 2022",
+        "description": "Developed responsive web applications for diverse clients. Collaborated with design teams to implement pixel-perfect interfaces with modern front-end technologies.",
+        "tags": ["React", "JavaScript", "CSS", "Figma"]
+      },
+      {
+        "title": "Junior Front-End Developer",
+        "company": "StartUp Inc.",
+        "period": "2019 - 2020",
+        "description": "Built and maintained web applications using React. Participated in code reviews and contributed to improving development workflows.",
+        "tags": ["React", "JavaScript", "Git"]
+      }
+    ]
+  },
+  "services": {
+    "title": "Services",
+    "subtitle": "What I can do for you",
+    "items": [
+      {
+        "title": "Front-End Development",
+        "description": "Building responsive, performant, and accessible web applications using modern frameworks and best practices.",
+        "icon": "Code"
+      },
+      {
+        "title": "Next.js Applications",
+        "description": "Developing full-stack Next.js applications with server-side rendering, static generation, and optimal performance.",
+        "icon": "Globe"
+      },
+      {
+        "title": "React Development",
+        "description": "Creating dynamic, component-based user interfaces with React, leveraging hooks, context, and state management.",
+        "icon": "Code"
+      },
+      {
+        "title": "Responsive Web Design",
+        "description": "Crafting mobile-first, cross-browser compatible websites that provide seamless experiences across all devices.",
+        "icon": "Smartphone"
+      },
+      {
+        "title": "UI Implementation",
+        "description": "Translating design mockups into pixel-perfect, interactive interfaces with smooth animations and transitions.",
+        "icon": "Palette"
+      },
+      {
+        "title": "Performance Optimization",
+        "description": "Auditing and optimizing web applications for Core Web Vitals, improving load times, and enhancing user experience.",
+        "icon": "Server"
+      }
+    ]
+  },
+  "techStack": {
+    "title": "Tech Stack",
+    "subtitle": "Technologies I use and love",
+    "groups": [
+      {
+        "title": "Frameworks",
+        "items": [
+          { "name": "Next.js", "icon": "SiNextdotjs" },
+          { "name": "React", "icon": "SiReact" }
+        ]
+      },
+      {
+        "title": "Languages",
+        "items": [
+          { "name": "TypeScript", "icon": "SiTypescript" },
+          { "name": "Python", "icon": "SiPython" }
+        ]
+      },
+      {
+        "title": "Styling & DB",
+        "items": [
+          { "name": "Tailwind CSS", "icon": "SiTailwindcss" },
+          { "name": "PostgreSQL", "icon": "SiPostgresql" }
+        ]
+      },
+      {
+        "title": "DevOps & Tools",
+        "items": [
+          { "name": "Docker", "icon": "SiDocker" },
+          { "name": "Git", "icon": "SiGit" }
+        ]
+      }
+    ]
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Thoughts and insights on web development",
+    "description": "Thoughts, tutorials, and insights on front-end development, React, Next.js, and modern web technologies.",
+    "readMore": "Read More",
+    "viewAll": "View All Posts",
+    "minRead": "min read",
+    "noPosts": "No posts yet. Coming soon!",
+    "backToBlog": "Back to Blog",
+    "comingSoon": "Coming soon!",
+    "previewPosts": [
+      {
+        "title": "Building Scalable React Architecture",
+        "description": "Learn how to structure large-scale React applications with a focus on maintainability, performance, and developer experience.",
+        "slug": "react-architecture",
+        "date": "2024-01-15"
+      },
+      {
+        "title": "Front-End Performance Optimization",
+        "description": "A comprehensive guide to optimizing front-end performance, from Core Web Vitals to advanced techniques like code splitting and lazy loading.",
+        "slug": "frontend-performance",
+        "date": "2024-02-20"
+      },
+      {
+        "title": "Next.js Best Practices",
+        "description": "Essential patterns and practices for building production-ready Next.js applications with TypeScript and Tailwind CSS.",
+        "slug": "nextjs-best-practices",
+        "date": "2024-03-10"
+      }
+    ]
+  },
+  "openSource": {
+    "title": "Open Source",
+    "subtitle": "Contributing to the developer community",
+    "repos": [
+      {
+        "name": "OpenMetadata",
+        "description": "An open-source metadata platform for data discovery, data quality, observability, governance, and team collaboration.",
+        "stars": 4200,
+        "forks": 850,
+        "url": "https://github.com/open-metadata/OpenMetadata",
+        "language": "TypeScript",
+        "languageColor": "#3178c6"
+      },
+      {
+        "name": "react-query-builder",
+        "description": "A flexible and extensible query builder component for React with drag-and-drop support.",
+        "stars": 1200,
+        "forks": 180,
+        "url": "https://github.com/hadimobarra/react-query-builder",
+        "language": "TypeScript",
+        "languageColor": "#3178c6"
+      }
+    ]
+  },
+  "certifications": {
+    "title": "Certifications",
+    "subtitle": "Professional certifications and achievements",
+    "items": [
+      { "name": "Meta Front-End Developer Certificate", "issuer": "Meta (Coursera)", "date": "2023" },
+      { "name": "AWS Cloud Practitioner", "issuer": "Amazon Web Services", "date": "2022" },
+      { "name": "Google UX Design Certificate", "issuer": "Google (Coursera)", "date": "2021" }
+    ]
+  },
+  "currentlyLearning": {
+    "title": "Currently Learning",
+    "subtitle": "Technologies and topics I'm exploring",
+    "items": [
+      { "name": "Rust Programming", "description": "Exploring systems programming with Rust for performance-critical web components." },
+      { "name": "Three.js & WebGL", "description": "Diving into 3D graphics and immersive web experiences." },
+      { "name": "System Design", "description": "Studying distributed systems architecture and scaling patterns." }
+    ]
+  },
+  "testimonials": {
+    "title": "What People Say",
+    "subtitle": "Feedback from colleagues and clients",
+    "items": [
+      { "name": "Sarah Johnson", "role": "CTO, TechStartup", "content": "Hadi is an exceptional front-end developer. His deep understanding of React and Next.js transformed our web application. The code quality and performance improvements were outstanding." },
+      { "name": "Michael Chen", "role": "Product Manager, DigitalCo", "content": "Working with Hadi was a pleasure. He has a rare combination of technical expertise and design sensibility. He delivered pixel-perfect implementations ahead of schedule." },
+      { "name": "Emily Rodriguez", "role": "Lead Designer, WebAgency", "content": "Hadi's ability to translate complex designs into smooth, interactive interfaces is impressive. He's my go-to developer for projects that demand both performance and aesthetics." }
+    ]
+  },
+  "contact": {
+    "title": "Get In Touch",
+    "subtitle": "Have a project in mind? Let's work together",
+    "description": "I'm always open to new projects and opportunities. Whether you have a question, a project proposal, or just want to say hello, I'd love to hear from you.",
+    "email": "Email",
+    "phone": "Phone",
+    "location": "Location",
+    "locationValue": "Iran",
+    "phoneValue": "+98 900 000 0000",
+    "form": {
+      "name": "Your Name",
+      "email": "Your Email",
+      "subject": "Subject",
+      "message": "Your Message",
+      "send": "Send Message",
+      "sent": "Sent Successfully!",
+      "sending": "Sending..."
+    }
+  },
+  "footer": {
+    "madeWith": "Made with",
+    "using": "using Next.js",
+    "backToTop": "Scroll to top"
+  },
+  "commandMenu": {
+    "placeholder": "Type a command...",
+    "toggleTheme": "Toggle Theme"
+  }
+}
