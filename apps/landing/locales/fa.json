@@ -12,8 +12,8 @@
   "hero": {
     "greeting": "سلام، من",
     "name": "هادی مبرا",
-    "roles": ["توسعه‌دهنده فرانت‌اند", "توسعه‌دهنده React", "توسعه‌دهنده Next.js", "مهندس کامپیوتر"],
-    "description": "توسعه‌دهنده فرانت‌اند با مدرک کارشناسی ارشد مهندسی کامپیوتر. متخصص در ساخت برنامه‌های وب مقیاس‌پذیر و با عملکرد بالا با استفاده از فناوری‌های مدرن.",
+    "roles": ["مهندس فرانت‌اند", "توسعه‌دهنده React", "توسعه‌دهنده TypeScript", "مشارکت‌کننده متن‌باز"],
+    "description": "مهندس فرانت‌اند با مدرک کارشناسی ارشد مهندسی کامپیوتر و ۳+ سال تجربه حرفه‌ای. مشارکت‌کننده فعال در پروژه‌های متن‌باز و سازنده برنامه‌های وب داده‌محور.",
     "contactMe": "ارتباط با من",
     "downloadResume": "دانلود رزومه",
     "viewProjects": "مشاهده پروژه‌ها",
@@ -22,14 +22,14 @@
   "about": {
     "title": "درباره من",
     "subtitle": "علاقه‌مند به خلق تجربیات دیجیتال استثنایی",
-    "para1": "من یک <strong>توسعه‌دهنده فرانت‌اند</strong> با <strong>مدرک کارشناسی ارشد مهندسی کامپیوتر</strong> هستم و به ساخت برنامه‌های وب مدرن، مقیاس‌پذیر و با عملکرد بالا علاقه دارم.",
-    "para2": "با تخصص در <strong>React</strong>، <strong>Next.js</strong> و <strong>TypeScript</strong>، در تبدیل طرح‌های پیچیده به تجربیات کاربری بی‌نقص تخصص دارم. پیشینه من در مهندسی کامپیوتر، پایه‌ای قوی در الگوریتم‌ها، طراحی سیستم و معماری نرم‌افزار به من داده است.",
-    "para3": "من عمیقاً به بهینه‌سازی عملکرد، دسترسی‌پذیری و نوشتن کد تمیز و قابل نگهداری متعهد هستم. هر پروژه‌ای که روی آن کار می‌کنم فرصتی است برای پیش بردن مرزهای ممکن در وب.",
+    "para1": "من یک <strong>مهندس فرانت‌اند</strong> با <strong>۳+ سال تجربه حرفه‌ای</strong> در ساخت برنامه‌های وب پیچیده و داده‌محور هستم. مدرک <strong>کارشناسی ارشد مهندسی کامپیوتر</strong> از دانشگاه علم و صنعت ایران دارم و عضو <strong>بنیاد ملی نخبگان</strong> هستم.",
+    "para2": "مشارکت‌کننده فعال در <strong>OpenMetadata</strong> — یک پلتفرم متن‌باز پیشرو در زمینه کاتالوگ داده و حاکمیت اطلاعات — با pull requestهای ادغام‌شده در زمینه کامپوننت‌های UI، بومی‌سازی و بهبود ویژگی‌ها. رابط‌های کاربری پیکسل‌کامل، قابل دسترس و با عملکرد بالا با <strong>React</strong>، <strong>TypeScript</strong> و راهکارهای مدرن مدیریت state تحویل می‌دهم.",
+    "para3": "در تیم‌های چابک و بین‌رشته‌ای پیشرفت می‌کنم و از معماری کتابخانه‌های کامپوننت مقیاس‌پذیر، بهینه‌سازی عملکرد (code-splitting، lazy loading، memoisation) و رهبری پروژه‌های بومی‌سازی RTL لذت می‌برم. هر پروژه فرصتی است برای پیش بردن مرزهای ممکن در وب.",
     "stats": {
-      "projects": "پروژه انجام شده",
-      "technologies": "فناوری استفاده شده",
+      "projects": "پروژه تحویل‌شده",
+      "technologies": "فناوری استفاده‌شده",
       "experience": "سال تجربه",
-      "contributions": "مشارکت گیت‌هاب"
+      "contributions": "مشارکت متن‌باز"
     }
   },
   "education": {
@@ -38,52 +38,80 @@
     "items": [
       {
         "degree": "کارشناسی ارشد مهندسی کامپیوتر",
-        "institution": "دانشگاه صنعتی",
-        "period": "۱۳۹۹ - ۱۴۰۱",
-        "description": "تخصص در مهندسی نرم‌افزار، سیستم‌های توزیع شده و الگوریتم‌های پیشرفته. پایان‌نامه متمرکز بر معماری برنامه‌های وب مدرن و بهینه‌سازی عملکرد."
+        "institution": "دانشگاه علم و صنعت ایران",
+        "period": "۱۴۰۱ - ۱۴۰۳",
+        "description": "عضو بنیاد ملی نخبگان (بالاترین افتخار علمی). پژوهش متمرکز بر سیستم‌های توزیع‌شده و مهندسی نرم‌افزار."
       },
       {
         "degree": "کارشناسی مهندسی کامپیوتر",
-        "institution": "دانشگاه صنعتی",
-        "period": "۱۳۹۵ - ۱۳۹۹",
+        "institution": "دانشگاه محقق اردبیلی",
+        "period": "۱۳۹۶ - ۱۴۰۰",
         "description": "بنیان جامع در علوم کامپیوتر، برنامه‌نویسی، ساختمان داده، الگوریتم‌ها و اصول مهندسی نرم‌افزار."
       }
     ]
   },
   "skillCategories": [
     {
-      "title": "فرانت‌اند",
+      "title": "زبان‌ها",
       "skills": [
-        { "name": "HTML", "level": 95 },
-        { "name": "CSS", "level": 90 },
-        { "name": "JavaScript", "level": 90 },
-        { "name": "TypeScript", "level": 85 },
-        { "name": "React", "level": 90 },
-        { "name": "Next.js", "level": 85 },
-        { "name": "Zustand", "level": 80 },
-        { "name": "Tailwind CSS", "level": 90 }
+        { "name": "TypeScript", "level": 90 },
+        { "name": "JavaScript (ES2024)", "level": 90 },
+        { "name": "HTML5", "level": 95 },
+        { "name": "CSS3", "level": 90 }
       ]
     },
     {
-      "title": "UI/UX",
+      "title": "فریم‌ورک‌ها و کتابخانه‌ها",
       "skills": [
-        { "name": "طراحی واکنش‌گرا", "level": 90 },
-        { "name": "دسترسی‌پذیری", "level": 80 },
-        { "name": "Figma", "level": 75 }
+        { "name": "React 18", "level": 92 },
+        { "name": "Redux", "level": 80 },
+        { "name": "Zustand", "level": 85 },
+        { "name": "React Query", "level": 80 },
+        { "name": "Next.js", "level": 75 }
+      ]
+    },
+    {
+      "title": "UI / استایل",
+      "skills": [
+        { "name": "Ant Design", "level": 88 },
+        { "name": "Tailwind CSS", "level": 92 },
+        { "name": "Material UI", "level": 80 },
+        { "name": "Sass", "level": 85 },
+        { "name": "RTL / i18n", "level": 90 }
       ]
     },
     {
       "title": "ابزارها",
       "skills": [
-        { "name": "Git", "level": 85 },
-        { "name": "GitHub", "level": 85 },
-        { "name": "VS Code", "level": 90 }
+        { "name": "Webpack", "level": 80 },
+        { "name": "Vite", "level": 78 },
+        { "name": "Git", "level": 88 },
+        { "name": "Docker", "level": 75 },
+        { "name": "Nginx", "level": 70 },
+        { "name": "ESLint / Prettier", "level": 85 }
+      ]
+    },
+    {
+      "title": "داده و پروتکل‌ها",
+      "skills": [
+        { "name": "Uppy.js", "level": 82 },
+        { "name": "پروتکل TUS", "level": 80 },
+        { "name": "REST APIs", "level": 88 },
+        { "name": "مفاهیم ETL", "level": 75 }
+      ]
+    },
+    {
+      "title": "پلتفرم‌ها",
+      "skills": [
+        { "name": "Linux", "level": 80 },
+        { "name": "GitHub Actions CI", "level": 78 },
+        { "name": "OpenMetadata", "level": 85 }
       ]
     }
   ],
   "skills": {
-    "title": "مهارت‌ها و فناوری‌ها",
-    "subtitle": "فناوری‌هایی که روزانه با آنها کار می‌کنم"
+    "title": "مهارت‌ها",
+    "subtitle": "فناوری‌ها و ابزارهایی که با آنها کار می‌کنم"
   },
   "projects": {
     "title": "پروژه‌های شاخص",
@@ -91,24 +119,24 @@
     "items": [
       {
         "title": "OpenMetadata",
-        "description": "یک پلتفرم متادیتای متن‌باز برای کشف داده، کیفیت داده، مشاهده‌پذیری، حاکمیت و همکاری تیمی. ساخته شده با فناوری‌های وب مدرن برای ارائه تجربه کاربری بی‌نقص برای حرفه‌ای‌های داده.",
-        "tags": ["React", "TypeScript", "Next.js", "Tailwind CSS"],
+        "description": "مشارکت‌کننده فعال در یک پلتفرم متن‌باز پیشرو در زمینه کاتالوگ داده و حاکمیت اطلاعات. تحویل کامپوننت‌های UI، بومی‌سازی کامل فارسی (RTL) و بهبود ویژگی‌ها با PRهای ادغام‌شده.",
+        "tags": ["React", "TypeScript", "Ant Design", "Tailwind CSS"],
         "liveUrl": "https://openmetadata.org",
         "githubUrl": "https://github.com/open-metadata/OpenMetadata"
       },
       {
-        "title": "پلتفرم فروشگاهی",
-        "description": "یک پلتفرم فروشگاهی کامل با مدیریت موجودی بلادرنگ، پرداخت آنلاین و داشبورد مدیریتی بصری ساخته شده با Next.js.",
-        "tags": ["Next.js", "TypeScript", "React", "Node.js"],
-        "liveUrl": "https://example.com/ecommerce",
-        "githubUrl": "https://github.com/hadimobarra/ecommerce"
+        "title": "رابط کاربری کاتالوگ داده سازمانی",
+        "description": "ایجاد یک رابط کاربری جستجوپذیر و قدرتمند برای کاتالوگ داده جهت کشف، برچسب‌گذاری و حاکمیت بر داده‌های سازمانی، بهبود قابلیت کشف داده در سراسر تیم‌ها.",
+        "tags": ["React", "TypeScript", "Ant Design", "Zustand"],
+        "liveUrl": null,
+        "githubUrl": null
       },
       {
-        "title": "اپلیکیشن مدیریت وظایف",
-        "description": "یک اپلیکیشن مدیریت وظایف مشارکتی با رابط‌های کشیدن و رها کردن، به‌روزرسانی بلادرنگ و قابلیت‌های جامع ردیابی پروژه.",
-        "tags": ["React", "TypeScript", "Tailwind CSS", "Node.js"],
-        "liveUrl": "https://example.com/tasks",
-        "githubUrl": "https://github.com/hadimobarra/task-manager"
+        "title": "ماژول آپلود فایل‌های حجیم",
+        "description": "طراحی و معماری ماژول آپلود فایل‌های حجیم با قابلیت انتقال چند گیگابایتی با استفاده از Uppy.js و پروتکل TUS همراه با قابلیت توقف/ادامه و تلاش مجدد خودکار.",
+        "tags": ["React", "TypeScript", "Uppy.js", "TUS Protocol"],
+        "liveUrl": null,
+        "githubUrl": null
       }
     ]
   },
@@ -117,25 +145,18 @@
     "subtitle": "مسیر حرفه‌ای من",
     "items": [
       {
-        "title": "توسعه‌دهنده ارشد فرانت‌اند",
-        "company": "شرکت فناوری",
-        "period": "۱۴۰۱ - اکنون",
-        "description": "رهبری توسعه فرانت‌اند برای چندین برنامه وب. معماری کتابخانه‌های کامپوننت مقیاس‌پذیر، پیاده‌سازی خطوط لوله CI/CD و منتورینگ توسعه‌دهندگان تازه‌کار.",
-        "tags": ["React", "Next.js", "TypeScript", "Tailwind CSS"]
+        "title": "مهندس فرانت‌اند",
+        "company": "آدین — تهران، ایران",
+        "period": "فروردین ۱۴۰۲ – اکنون",
+        "description": "معماری ماژول آپلود فایل‌های حجیم با Uppy.js و پروتکل TUS. ساخت رابط‌های Mapping Table و Mapping Column برای جریان‌های کاری ETL. توسعه رابط کاربری کاتالوگ داده و ماژول مدیریت نقش با کنترل دسترسی پویا. رهبری بومی‌سازی کامل فارسی (RTL) با i18next. بهینه‌سازی عملکرد و کاهش زمان بارگذاری اولیه. تحویل end-to-end صفحه Add Pipeline.",
+        "tags": ["React", "TypeScript", "Ant Design", "Tailwind CSS", "Zustand", "i18n/RTL"]
       },
       {
-        "title": "توسعه‌دهنده فرانت‌اند",
-        "company": "آژانس دیجیتال",
-        "period": "۱۳۹۹ - ۱۴۰۱",
-        "description": "توسعه برنامه‌های وب واکنش‌گرا برای مشتریان متنوع. همکاری با تیم‌های طراحی برای پیاده‌سازی رابط‌های پیکسل‌کامل با فناوری‌های مدرن فرانت‌اند.",
-        "tags": ["React", "JavaScript", "CSS", "Figma"]
-      },
-      {
-        "title": "توسعه‌دهنده فرانت‌اند تازه‌کار",
-        "company": "استارتاپ اینک.",
-        "period": "۱۳۹۸ - ۱۳۹۹",
-        "description": "ساخت و نگهداری برنامه‌های وب با استفاده از React. شرکت در بازبینی‌های کد و کمک به بهبود گردش کار توسعه.",
-        "tags": ["React", "JavaScript", "Git"]
+        "title": "توسعه‌دهنده فرانت‌اند (کارآموزی تحصیلات تکمیلی)",
+        "company": "MCI (همراه اول) — تهران، ایران",
+        "period": "آبان ۱۴۰۱ – فروردین ۱۴۰۲",
+        "description": "مشارکت در داشبوردهای مخابراتی با React، Redux Saga و Material UI. پیاده‌سازی کامپوننت‌های واکنش‌گرا با Sass/Css. یکپارچه‌سازی خطوط لوله Webpack و استقرار مبتنی بر Docker و Nginx.",
+        "tags": ["React", "Redux", "Redux Saga", "Material UI", "Sass", "Webpack", "Docker"]
       }
     ]
   },
@@ -180,31 +201,36 @@
     "subtitle": "فناوری‌هایی که استفاده می‌کنم و دوست دارم",
     "groups": [
       {
-        "title": "فریم‌ورک‌ها",
+        "title": "فریم‌ورک‌ها و کتابخانه‌ها",
         "items": [
+          { "name": "React", "icon": "SiReact" },
           { "name": "Next.js", "icon": "SiNextdotjs" },
-          { "name": "React", "icon": "SiReact" }
+          { "name": "Redux", "icon": "SiRedux" },
+          { "name": "Zustand", "icon": "SiReact" }
         ]
       },
       {
         "title": "زبان‌ها",
         "items": [
           { "name": "TypeScript", "icon": "SiTypescript" },
-          { "name": "Python", "icon": "SiPython" }
+          { "name": "JavaScript", "icon": "SiJavascript" }
         ]
       },
       {
-        "title": "استایل و دیتابیس",
+        "title": "UI و استایل",
         "items": [
           { "name": "Tailwind CSS", "icon": "SiTailwindcss" },
-          { "name": "PostgreSQL", "icon": "SiPostgresql" }
+          { "name": "Ant Design", "icon": "SiAntdesign" },
+          { "name": "Material UI", "icon": "SiMaterialdesign" }
         ]
       },
       {
         "title": "دوآپس و ابزارها",
         "items": [
           { "name": "Docker", "icon": "SiDocker" },
-          { "name": "Git", "icon": "SiGit" }
+          { "name": "Git", "icon": "SiGit" },
+          { "name": "Webpack", "icon": "SiWebpack" },
+          { "name": "Vite", "icon": "SiVite" }
         ]
       }
     ]
@@ -246,19 +272,10 @@
     "repos": [
       {
         "name": "OpenMetadata",
-        "description": "یک پلتفرم متادیتای متن‌باز برای کشف داده، کیفیت داده، مشاهده‌پذیری، حاکمیت و همکاری تیمی.",
-        "stars": 4200,
-        "forks": 850,
+        "description": "یک پلتفرم متن‌باز برای کاتالوگ داده، کیفیت داده، مشاهده‌پذیری، حاکمیت و همکاری تیمی. مشارکت‌کننده فعال با PRهای ادغام‌شده.",
+        "stars": 5200,
+        "forks": 1000,
         "url": "https://github.com/open-metadata/OpenMetadata",
-        "language": "TypeScript",
-        "languageColor": "#3178c6"
-      },
-      {
-        "name": "react-query-builder",
-        "description": "یک کامپوننت سازنده پرس‌وجوی انعطاف‌پذیر و قابل توسعه برای React با پشتیبانی از کشیدن و رها کردن.",
-        "stars": 1200,
-        "forks": 180,
-        "url": "https://github.com/hadimobarra/react-query-builder",
         "language": "TypeScript",
         "languageColor": "#3178c6"
       }
@@ -268,9 +285,9 @@
     "title": "گواهینامه‌ها",
     "subtitle": "گواهینامه‌ها و دستاوردهای حرفه‌ای",
     "items": [
-      { "name": "گواهی توسعه‌دهنده فرانت‌اند Meta", "issuer": "Meta (Coursera)", "date": "۲۰۲۳" },
-      { "name": "AWS Cloud Practitioner", "issuer": "Amazon Web Services", "date": "۲۰۲۲" },
-      { "name": "گواهی طراحی UX گوگل", "issuer": "Google (Coursera)", "date": "۲۰۲۱" }
+      { "name": "عضویت در بنیاد ملی نخبگان", "issuer": "بنیاد ملی نخبگان ایران", "date": "۱۴۰۱" },
+      { "name": "کارشناسی ارشد مهندسی کامپیوتر", "issuer": "دانشگاه علم و صنعت ایران", "date": "۱۴۰۳" },
+      { "name": "کارشناسی مهندسی کامپیوتر", "issuer": "دانشگاه محقق اردبیلی", "date": "۱۴۰۰" }
     ]
   },
   "currentlyLearning": {
@@ -299,7 +316,7 @@
     "phone": "تلفن",
     "location": "موقعیت",
     "locationValue": "ایران",
-    "phoneValue": "+۹۸ ۹۰۰ ۰۰۰ ۰۰۰۰",
+    "phoneValue": "+۹۸ ۹۱۴ ۷۴۸ ۲۲۸۴",
     "form": {
       "name": "نام شما",
       "email": "ایمیل شما",

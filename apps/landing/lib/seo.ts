@@ -10,7 +10,7 @@ export const siteConfig = {
     github: "https://github.com/hadimobarra",
     linkedin: "https://linkedin.com/in/hadimobarra",
     email: "hadimobarra@gmail.com",
-    phone: "+09123456789",
+    phone: "+989147482284",
   },
 };
 

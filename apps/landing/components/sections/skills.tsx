@@ -1,10 +1,22 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { SectionWrapper } from "@/components/shared/section-wrapper";
 import { AnimatedElement } from "@/components/shared/animated-element";
+
+const categoryIcons: Record<string, string> = {
+  Languages: "💬",
+  "Frameworks & Libraries": "⚛️",
+  "فریم‌ورک‌ها و کتابخانه‌ها": "⚛️",
+  "UI / Styling": "🎨",
+  "UI / استایل": "🎨",
+  Tooling: "🛠️",
+  ابزارها: "🛠️",
+  "Data & Protocols": "📡",
+  "داده و پروتکل‌ها": "📡",
+  Platforms: "☁️",
+  پلتفرم‌ها: "☁️",
+};
 
 export function Skills() {
   const { t } = useTranslation();
@@ -30,42 +42,33 @@ export function Skills() {
 }
 
 function SkillCard({
-  category,
-  index,
+  category, index,
 }: {
   category: { title: string; skills: { name: string; level: number }[] };
   index: number;
 }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-50px" });
-
   return (
-    <AnimatedElement ref={ref} delay={index * 0.1} direction="up">
-      <div className="glass-card rounded-2xl p-6 h-full">
-        <h3 className="text-lg font-semibold mb-5">{category.title}</h3>
-        <div className="space-y-4">
+    <AnimatedElement delay={index * 0.1} direction="up">
+      <div className="glass-card rounded-2xl p-6 h-full group hover:shadow-lg transition-all">
+        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-border">
+          <span className="text-xl">{categoryIcons[category.title] || "📦"}</span>
+          <h3 className="text-lg font-semibold group-hover:text-primary transition-colors">
+            {category.title}
+          </h3>
+        </div>
+        <div className="flex flex-wrap gap-2">
           {category.skills.map((skill) => (
-            <div key={skill.name}>
-              <div className="flex justify-between text-sm mb-1.5">
-                <span className="font-medium">{skill.name}</span>
-                <span className="text-muted">{skill.level}%</span>
-              </div>
-              <div className="h-2 bg-surface-alt rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full rounded-full bg-gradient-to-r from-primary to-secondary"
-                  initial={{ width: 0 }}
-                  animate={isInView ? { width: `${skill.level}%` } : {}}
-                  transition={{
-                    delay: index * 0.1,
-                    duration: 1,
-                    ease: [0.25, 0.1, 0.25, 1],
-                  }}
-                />
-              </div>
-            </div>
+            <span
+              key={skill.name}
+              className="px-3.5 py-2 text-sm font-medium rounded-xl bg-surface-alt text-foreground border border-border/50 hover:border-primary/30 hover:bg-primary/5 hover:text-primary transition-all"
+            >
+              {skill.name}
+            </span>
           ))}
         </div>
       </div>
     </AnimatedElement>
   );
 }
+
+

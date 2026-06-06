@@ -18,6 +18,12 @@ import {
   SiPrisma,
   SiGraphql,
   SiGit,
+  SiRedux,
+  SiJavascript,
+  SiAntdesign,
+  SiMaterialdesign,
+  SiWebpack,
+  SiVite,
 } from "react-icons/si";
 
 interface TechGroup {
@@ -28,6 +34,7 @@ interface TechGroup {
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   SiNextdotjs, SiReact, SiTypescript, SiTailwindcss, SiNodedotjs,
   SiPython, SiDocker, SiPostgresql, SiMongodb, SiPrisma, SiGraphql, SiGit,
+  SiRedux, SiJavascript, SiAntdesign, SiMaterialdesign, SiWebpack, SiVite,
 };
 
 export function TechStack() {

@@ -12,8 +12,8 @@
   "hero": {
     "greeting": "Hello, I'm",
     "name": "Hadi Mobarra",
-    "roles": ["Front-End Developer", "React Developer", "Next.js Developer", "Computer Engineer"],
-    "description": "Front-End Developer with a Master's Degree in Computer Engineering. Specializing in building scalable, high-performance web applications with modern technologies.",
+    "roles": ["Front-End Engineer", "React Developer", "TypeScript Developer", "Open-Source Contributor"],
+    "description": "Front-End Engineer with a Master's Degree in Computer Engineering and 3+ years of production experience. Active open-source contributor building data-intensive web applications.",
     "contactMe": "Contact Me",
     "downloadResume": "Download Resume",
     "viewProjects": "View Projects",
@@ -22,14 +22,14 @@
   "about": {
     "title": "About Me",
     "subtitle": "Passionate about creating exceptional digital experiences",
-    "para1": "I'm a <strong>Front-End Developer</strong> with a <strong>Master's Degree in Computer Engineering</strong>, passionate about building modern, scalable, and high-performance web applications.",
-    "para2": "With expertise in <strong>React</strong>, <strong>Next.js</strong>, and <strong>TypeScript</strong>, I specialize in translating complex designs into seamless user experiences. My background in computer engineering gives me a strong foundation in algorithms, system design, and software architecture.",
-    "para3": "I'm deeply committed to performance optimization, accessibility, and writing clean, maintainable code. Every project I work on is an opportunity to push the boundaries of what's possible on the web.",
+    "para1": "I'm a <strong>Front-End Engineer</strong> with <strong>3+ years of production experience</strong> building complex, data-intensive web applications. I hold an <strong>M.Sc. in Computer Engineering</strong> from Iran University of Science and Technology and am recognised by the <strong>National Elite Foundation</strong>.",
+    "para2": "I'm an active contributor to <strong>OpenMetadata</strong> — a leading open-source data catalog and governance platform — with merged pull requests spanning UI components, localization, and feature enhancements. I deliver pixel-perfect, accessible, and performant interfaces using <strong>React</strong>, <strong>TypeScript</strong>, and modern state-management solutions.",
+    "para3": "I thrive in agile, cross-functional teams and enjoy architecting scalable component libraries, driving performance optimisations (code-splitting, lazy loading, memoisation), and leading full RTL localisation efforts. Every project is an opportunity to push the boundaries of what's possible on the web.",
     "stats": {
-      "projects": "Projects Completed",
+      "projects": "Projects Delivered",
       "technologies": "Technologies Used",
       "experience": "Years of Experience",
-      "contributions": "GitHub Contributions"
+      "contributions": "Open-Source Contributions"
     }
   },
   "education": {
@@ -37,53 +37,81 @@
     "subtitle": "My academic journey",
     "items": [
       {
-        "degree": "Master's Degree in Computer Engineering",
-        "institution": "University of Technology",
-        "period": "2020 - 2022",
-        "description": "Specialized in software engineering, distributed systems, and advanced algorithms. Thesis focused on modern web application architecture and performance optimization."
+        "degree": "M.Sc. in Computer Engineering",
+        "institution": "Iran University of Science and Technology",
+        "period": "2022 - 2024",
+        "description": "Member of the National Elite Foundation (top academic honour). Research focused on distributed systems and software engineering."
       },
       {
-        "degree": "Bachelor's Degree in Computer Engineering",
-        "institution": "University of Technology",
-        "period": "2016 - 2020",
+        "degree": "B.Sc. in Computer Engineering",
+        "institution": "University of Mohaghegh Ardabili",
+        "period": "2017 - 2021",
         "description": "Comprehensive foundation in computer science, programming, data structures, algorithms, and software engineering principles."
       }
     ]
   },
   "skillCategories": [
     {
-      "title": "Frontend",
+      "title": "Languages",
       "skills": [
-        { "name": "HTML", "level": 95 },
-        { "name": "CSS", "level": 90 },
-        { "name": "JavaScript", "level": 90 },
-        { "name": "TypeScript", "level": 85 },
-        { "name": "React", "level": 90 },
-        { "name": "Next.js", "level": 85 },
-        { "name": "Zustand", "level": 80 },
-        { "name": "Tailwind CSS", "level": 90 }
+        { "name": "TypeScript", "level": 90 },
+        { "name": "JavaScript (ES2024)", "level": 90 },
+        { "name": "HTML5", "level": 95 },
+        { "name": "CSS3", "level": 90 }
       ]
     },
     {
-      "title": "UI/UX",
+      "title": "Frameworks & Libraries",
       "skills": [
-        { "name": "Responsive Design", "level": 90 },
-        { "name": "Accessibility", "level": 80 },
-        { "name": "Figma", "level": 75 }
+        { "name": "React 18", "level": 92 },
+        { "name": "Redux", "level": 80 },
+        { "name": "Zustand", "level": 85 },
+        { "name": "React Query", "level": 80 },
+        { "name": "Next.js", "level": 75 }
       ]
     },
     {
-      "title": "Tools",
+      "title": "UI / Styling",
       "skills": [
-        { "name": "Git", "level": 85 },
-        { "name": "GitHub", "level": 85 },
-        { "name": "VS Code", "level": 90 }
+        { "name": "Ant Design", "level": 88 },
+        { "name": "Tailwind CSS", "level": 92 },
+        { "name": "Material UI", "level": 80 },
+        { "name": "Sass", "level": 85 },
+        { "name": "RTL / i18n", "level": 90 }
+      ]
+    },
+    {
+      "title": "Tooling",
+      "skills": [
+        { "name": "Webpack", "level": 80 },
+        { "name": "Vite", "level": 78 },
+        { "name": "Git", "level": 88 },
+        { "name": "Docker", "level": 75 },
+        { "name": "Nginx", "level": 70 },
+        { "name": "ESLint / Prettier", "level": 85 }
+      ]
+    },
+    {
+      "title": "Data & Protocols",
+      "skills": [
+        { "name": "Uppy.js", "level": 82 },
+        { "name": "TUS Protocol", "level": 80 },
+        { "name": "REST APIs", "level": 88 },
+        { "name": "ETL Concepts", "level": 75 }
+      ]
+    },
+    {
+      "title": "Platforms",
+      "skills": [
+        { "name": "Linux", "level": 80 },
+        { "name": "GitHub Actions CI", "level": 78 },
+        { "name": "OpenMetadata", "level": 85 }
       ]
     }
   ],
   "skills": {
-    "title": "Skills & Technologies",
-    "subtitle": "Technologies I work with on a daily basis"
+    "title": "Skills",
+    "subtitle": "Technologies and tools I work with"
   },
   "projects": {
     "title": "Featured Projects",
@@ -91,24 +119,24 @@
     "items": [
       {
         "title": "OpenMetadata",
-        "description": "An open-source metadata platform for data discovery, data quality, observability, governance, and team collaboration. Built with modern web technologies to provide a seamless user experience for data professionals.",
-        "tags": ["React", "TypeScript", "Next.js", "Tailwind CSS"],
+        "description": "Active contributor to a leading open-source data catalog and governance platform. Shipped UI components, full Persian RTL localisation, and feature enhancements with merged PRs.",
+        "tags": ["React", "TypeScript", "Ant Design", "Tailwind CSS"],
         "liveUrl": "https://openmetadata.org",
         "githubUrl": "https://github.com/open-metadata/OpenMetadata"
       },
       {
-        "title": "E-Commerce Platform",
-        "description": "A full-featured e-commerce platform with real-time inventory management, payment processing, and an intuitive admin dashboard built with Next.js.",
-        "tags": ["Next.js", "TypeScript", "React", "Node.js"],
-        "liveUrl": "https://example.com/ecommerce",
-        "githubUrl": "https://github.com/hadimobarra/ecommerce"
+        "title": "Enterprise Data Catalog UI",
+        "description": "Built a full-featured, searchable Data Catalog interface for discovering, tagging, and governing enterprise datasets, directly improving data discoverability across teams.",
+        "tags": ["React", "TypeScript", "Ant Design", "Zustand"],
+        "liveUrl": null,
+        "githubUrl": null
       },
       {
-        "title": "Task Management App",
-        "description": "A collaborative task management application with drag-and-drop interfaces, real-time updates, and comprehensive project tracking capabilities.",
-        "tags": ["React", "TypeScript", "Tailwind CSS", "Node.js"],
-        "liveUrl": "https://example.com/tasks",
-        "githubUrl": "https://github.com/hadimobarra/task-manager"
+        "title": "Large-File Upload Module",
+        "description": "Architected a reliable multi-GB file upload module using Uppy.js and TUS resumable-upload protocol with pause/resume, automatic retry, and support for Excel, JSON, TSV, and CSV formats.",
+        "tags": ["React", "TypeScript", "Uppy.js", "TUS Protocol"],
+        "liveUrl": null,
+        "githubUrl": null
       }
     ]
   },
@@ -117,25 +145,18 @@
     "subtitle": "My professional journey",
     "items": [
       {
-        "title": "Senior Front-End Developer",
-        "company": "Tech Company",
-        "period": "2022 - Present",
-        "description": "Leading front-end development for multiple web applications. Architected scalable component libraries, implemented CI/CD pipelines, and mentored junior developers.",
-        "tags": ["React", "Next.js", "TypeScript", "Tailwind CSS"]
+        "title": "Front-End Engineer",
+        "company": "Adin — Tehran, Iran",
+        "period": "Apr 2023 – Present",
+        "description": "Architected a large-file upload module (Excel, JSON, TSV, CSV) using Uppy.js and TUS protocol enabling reliable multi-GB transfers. Built Mapping Table & Column interfaces (Databricks-inspired) for ETL workflows. Developed a full-featured Data Catalog UI and a Role Management module with dynamic access-control. Led full Persian (RTL) localisation using i18next across the entire product. Drove performance optimisations reducing initial load time. Owned end-to-end delivery of the Add Pipeline page.",
+        "tags": ["React", "TypeScript", "Ant Design", "Tailwind CSS", "Zustand", "i18n/RTL"]
       },
       {
-        "title": "Front-End Developer",
-        "company": "Digital Agency",
-        "period": "2020 - 2022",
-        "description": "Developed responsive web applications for diverse clients. Collaborated with design teams to implement pixel-perfect interfaces with modern front-end technologies.",
-        "tags": ["React", "JavaScript", "CSS", "Figma"]
-      },
-      {
-        "title": "Junior Front-End Developer",
-        "company": "StartUp Inc.",
-        "period": "2019 - 2020",
-        "description": "Built and maintained web applications using React. Participated in code reviews and contributed to improving development workflows.",
-        "tags": ["React", "JavaScript", "Git"]
+        "title": "Front-End Developer (Graduate Internship)",
+        "company": "MCI (Hamrah-e Aval) — Tehran, Iran",
+        "period": "Nov 2022 – Apr 2023",
+        "description": "Contributed to production-grade telecom dashboards using React, Redux Saga, and Material UI within a large enterprise codebase. Implemented responsive UI components with Sass/CSS following design-system guidelines. Integrated Webpack build pipelines and Nginx-based deployment via Docker.",
+        "tags": ["React", "Redux", "Redux Saga", "Material UI", "Sass", "Webpack", "Docker"]
       }
     ]
   },
@@ -180,31 +201,36 @@
     "subtitle": "Technologies I use and love",
     "groups": [
       {
-        "title": "Frameworks",
+        "title": "Frameworks & Libs",
         "items": [
+          { "name": "React", "icon": "SiReact" },
           { "name": "Next.js", "icon": "SiNextdotjs" },
-          { "name": "React", "icon": "SiReact" }
+          { "name": "Redux", "icon": "SiRedux" },
+          { "name": "Zustand", "icon": "SiReact" }
         ]
       },
       {
         "title": "Languages",
         "items": [
           { "name": "TypeScript", "icon": "SiTypescript" },
-          { "name": "Python", "icon": "SiPython" }
+          { "name": "JavaScript", "icon": "SiJavascript" }
         ]
       },
       {
-        "title": "Styling & DB",
+        "title": "UI & Styling",
         "items": [
           { "name": "Tailwind CSS", "icon": "SiTailwindcss" },
-          { "name": "PostgreSQL", "icon": "SiPostgresql" }
+          { "name": "Ant Design", "icon": "SiAntdesign" },
+          { "name": "Material UI", "icon": "SiMaterialdesign" }
         ]
       },
       {
         "title": "DevOps & Tools",
         "items": [
           { "name": "Docker", "icon": "SiDocker" },
-          { "name": "Git", "icon": "SiGit" }
+          { "name": "Git", "icon": "SiGit" },
+          { "name": "Webpack", "icon": "SiWebpack" },
+          { "name": "Vite", "icon": "SiVite" }
         ]
       }
     ]
@@ -246,19 +272,10 @@
     "repos": [
       {
         "name": "OpenMetadata",
-        "description": "An open-source metadata platform for data discovery, data quality, observability, governance, and team collaboration.",
-        "stars": 4200,
-        "forks": 850,
+        "description": "An open-source metadata platform for data discovery, data quality, observability, governance, and team collaboration. Active contributor with merged PRs.",
+        "stars": 5200,
+        "forks": 1000,
         "url": "https://github.com/open-metadata/OpenMetadata",
-        "language": "TypeScript",
-        "languageColor": "#3178c6"
-      },
-      {
-        "name": "react-query-builder",
-        "description": "A flexible and extensible query builder component for React with drag-and-drop support.",
-        "stars": 1200,
-        "forks": 180,
-        "url": "https://github.com/hadimobarra/react-query-builder",
         "language": "TypeScript",
         "languageColor": "#3178c6"
       }
@@ -268,9 +285,9 @@
     "title": "Certifications",
     "subtitle": "Professional certifications and achievements",
     "items": [
-      { "name": "Meta Front-End Developer Certificate", "issuer": "Meta (Coursera)", "date": "2023" },
-      { "name": "AWS Cloud Practitioner", "issuer": "Amazon Web Services", "date": "2022" },
-      { "name": "Google UX Design Certificate", "issuer": "Google (Coursera)", "date": "2021" }
+      { "name": "National Elite Foundation Member", "issuer": "Iran National Elite Foundation", "date": "2022" },
+      { "name": "M.Sc. in Computer Engineering", "issuer": "Iran University of Science and Technology", "date": "2024" },
+      { "name": "B.Sc. in Computer Engineering", "issuer": "University of Mohaghegh Ardabili", "date": "2021" }
     ]
   },
   "currentlyLearning": {
@@ -299,7 +316,7 @@
     "phone": "Phone",
     "location": "Location",
     "locationValue": "Iran",
-    "phoneValue": "+98 900 000 0000",
+    "phoneValue": "+98 914 748 2284",
     "form": {
       "name": "Your Name",
       "email": "Your Email",
