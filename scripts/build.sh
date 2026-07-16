@@ -27,5 +27,8 @@ build_app "landing" "$SITE_DIR"
 build_app "project-a" "$SITE_DIR/project-a"
 build_app "project-b" "$SITE_DIR/project-b"
 
+echo "==> Adding .nojekyll for GitHub Pages"
+touch "$SITE_DIR/.nojekyll"
+
 echo "==> Site ready at _site/"
 find "$SITE_DIR" -maxdepth 2 -name "*.html" | sort
