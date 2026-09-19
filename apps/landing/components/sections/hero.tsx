@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Download, Mail, ArrowDown } from "lucide-react";
+import { Mail, ArrowDown } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Typewriter } from "@/components/shared/typewriter";
 import { FloatingIcons } from "@/components/shared/floating-icons";
@@ -70,14 +70,6 @@ export function Hero() {
           >
             <Mail size={18} />
             {t("hero.contactMe")}
-          </a>
-          <a
-            href="/resume.pdf"
-            download
-            className="inline-flex items-center justify-center gap-2 h-13 px-8 rounded-full text-base font-medium bg-background text-foreground border border-border hover:border-primary/30 hover:bg-surface hover:shadow-sm transition-all duration-300"
-          >
-            <Download size={18} />
-            {t("hero.downloadResume")}
           </a>
           <a
             href="#projects"

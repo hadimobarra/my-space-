@@ -13,9 +13,9 @@ export function About() {
   const statsInView = useInView(statsRef, { once: true, margin: "-100px" });
 
   const stats = [
-    { icon: Code, value: "50+", label: t("about.stats.projects") },
+    { icon: Code, value: "10+", label: t("about.stats.projects") },
     { icon: Briefcase, value: "30+", label: t("about.stats.technologies") },
-    { icon: Award, value: "5+", label: t("about.stats.experience") },
+    { icon: Award, value: "4+", label: t("about.stats.experience") },
     { icon: GitCommit, value: "1K+", label: t("about.stats.contributions") },
   ];
 

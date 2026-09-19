@@ -15,7 +15,6 @@
     "roles": ["Front-End Engineer", "React Developer", "TypeScript Developer", "Open-Source Contributor"],
     "description": "Front-End Engineer with a Master's Degree in Computer Engineering and 3+ years of production experience. Active open-source contributor building data-intensive web applications.",
     "contactMe": "Contact Me",
-    "downloadResume": "Download Resume",
     "viewProjects": "View Projects",
     "scroll": "Scroll"
   },
@@ -123,6 +122,13 @@
         "tags": ["React", "TypeScript", "Ant Design", "Tailwind CSS"],
         "liveUrl": "https://openmetadata.org",
         "githubUrl": "https://github.com/open-metadata/OpenMetadata"
+      },
+      {
+        "title": "Apache Superset",
+        "description": "Contributing to Apache Superset, a leading open-source business intelligence and data exploration platform. Working across its React/TypeScript front-end with a focus on UI features and improvements.",
+        "tags": ["React", "TypeScript", "Python"],
+        "liveUrl": "https://superset.apache.org",
+        "githubUrl": "https://github.com/apache/superset"
       },
       {
         "title": "Enterprise Data Catalog UI",
@@ -278,6 +284,15 @@
         "url": "https://github.com/open-metadata/OpenMetadata",
         "language": "TypeScript",
         "languageColor": "#3178c6"
+      },
+      {
+        "name": "Apache Superset",
+        "description": "An open-source business intelligence and data exploration platform with a rich React/TypeScript front-end. Contributor with merged PRs.",
+        "stars": 74832,
+        "forks": 18342,
+        "url": "https://github.com/apache/superset",
+        "language": "TypeScript",
+        "languageColor": "#3178c6"
       }
     ]
   },
@@ -323,13 +338,13 @@
       "subject": "Subject",
       "message": "Your Message",
       "send": "Send Message",
+      "sending": "Sending...",
       "sent": "Sent Successfully!",
-      "sending": "Sending..."
+      "error": "Failed to Send",
+      "subjectPrefix": "[Portfolio Contact]"
     }
   },
   "footer": {
-    "madeWith": "Made with",
-    "using": "using Next.js",
     "backToTop": "Scroll to top"
   },
   "commandMenu": {

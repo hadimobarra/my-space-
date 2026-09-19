@@ -4,3 +4,8 @@ out/
 _site/
 *.tsbuildinfo
 next-env.d.ts
+.env.local
+.env*.local
+
+# graft's local graph cache — regenerable, not committed (run `graft build`).
+/graft/

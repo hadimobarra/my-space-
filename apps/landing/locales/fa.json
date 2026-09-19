@@ -15,7 +15,6 @@
     "roles": ["مهندس فرانت‌اند", "توسعه‌دهنده React", "توسعه‌دهنده TypeScript", "مشارکت‌کننده متن‌باز"],
     "description": "مهندس فرانت‌اند با مدرک کارشناسی ارشد مهندسی کامپیوتر و ۳+ سال تجربه حرفه‌ای. مشارکت‌کننده فعال در پروژه‌های متن‌باز و سازنده برنامه‌های وب داده‌محور.",
     "contactMe": "ارتباط با من",
-    "downloadResume": "دانلود رزومه",
     "viewProjects": "مشاهده پروژه‌ها",
     "scroll": "اسکرول"
   },
@@ -123,6 +122,13 @@
         "tags": ["React", "TypeScript", "Ant Design", "Tailwind CSS"],
         "liveUrl": "https://openmetadata.org",
         "githubUrl": "https://github.com/open-metadata/OpenMetadata"
+      },
+      {
+        "title": "Apache Superset",
+        "description": "مشارکت در Apache Superset، یک پلتفرم متن‌باز پیشرو برای هوش تجاری و کاوش داده. کار بر روی فرانت‌اند React/TypeScript آن با تمرکز بر ویژگی‌های UI و بهبودها.",
+        "tags": ["React", "TypeScript", "Python"],
+        "liveUrl": "https://superset.apache.org",
+        "githubUrl": "https://github.com/apache/superset"
       },
       {
         "title": "رابط کاربری کاتالوگ داده سازمانی",
@@ -278,6 +284,15 @@
         "url": "https://github.com/open-metadata/OpenMetadata",
         "language": "TypeScript",
         "languageColor": "#3178c6"
+      },
+      {
+        "name": "Apache Superset",
+        "description": "یک پلتفرم متن‌باز برای هوش تجاری و کاوش داده با فرانت‌اند غنی React/TypeScript. مشارکت‌کننده با PRهای ادغام‌شده.",
+        "stars": 74832,
+        "forks": 18342,
+        "url": "https://github.com/apache/superset",
+        "language": "TypeScript",
+        "languageColor": "#3178c6"
       }
     ]
   },
@@ -323,13 +338,13 @@
       "subject": "موضوع",
       "message": "پیام شما",
       "send": "ارسال پیام",
+      "sending": "در حال ارسال...",
       "sent": "با موفقیت ارسال شد!",
-      "sending": "در حال ارسال..."
+      "error": "ارسال ناموفق بود",
+      "subjectPrefix": "[تماس از سایت]"
     }
   },
   "footer": {
-    "madeWith": "ساخته شده با",
-    "using": "با Next.js",
     "backToTop": "بازگشت به بالا"
   },
   "commandMenu": {

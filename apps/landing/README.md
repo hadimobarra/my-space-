@@ -34,3 +34,14 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Contact form (email delivery)
+
+The site is a static export (`output: "export"`) deployed to GitHub Pages, so the contact form posts directly to [Web3Forms](https://web3forms.com). Messages are delivered to `hadimobarra@gmail.com`.
+
+1. Visit https://web3forms.com and enter `hadimobarra@gmail.com` as the recipient — you'll receive an access key by email.
+2. Set the key as an environment variable:
+   - Local dev: create `apps/landing/.env.local` with `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY=<your-key>`
+   - Production: add a repo secret named `WEB3FORMS_ACCESS_KEY` (Settings → Secrets and variables → Actions). The GitHub Pages workflow inlines it at build time.
+
+`NEXT_PUBLIC_*` variables are baked into the client bundle at build time, so after changing the key you must rebuild/redeploy.

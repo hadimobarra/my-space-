@@ -1,12 +1,9 @@
 "use client";
 
-import { Heart, ArrowUp } from "lucide-react";
-import { useTranslation } from "react-i18next";
+import { ArrowUp } from "lucide-react";
 import { siteConfig } from "@/lib/seo";
 
 export function Footer() {
-  const { t } = useTranslation();
-
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -15,10 +12,8 @@ export function Footer() {
     <footer className="relative border-t border-border bg-surface/80">
       <div className="container-wide px-4 md:px-8 py-10">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <p className="text-sm text-muted flex items-center gap-1">
-            &copy; {new Date().getFullYear()} {siteConfig.name}. {t("footer.madeWith")}{" "}
-            <Heart size={14} className="text-red-400/80 fill-red-400/80 inline" />{" "}
-            {t("footer.using")}
+          <p className="text-sm text-muted">
+            &copy; {new Date().getFullYear()} {siteConfig.name}.
           </p>
 
           <div className="flex items-center gap-6">
