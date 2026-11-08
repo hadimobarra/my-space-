@@ -1,0 +1,170 @@
+---
+title: "Taming INP: A Practical Guide to Interaction to Next Paint"
+description: "INP replaced FID as a Core Web Vital. Learn how it's measured, how to find the slow interactions in your app, and the concrete techniques that cut it: yielding, deferring non-urgent work, React transitions and smaller DOMs."
+date: "2026-07-14"
+tags: ["Performance", "Core Web Vitals", "React"]
+---
+
+## What INP measures
+
+**Interaction to Next Paint** observes every click, tap and key press during a page visit and reports (roughly) the *worst* one — the 98th percentile for pages with many interactions. Each interaction's latency is the time from the input until the browser **paints the next frame** after handling it.
+
+That latency has three parts:
+
+1. **Input delay** — the main thread was busy with something else when the user interacted.
+2. **Processing time** — your event handlers ran.
+3. **Presentation delay** — style, layout, paint and compositing for the resulting frame.
+
+Thresholds: **≤ 200ms is good**, **> 500ms is poor**, measured at the 75th percentile of page loads.
+
+Because INP covers the whole visit and not just the first input, it punishes exactly the things heavy single-page apps do: big re-renders, synchronous state updates and long tasks during hydration.
+
+## Step 1: measure in the field
+
+Lab tools can't know which interactions real users perform. Collect field data with the `web-vitals` library and the attribution build:
+
+```js
+import { onINP } from "web-vitals/attribution";
+
+onINP(({ value, rating, attribution }) => {
+  navigator.sendBeacon("/analytics", JSON.stringify({
+    value,
+    rating,
+    target: attribution.interactionTarget,       // CSS selector of the element
+    type: attribution.interactionType,           // "pointer" | "keyboard"
+    inputDelay: attribution.inputDelay,
+    processing: attribution.processingDuration,
+    presentation: attribution.presentationDelay,
+    // Long Animation Frame entries explain *which scripts* were responsible
+    scripts: attribution.longAnimationFrameEntries
+      ?.flatMap((e) => e.scripts.map((s) => s.sourceURL)),
+  }));
+});
+```
+
+The breakdown tells you where to look:
+
+| Dominant phase | Usual cause | Fix |
+| --- | --- | --- |
+| Input delay | Long tasks already running (hydration, timers, third-party scripts) | Break up long tasks, defer third parties |
+| Processing | Expensive handlers, large synchronous re-renders | Yield, defer, memoise, transitions |
+| Presentation | Huge DOM, layout thrashing, expensive CSS | Smaller DOM, `content-visibility`, avoid forced layouts |
+
+## Step 2: do the visible work first, defer the rest
+
+The single most effective pattern: in the handler, do only what's needed for the **next frame**, then yield before the rest.
+
+```js
+// Yield with a *task*, so the browser can paint and handle input
+function yieldToMain() {
+  if (globalThis.scheduler?.yield) return scheduler.yield();
+  return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
+button.addEventListener("click", async () => {
+  // 1. Immediate visual feedback
+  button.classList.add("is-loading");
+
+  // 2. Let the browser paint that feedback
+  await yieldToMain();
+
+  // 3. Non-urgent work happens after the paint
+  recalculateRecommendations();
+  sendAnalytics("click");
+});
+```
+
+Analytics, logging and prefetching almost never need to block the frame. Move them behind a yield or into `requestIdleCallback`.
+
+## Step 3: break up long tasks
+
+Any task over 50ms is a **long task**. If one is running when the user clicks, the click has to wait. Chunk heavy loops:
+
+```js
+async function filterLargeList(items, predicate) {
+  const result = [];
+  let deadline = performance.now() + 8; // ~half a frame
+  for (let i = 0; i < items.length; i++) {
+    if (predicate(items[i])) result.push(items[i]);
+    if (performance.now() > deadline) {
+      await yieldToMain();
+      deadline = performance.now() + 8;
+    }
+  }
+  return result;
+}
+```
+
+If the work is pure computation (parsing, sorting, diffing), move it **off the main thread** entirely into a Web Worker.
+
+## Step 4: React-specific techniques
+
+React 18+ gives you concurrent rendering that can be interrupted by input:
+
+```jsx
+import { useState, useTransition, useDeferredValue } from "react";
+
+function Search({ items }) {
+  const [query, setQuery] = useState("");
+  const [isPending, startTransition] = useTransition();
+  const [filter, setFilter] = useState("");
+
+  return (
+    <>
+      <input
+        value={query}
+        onChange={(e) => {
+          setQuery(e.target.value);                       // urgent: keep typing snappy
+          startTransition(() => setFilter(e.target.value)); // can be interrupted
+        }}
+      />
+      {isPending && <Spinner />}
+      <Results items={items} filter={filter} />
+    </>
+  );
+}
+```
+
+The input update commits immediately; the expensive results render happens in a transition that React abandons and restarts if another keystroke arrives. `useDeferredValue` achieves the same thing when you don't control the state setter.
+
+Other React wins:
+
+- **Memoise expensive subtrees** (`memo`, or the React Compiler) so a keystroke doesn't re-render the world.
+- **Virtualise long lists** — rendering 5,000 rows is slow no matter how fast each row is.
+- **Avoid hydration-time long tasks** with selective hydration (`Suspense` boundaries) and by shipping less client JavaScript (Server Components).
+
+## Step 5: reduce presentation delay
+
+Even with a fast handler, the frame can be slow to produce:
+
+- **Large DOMs** make style recalculation and layout expensive. Keep it under a few thousand nodes where possible.
+- **`content-visibility: auto`** lets the browser skip rendering off-screen sections:
+
+```css
+.feed-item {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 320px; /* placeholder size to avoid scroll jumps */
+}
+```
+
+- **Avoid layout thrashing** — interleaving DOM writes and layout reads in a loop forces synchronous layout each iteration:
+
+```js
+// ❌ read → write → read → write: forced layout each time
+for (const el of cards) el.style.height = el.offsetWidth * 0.5 + "px";
+
+// ✅ batch reads, then batch writes
+const widths = cards.map((el) => el.offsetWidth);
+cards.forEach((el, i) => (el.style.height = widths[i] * 0.5 + "px"));
+```
+
+## A debugging workflow that works
+
+1. Find the worst interactions from field data (target selector + phase breakdown).
+2. Reproduce in Chrome DevTools' **Performance** panel with CPU throttling at 4× or 6×.
+3. Look at the **Interactions** track; expand the long interaction and read the flame chart under it.
+4. Apply the matching fix from the table above, then verify in the field — lab improvements don't always transfer.
+
+## Conclusion
+
+INP rewards apps that respond first and compute later. Show feedback in the next frame, yield before non-urgent work, keep long tasks off the main thread, and let React's transitions keep input urgent. These habits fix a metric and also make the app feel faster.

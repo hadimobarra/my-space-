@@ -1,0 +1,167 @@
+---
+title: "A Mental Model for React Server Components and Streaming"
+description: "Server Components, Client Components, the RSC payload, Suspense streaming and Server Actions — explained as one coherent model, with the composition patterns and pitfalls that matter in a real Next.js codebase."
+date: "2026-03-09"
+tags: ["React", "Next.js", "Architecture"]
+---
+
+## Two kinds of components, one tree
+
+React Server Components (RSC) split your component tree across two environments:
+
+- **Server Components** run only on the server (at build time or request time). They can be `async`, read databases and files directly, and **ship zero JavaScript** to the browser.
+- **Client Components** are the components you already know. They are marked with `"use client"`, run on the server for the initial HTML *and* in the browser, and can use state, effects and event handlers.
+
+In the Next.js App Router, every component is a Server Component unless something makes it a client one.
+
+```tsx
+// app/posts/page.tsx — a Server Component
+import { db } from "@/lib/db";
+import { LikeButton } from "./like-button";
+
+export default async function PostsPage() {
+  const posts = await db.post.findMany({ take: 20 }); // direct data access
+
+  return (
+    <ul>
+      {posts.map((post) => (
+        <li key={post.id}>
+          <h2>{post.title}</h2>
+          <LikeButton postId={post.id} initialLikes={post.likes} />
+        </li>
+      ))}
+    </ul>
+  );
+}
+```
+
+```tsx
+// app/posts/like-button.tsx
+"use client";
+
+import { useState } from "react";
+
+export function LikeButton({ postId, initialLikes }: { postId: string; initialLikes: number }) {
+  const [likes, setLikes] = useState(initialLikes);
+  return <button onClick={() => setLikes((n) => n + 1)}>♥ {likes}</button>;
+}
+```
+
+The database client, the query and the mapping code never reach the browser. Only `LikeButton`'s code does.
+
+## `"use client"` marks a boundary, not a component
+
+The directive marks a **module boundary**: that file and everything it *imports* become part of the client bundle. That's why you should push `"use client"` as far down the tree as possible — mark the small interactive leaf, not the whole page.
+
+A frequent mistake is putting `"use client"` at the top of a layout because one child needs `useState`. Now every import of that layout — markdown parsers, date libraries, icon sets — ships to the browser.
+
+## What actually goes over the wire
+
+Server Components don't render to HTML in the browser; they render to the **RSC payload**, a streamable serialised description of the tree. Conceptually it looks like:
+
+```text
+0: ["$", "ul", null, { children: ["$L1", "$L2"] }]
+1: ["$", "li", null, { children: [["$", "h2", null, { children: "Hello RSC" }],
+     ["$", "$Lclient:LikeButton", null, { postId: "1", initialLikes: 3 }]] }]
+client:LikeButton: { id: "./like-button.js", chunks: ["chunk-abc.js"] }
+```
+
+Server Component output is inlined as plain elements. Client Components appear as **references** to a module plus the props to pass them. The browser downloads only those referenced chunks and hydrates them.
+
+Two consequences follow:
+
+1. **Props passed from server to client must be serialisable** — plain objects, arrays, strings, numbers, `Date`, `Map`, `Set`, promises and server actions. Not class instances, and not ordinary functions.
+2. **Navigations fetch payloads, not HTML.** On client navigation, React requests the RSC payload for the new route and merges it into the existing tree, so client state in shared layouts survives.
+
+## The composition rule: pass Server Components as children
+
+A Client Component can't *import* a Server Component (the import would pull server-only code into the client bundle). But it can *render* one passed in as a prop:
+
+```tsx
+// ❌ Inside a client component file
+import { ServerSidebar } from "./server-sidebar"; // becomes client code
+
+// ✅ Compose from a server component instead
+// app/layout.tsx (server)
+<CollapsiblePanel>          {/* client: owns open/closed state */}
+  <ServerSidebar />          {/* server: rendered on the server, passed as children */}
+</CollapsiblePanel>
+```
+
+`children` here is already-rendered output in the RSC payload, so the client component just places it. This "donut" pattern — an interactive shell around server-rendered content — is the most important RSC composition technique.
+
+## Streaming with Suspense
+
+Because the payload is a stream, the server can send the page shell immediately and fill in slow parts later:
+
+```tsx
+import { Suspense } from "react";
+
+export default function Dashboard() {
+  return (
+    <>
+      <Header />                                  {/* sent immediately */}
+      <Suspense fallback={<ChartSkeleton />}>
+        <RevenueChart />                          {/* async; streams in when ready */}
+      </Suspense>
+      <Suspense fallback={<FeedSkeleton />}>
+        <ActivityFeed />
+      </Suspense>
+    </>
+  );
+}
+```
+
+Each boundary resolves independently. The user sees and can interact with the header while the chart query is still running, and React hydrates parts of the page as their code arrives (**selective hydration**), prioritising the part the user interacts with first.
+
+Watch out for **waterfalls**. Awaiting in sequence serialises requests:
+
+```tsx
+// ❌ 300ms + 300ms
+const user = await getUser(id);
+const orders = await getOrders(id);
+
+// ✅ ~300ms — start both, then await
+const [user, orders] = await Promise.all([getUser(id), getOrders(id)]);
+```
+
+Or better, move each fetch into the component that needs it and give each its own Suspense boundary.
+
+## Mutations with Server Actions
+
+Server Actions are async functions marked with `"use server"` that the client can call like a function. React turns the call into a POST request:
+
+```tsx
+// app/posts/actions.ts
+"use server";
+
+import { revalidatePath } from "next/cache";
+
+export async function createPost(formData: FormData) {
+  const title = String(formData.get("title") ?? "");
+  if (!title) return { error: "Title is required" };
+  await db.post.create({ data: { title } });
+  revalidatePath("/posts"); // re-render affected server components
+}
+```
+
+```tsx
+// Works even before JavaScript loads (progressive enhancement)
+<form action={createPost}>
+  <input name="title" />
+  <button type="submit">Publish</button>
+</form>
+```
+
+**Treat every Server Action as a public API endpoint.** Anyone can call it with any arguments. Authenticate, authorise and validate inside the action itself — never rely on the UI hiding a button.
+
+## Pitfalls checklist
+
+- **Leaking secrets:** a module imported by a client component can end up in the browser. Add `import "server-only"` to modules that touch secrets so the build fails if that happens.
+- **Context:** `createContext` providers must be Client Components. Wrap them in a small client `Providers` component and render it from your server layout.
+- **Over-fetching in loops:** use React's `cache()` to dedupe the same data request across components within a single render.
+- **Large props:** everything you pass to a client component is serialised into the payload. Pass the 3 fields it needs, not the full database row.
+
+## Conclusion
+
+Server Components render to a serialisable stream. Client Components are references in that stream that hydrate in the browser. `"use client"` marks a bundle boundary, and composition through `children` lets server content live inside interactive shells. Suspense streams the slow parts, and Server Actions handle mutations as public endpoints. Keep `"use client"` at the leaves, fetch in parallel and validate every action, and RSC will give you smaller bundles and faster pages.

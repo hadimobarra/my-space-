@@ -12,11 +12,20 @@
   "hero": {
     "greeting": "Hello, I'm",
     "name": "Hadi Mobarra",
-    "roles": ["Front-End Engineer", "React Developer", "TypeScript Developer", "Open-Source Contributor"],
+    "roles": [
+      "Front-End Engineer",
+      "React Developer",
+      "TypeScript Developer",
+      "Open-Source Contributor"
+    ],
     "description": "Front-End Engineer with a Master's Degree in Computer Engineering and 3+ years of production experience. Active open-source contributor building data-intensive web applications.",
     "contactMe": "Contact Me",
     "viewProjects": "View Projects",
-    "scroll": "Scroll"
+    "scroll": "Scroll",
+    "available": "Available for new opportunities",
+    "resume": "Resume",
+    "chipYears": "Years shipping production UI",
+    "chipOss": "Open-source contributor"
   },
   "about": {
     "title": "About Me",
@@ -53,58 +62,139 @@
     {
       "title": "Languages",
       "skills": [
-        { "name": "TypeScript", "level": 90 },
-        { "name": "JavaScript (ES2024)", "level": 90 },
-        { "name": "HTML5", "level": 95 },
-        { "name": "CSS3", "level": 90 }
+        {
+          "name": "TypeScript",
+          "level": 90
+        },
+        {
+          "name": "JavaScript (ES2024)",
+          "level": 90
+        },
+        {
+          "name": "HTML5",
+          "level": 95
+        },
+        {
+          "name": "CSS3",
+          "level": 90
+        }
       ]
     },
     {
       "title": "Frameworks & Libraries",
       "skills": [
-        { "name": "React 18", "level": 92 },
-        { "name": "Redux", "level": 80 },
-        { "name": "Zustand", "level": 85 },
-        { "name": "React Query", "level": 80 },
-        { "name": "Next.js", "level": 75 }
+        {
+          "name": "React 18",
+          "level": 92
+        },
+        {
+          "name": "Redux",
+          "level": 80
+        },
+        {
+          "name": "Zustand",
+          "level": 85
+        },
+        {
+          "name": "React Query",
+          "level": 80
+        },
+        {
+          "name": "Next.js",
+          "level": 75
+        }
       ]
     },
     {
       "title": "UI / Styling",
       "skills": [
-        { "name": "Ant Design", "level": 88 },
-        { "name": "Tailwind CSS", "level": 92 },
-        { "name": "Material UI", "level": 80 },
-        { "name": "Sass", "level": 85 },
-        { "name": "RTL / i18n", "level": 90 }
+        {
+          "name": "Ant Design",
+          "level": 88
+        },
+        {
+          "name": "Tailwind CSS",
+          "level": 92
+        },
+        {
+          "name": "Material UI",
+          "level": 80
+        },
+        {
+          "name": "Sass",
+          "level": 85
+        },
+        {
+          "name": "RTL / i18n",
+          "level": 90
+        }
       ]
     },
     {
       "title": "Tooling",
       "skills": [
-        { "name": "Webpack", "level": 80 },
-        { "name": "Vite", "level": 78 },
-        { "name": "Git", "level": 88 },
-        { "name": "Docker", "level": 75 },
-        { "name": "Nginx", "level": 70 },
-        { "name": "ESLint / Prettier", "level": 85 }
+        {
+          "name": "Webpack",
+          "level": 80
+        },
+        {
+          "name": "Vite",
+          "level": 78
+        },
+        {
+          "name": "Git",
+          "level": 88
+        },
+        {
+          "name": "Docker",
+          "level": 75
+        },
+        {
+          "name": "Nginx",
+          "level": 70
+        },
+        {
+          "name": "ESLint / Prettier",
+          "level": 85
+        }
       ]
     },
     {
       "title": "Data & Protocols",
       "skills": [
-        { "name": "Uppy.js", "level": 82 },
-        { "name": "TUS Protocol", "level": 80 },
-        { "name": "REST APIs", "level": 88 },
-        { "name": "ETL Concepts", "level": 75 }
+        {
+          "name": "Uppy.js",
+          "level": 82
+        },
+        {
+          "name": "TUS Protocol",
+          "level": 80
+        },
+        {
+          "name": "REST APIs",
+          "level": 88
+        },
+        {
+          "name": "ETL Concepts",
+          "level": 75
+        }
       ]
     },
     {
       "title": "Platforms",
       "skills": [
-        { "name": "Linux", "level": 80 },
-        { "name": "GitHub Actions CI", "level": 78 },
-        { "name": "OpenMetadata", "level": 85 }
+        {
+          "name": "Linux",
+          "level": 80
+        },
+        {
+          "name": "GitHub Actions CI",
+          "level": 78
+        },
+        {
+          "name": "OpenMetadata",
+          "level": 85
+        }
       ]
     }
   ],
@@ -119,32 +209,53 @@
       {
         "title": "OpenMetadata",
         "description": "Active contributor to a leading open-source data catalog and governance platform. Shipped UI components, full Persian RTL localisation, and feature enhancements with merged PRs.",
-        "tags": ["React", "TypeScript", "Ant Design", "Tailwind CSS"],
+        "tags": [
+          "React",
+          "TypeScript",
+          "Ant Design",
+          "Tailwind CSS"
+        ],
         "liveUrl": "https://openmetadata.org",
         "githubUrl": "https://github.com/open-metadata/OpenMetadata"
       },
       {
         "title": "Apache Superset",
         "description": "Contributing to Apache Superset, a leading open-source business intelligence and data exploration platform. Working across its React/TypeScript front-end with a focus on UI features and improvements.",
-        "tags": ["React", "TypeScript", "Python"],
+        "tags": [
+          "React",
+          "TypeScript",
+          "Python"
+        ],
         "liveUrl": "https://superset.apache.org",
         "githubUrl": "https://github.com/apache/superset"
       },
       {
         "title": "Enterprise Data Catalog UI",
         "description": "Built a full-featured, searchable Data Catalog interface for discovering, tagging, and governing enterprise datasets, directly improving data discoverability across teams.",
-        "tags": ["React", "TypeScript", "Ant Design", "Zustand"],
+        "tags": [
+          "React",
+          "TypeScript",
+          "Ant Design",
+          "Zustand"
+        ],
         "liveUrl": null,
         "githubUrl": null
       },
       {
         "title": "Large-File Upload Module",
         "description": "Architected a reliable multi-GB file upload module using Uppy.js and TUS resumable-upload protocol with pause/resume, automatic retry, and support for Excel, JSON, TSV, and CSV formats.",
-        "tags": ["React", "TypeScript", "Uppy.js", "TUS Protocol"],
+        "tags": [
+          "React",
+          "TypeScript",
+          "Uppy.js",
+          "TUS Protocol"
+        ],
         "liveUrl": null,
         "githubUrl": null
       }
-    ]
+    ],
+    "live": "Live",
+    "source": "Source"
   },
   "experience": {
     "title": "Work Experience",
@@ -155,14 +266,29 @@
         "company": "Adin — Tehran, Iran",
         "period": "Apr 2023 – Present",
         "description": "Architected a large-file upload module (Excel, JSON, TSV, CSV) using Uppy.js and TUS protocol enabling reliable multi-GB transfers. Built Mapping Table & Column interfaces (Databricks-inspired) for ETL workflows. Developed a full-featured Data Catalog UI and a Role Management module with dynamic access-control. Led full Persian (RTL) localisation using i18next across the entire product. Drove performance optimisations reducing initial load time. Owned end-to-end delivery of the Add Pipeline page.",
-        "tags": ["React", "TypeScript", "Ant Design", "Tailwind CSS", "Zustand", "i18n/RTL"]
+        "tags": [
+          "React",
+          "TypeScript",
+          "Ant Design",
+          "Tailwind CSS",
+          "Zustand",
+          "i18n/RTL"
+        ]
       },
       {
         "title": "Front-End Developer (Graduate Internship)",
         "company": "MCI (Hamrah-e Aval) — Tehran, Iran",
         "period": "Nov 2022 – Apr 2023",
         "description": "Contributed to production-grade telecom dashboards using React, Redux Saga, and Material UI within a large enterprise codebase. Implemented responsive UI components with Sass/CSS following design-system guidelines. Integrated Webpack build pipelines and Nginx-based deployment via Docker.",
-        "tags": ["React", "Redux", "Redux Saga", "Material UI", "Sass", "Webpack", "Docker"]
+        "tags": [
+          "React",
+          "Redux",
+          "Redux Saga",
+          "Material UI",
+          "Sass",
+          "Webpack",
+          "Docker"
+        ]
       }
     ]
   },
@@ -209,68 +335,105 @@
       {
         "title": "Frameworks & Libs",
         "items": [
-          { "name": "React", "icon": "SiReact" },
-          { "name": "Next.js", "icon": "SiNextdotjs" },
-          { "name": "Redux", "icon": "SiRedux" },
-          { "name": "Zustand", "icon": "SiReact" }
+          {
+            "name": "React",
+            "icon": "SiReact"
+          },
+          {
+            "name": "Next.js",
+            "icon": "SiNextdotjs"
+          },
+          {
+            "name": "Redux",
+            "icon": "SiRedux"
+          },
+          {
+            "name": "Zustand",
+            "icon": "SiReact"
+          }
         ]
       },
       {
         "title": "Languages",
         "items": [
-          { "name": "TypeScript", "icon": "SiTypescript" },
-          { "name": "JavaScript", "icon": "SiJavascript" }
+          {
+            "name": "TypeScript",
+            "icon": "SiTypescript"
+          },
+          {
+            "name": "JavaScript",
+            "icon": "SiJavascript"
+          }
         ]
       },
       {
         "title": "UI & Styling",
         "items": [
-          { "name": "Tailwind CSS", "icon": "SiTailwindcss" },
-          { "name": "Ant Design", "icon": "SiAntdesign" },
-          { "name": "Material UI", "icon": "SiMaterialdesign" }
+          {
+            "name": "Tailwind CSS",
+            "icon": "SiTailwindcss"
+          },
+          {
+            "name": "Ant Design",
+            "icon": "SiAntdesign"
+          },
+          {
+            "name": "Material UI",
+            "icon": "SiMaterialdesign"
+          }
         ]
       },
       {
         "title": "DevOps & Tools",
         "items": [
-          { "name": "Docker", "icon": "SiDocker" },
-          { "name": "Git", "icon": "SiGit" },
-          { "name": "Webpack", "icon": "SiWebpack" },
-          { "name": "Vite", "icon": "SiVite" }
+          {
+            "name": "Docker",
+            "icon": "SiDocker"
+          },
+          {
+            "name": "Git",
+            "icon": "SiGit"
+          },
+          {
+            "name": "Webpack",
+            "icon": "SiWebpack"
+          },
+          {
+            "name": "Vite",
+            "icon": "SiVite"
+          }
         ]
       }
     ]
   },
   "blog": {
     "title": "Blog",
-    "subtitle": "Thoughts and insights on web development",
-    "description": "Thoughts, tutorials, and insights on front-end development, React, Next.js, and modern web technologies.",
+    "subtitle": "Deep dives into JavaScript internals, React and web performance",
+    "description": "Deep dives into JavaScript internals, React architecture, TypeScript and web performance — written from production experience.",
     "readMore": "Read More",
     "viewAll": "View All Posts",
     "minRead": "min read",
     "noPosts": "No posts yet. Coming soon!",
     "backToBlog": "Back to Blog",
     "comingSoon": "Coming soon!",
-    "previewPosts": [
-      {
-        "title": "Building Scalable React Architecture",
-        "description": "Learn how to structure large-scale React applications with a focus on maintainability, performance, and developer experience.",
-        "slug": "react-architecture",
-        "date": "2024-01-15"
-      },
-      {
-        "title": "Front-End Performance Optimization",
-        "description": "A comprehensive guide to optimizing front-end performance, from Core Web Vitals to advanced techniques like code splitting and lazy loading.",
-        "slug": "frontend-performance",
-        "date": "2024-02-20"
-      },
-      {
-        "title": "Next.js Best Practices",
-        "description": "Essential patterns and practices for building production-ready Next.js applications with TypeScript and Tailwind CSS.",
-        "slug": "nextjs-best-practices",
-        "date": "2024-03-10"
-      }
-    ]
+    "featured": "Featured",
+    "articles": "articles",
+    "pageTitle": "Engineering Notes",
+    "searchPlaceholder": "Search articles, topics, tags…",
+    "allTopics": "All topics",
+    "noResults": "No articles match your search.",
+    "clearFilters": "Clear filters",
+    "subscribe": "Subscribe via RSS",
+    "onThisPage": "On this page",
+    "copyCode": "Copy code",
+    "linkCopied": "Link copied to clipboard",
+    "copyLink": "Copy link",
+    "writtenBy": "Written by",
+    "authorBio": "Front-End Engineer and open-source contributor. I write about the parts of JavaScript and React that matter once an app gets big: performance, architecture and how the browser actually works.",
+    "getInTouch": "Get in touch",
+    "previousPost": "Previous",
+    "nextPost": "Next",
+    "relatedPosts": "Keep reading"
   },
   "openSource": {
     "title": "Open Source",
@@ -300,26 +463,55 @@
     "title": "Certifications",
     "subtitle": "Professional certifications and achievements",
     "items": [
-      { "name": "National Elite Foundation Member", "issuer": "Iran National Elite Foundation", "date": "2022" },
-      { "name": "M.Sc. in Computer Engineering", "issuer": "Iran University of Science and Technology", "date": "2024" },
-      { "name": "B.Sc. in Computer Engineering", "issuer": "University of Mohaghegh Ardabili", "date": "2021" }
+      {
+        "name": "National Elite Foundation Member",
+        "issuer": "Iran National Elite Foundation",
+        "date": "2022"
+      },
+      {
+        "name": "M.Sc. in Computer Engineering",
+        "issuer": "Iran University of Science and Technology",
+        "date": "2024"
+      },
+      {
+        "name": "B.Sc. in Computer Engineering",
+        "issuer": "University of Mohaghegh Ardabili",
+        "date": "2021"
+      }
     ]
   },
   "currentlyLearning": {
     "title": "Currently Learning",
     "subtitle": "Technologies and topics I'm exploring",
     "items": [
-      { "name": "Rust Programming", "description": "Exploring systems programming with Rust for performance-critical web components." },
-      { "name": "Three.js & WebGL", "description": "Diving into 3D graphics and immersive web experiences." },
-      { "name": "System Design", "description": "Studying distributed systems architecture and scaling patterns." }
+      {
+        "name": "Rust Programming",
+        "description": "Exploring systems programming with Rust for performance-critical web components."
+      },
+      {
+        "name": "Three.js & WebGL",
+        "description": "Diving into 3D graphics and immersive web experiences."
+      },
+      {
+        "name": "System Design",
+        "description": "Studying distributed systems architecture and scaling patterns."
+      }
     ]
   },
   "testimonials": {
     "title": "What People Say",
     "subtitle": "Feedback from colleagues and clients",
     "items": [
-      { "name": "Hossein Eivazy", "role": "Data Team Lead at میلی | Milli", "content": "Working with Hadi was a genuinely great experience. He has strong front-end expertise and approaches his work with consistency, dedication, and attention to detail. For Hadi, it's never just about getting the job done—he always aims to deliver the best possible result. That makes him someone you can truly rely on.\n\nBeyond his technical skills, Hadi is friendly, professional, and simply a pleasure to work with. Of course, our time together wasn't all about work—our ongoing rivalry over darts was an essential part of our workdays, although we still haven't agreed on who the better player was!\n\nI'm really glad I had the opportunity to work with Hadi, and I'm confident he would be a valuable addition to any team." },
-      { "name": "Mehdi Alemi", "role": "AI Engineer | Java Backend Developer | Technical Manager | Project Manager", "content": "I had the pleasure of collaborating with Hadi at Adin, and I was consistently impressed by his skills as a front-end developer. Hadi brings a perfect blend of technical expertise and creativity, demonstrating a strong proficiency in JavaScript and React. He played a pivotal role in OpenMetadata platform development. Beyond technical abilities, Hadi is a fantastic communicator and team player, always ready to lend support and share knowledge with colleagues. I wholeheartedly recommend Hadi for any front-end development position—he would be a valuable asset to any team." }
+      {
+        "name": "Hossein Eivazy",
+        "role": "Data Team Lead at میلی | Milli",
+        "content": "Working with Hadi was a genuinely great experience. He has strong front-end expertise and approaches his work with consistency, dedication, and attention to detail. For Hadi, it's never just about getting the job done—he always aims to deliver the best possible result. That makes him someone you can truly rely on.\n\nBeyond his technical skills, Hadi is friendly, professional, and simply a pleasure to work with. Of course, our time together wasn't all about work—our ongoing rivalry over darts was an essential part of our workdays, although we still haven't agreed on who the better player was!\n\nI'm really glad I had the opportunity to work with Hadi, and I'm confident he would be a valuable addition to any team."
+      },
+      {
+        "name": "Mehdi Alemi",
+        "role": "AI Engineer | Java Backend Developer | Technical Manager | Project Manager",
+        "content": "I had the pleasure of collaborating with Hadi at Adin, and I was consistently impressed by his skills as a front-end developer. Hadi brings a perfect blend of technical expertise and creativity, demonstrating a strong proficiency in JavaScript and React. He played a pivotal role in OpenMetadata platform development. Beyond technical abilities, Hadi is a fantastic communicator and team player, always ready to lend support and share knowledge with colleagues. I wholeheartedly recommend Hadi for any front-end development position—he would be a valuable asset to any team."
+      }
     ]
   },
   "contact": {
@@ -341,13 +533,48 @@
       "sent": "Sent Successfully!",
       "error": "Failed to Send",
       "subjectPrefix": "[Portfolio Contact]"
-    }
+    },
+    "copied": "Copied to clipboard"
   },
   "footer": {
-    "backToTop": "Scroll to top"
+    "backToTop": "Scroll to top",
+    "explore": "Explore",
+    "writing": "Writing",
+    "allArticles": "All articles",
+    "resume": "Resume",
+    "ctaTitle": "Have a project in mind?",
+    "ctaHighlight": "Let's build it.",
+    "ctaText": "I'm open to front-end roles, collaborations and interesting open-source work.",
+    "builtWith": "Built with Next.js & a lot of"
   },
   "commandMenu": {
-    "placeholder": "Type a command...",
-    "toggleTheme": "Toggle Theme"
+    "placeholder": "Search pages, articles, actions…",
+    "toggleTheme": "Toggle Theme",
+    "search": "Search",
+    "groups": {
+      "navigation": "Navigation",
+      "articles": "Articles",
+      "actions": "Actions"
+    },
+    "allPosts": "All articles",
+    "toggleLanguage": "Switch language (EN / FA)",
+    "empty": "No results found.",
+    "navigate": "navigate",
+    "select": "select"
+  },
+  "eyebrows": {
+    "about": "Who I am",
+    "education": "Background",
+    "skills": "Toolbox",
+    "projects": "Selected work",
+    "experience": "Career",
+    "services": "What I do",
+    "tech-stack": "Stack",
+    "blog": "Writing",
+    "open-source": "Open source",
+    "certifications": "Credentials",
+    "currently-learning": "Growth",
+    "testimonials": "Kind words",
+    "contact": "Contact"
   }
 }

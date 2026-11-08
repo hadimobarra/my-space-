@@ -1,0 +1,201 @@
+---
+title: "Off the Main Thread: Web Workers, Transferables and RPC in Practice"
+description: "Move expensive work off the UI thread. Covers dedicated workers in modern bundlers, structured clone costs, zero-copy transferables, a promise-based RPC layer, SharedArrayBuffer with Atomics, and OffscreenCanvas."
+date: "2026-04-20"
+tags: ["JavaScript", "Performance", "Web Workers"]
+---
+
+## The main thread is shared and busy
+
+Everything that makes your UI responsive — input handling, React rendering, style, layout, paint — competes for one thread. Every millisecond spent parsing a large JSON payload, filtering 100k rows or resizing an image on that thread is a millisecond the user's click has to wait.
+
+**Web Workers** give you real OS threads with their own event loops. They can't touch the DOM, which is exactly why they're safe to run in parallel.
+
+## Creating a worker with a modern bundler
+
+Vite, webpack 5, Turbopack and Parcel all recognise this pattern and bundle the worker file for you:
+
+```js
+// main.js
+const worker = new Worker(new URL("./search.worker.js", import.meta.url), {
+  type: "module",
+});
+
+worker.postMessage({ type: "index", docs });
+worker.onmessage = (event) => {
+  console.log("results", event.data);
+};
+```
+
+```js
+// search.worker.js
+let index;
+
+self.onmessage = (event) => {
+  const { type, docs, query } = event.data;
+  if (type === "index") index = buildIndex(docs);
+  if (type === "search") self.postMessage(search(index, query));
+};
+```
+
+`type: "module"` lets the worker use `import` statements — supported in all modern browsers.
+
+## The hidden cost: structured clone
+
+`postMessage` copies data with the **structured clone algorithm**. It handles `Map`, `Set`, `Date`, typed arrays, cyclic references and more, but it's a deep copy — performed synchronously on the *sending* thread.
+
+Sending a 50MB object to a worker can itself block the main thread for tens of milliseconds. Measure before assuming a worker is a win, and design messages to be small:
+
+- send IDs or diffs instead of whole datasets,
+- keep large state *inside* the worker and query it,
+- or transfer instead of copying.
+
+## Zero-copy with transferables
+
+Some objects — `ArrayBuffer`, `MessagePort`, `ImageBitmap`, `OffscreenCanvas`, streams — can be **transferred**: ownership moves to the other thread without copying, and the sender's reference becomes unusable.
+
+```js
+const pixels = new Uint8ClampedArray(width * height * 4);
+
+worker.postMessage({ pixels }, [pixels.buffer]); // transfer list
+
+console.log(pixels.byteLength); // 0 — the buffer is now "detached"
+```
+
+For binary data — images, audio, geometry, parsed file contents — transfer turns an O(n) copy into a constant-time handoff.
+
+## A promise-based RPC layer
+
+Raw `onmessage` handlers get messy fast. Wrap them in a request/response protocol with IDs so calls look like async functions. This is the idea behind the popular Comlink library:
+
+```js
+// rpc.js — shared by both sides
+export function expose(api, endpoint = self) {
+  endpoint.addEventListener("message", async (event) => {
+    const { id, method, args } = event.data;
+    try {
+      const result = await api[method](...args);
+      endpoint.postMessage({ id, result });
+    } catch (error) {
+      endpoint.postMessage({ id, error: { message: error.message, stack: error.stack } });
+    }
+  });
+}
+
+export function wrap(worker) {
+  let nextId = 0;
+  const pending = new Map();
+
+  worker.addEventListener("message", (event) => {
+    const { id, result, error } = event.data;
+    const call = pending.get(id);
+    if (!call) return;
+    pending.delete(id);
+    error ? call.reject(Object.assign(new Error(error.message), error)) : call.resolve(result);
+  });
+
+  return new Proxy({}, {
+    get: (_, method) => (...args) =>
+      new Promise((resolve, reject) => {
+        const id = nextId++;
+        pending.set(id, { resolve, reject });
+        worker.postMessage({ id, method, args });
+      }),
+  });
+}
+```
+
+```js
+// image.worker.js
+import { expose } from "./rpc.js";
+expose({
+  async blur(bitmap, radius) { /* ... */ },
+  async parseCsv(text) { /* ... */ },
+});
+
+// main.js
+import { wrap } from "./rpc.js";
+const api = wrap(new Worker(new URL("./image.worker.js", import.meta.url), { type: "module" }));
+const rows = await api.parseCsv(fileText); // looks local, runs in parallel
+```
+
+## Using workers from React
+
+Create the worker once, and terminate it on unmount:
+
+```jsx
+function useWorker(factory) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const worker = factory();
+    ref.current = wrap(worker);
+    return () => worker.terminate();
+  }, []);
+  return ref;
+}
+```
+
+Combine it with `useTransition` or a loading state so the UI stays interactive while the worker computes.
+
+## Shared memory: SharedArrayBuffer and Atomics
+
+When copying or transferring isn't enough — for example, a physics simulation that both threads read every frame — `SharedArrayBuffer` gives both threads the *same* memory.
+
+It requires the page to be **cross-origin isolated**, which means serving two headers:
+
+```text
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Embedder-Policy: require-corp
+```
+
+Shared memory brings data races, so use `Atomics` for coordination:
+
+```js
+// main.js
+const shared = new SharedArrayBuffer(4);
+const flag = new Int32Array(shared);
+worker.postMessage({ shared });
+
+// worker.js
+self.onmessage = ({ data }) => {
+  const flag = new Int32Array(data.shared);
+  doWork();
+  Atomics.store(flag, 0, 1);
+  Atomics.notify(flag, 0); // wake anyone waiting on index 0
+};
+```
+
+`Atomics.wait` blocks a thread and isn't allowed on the main thread; use `Atomics.waitAsync` there instead, where supported.
+
+## OffscreenCanvas: rendering in a worker
+
+Charts, maps and visualisations can render entirely off the main thread:
+
+```js
+// main.js
+const canvas = document.querySelector("canvas");
+const offscreen = canvas.transferControlToOffscreen();
+worker.postMessage({ canvas: offscreen }, [offscreen]);
+
+// render.worker.js
+self.onmessage = ({ data }) => {
+  const ctx = data.canvas.getContext("2d");
+  function frame(t) {
+    draw(ctx, t);
+    requestAnimationFrame(frame); // rAF is available in dedicated workers
+  }
+  requestAnimationFrame(frame);
+};
+```
+
+The canvas keeps animating smoothly even when the main thread is busy with a heavy React render.
+
+## When *not* to use a worker
+
+- The work takes under ~10ms — messaging overhead and complexity aren't worth it.
+- The work needs the DOM or layout information.
+- The payload is huge and can't be transferred — the clone may cost more than the computation.
+
+## Conclusion
+
+Workers are the only way to get real parallelism in the browser. Start with a plain dedicated worker behind a small RPC wrapper, transfer binary data instead of cloning it, keep heavy state on the worker side, and reach for `SharedArrayBuffer` or `OffscreenCanvas` only when profiling shows you need them.

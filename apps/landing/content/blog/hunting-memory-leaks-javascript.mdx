@@ -1,0 +1,182 @@
+---
+title: "Hunting Memory Leaks in JavaScript Applications"
+description: "How garbage collection really decides what to keep, the five leak patterns behind most SPA memory issues, and a repeatable DevTools workflow using heap snapshots, allocation timelines and WeakRef-aware design."
+date: "2025-09-29"
+tags: ["JavaScript", "Performance", "Debugging"]
+---
+
+## Leaks in a garbage-collected language
+
+JavaScript frees memory automatically, so how can it leak? Because the garbage collector only frees what is **unreachable**. A leak is memory that's still reachable from a root (the global object, the current call stack, active closures, DOM, timers) even though your program will never use it again.
+
+In long-lived single-page apps — dashboards left open all day, editors, chat clients — these small mistakes add up until the tab gets slow or crashes.
+
+## How reachability works
+
+Modern engines use a **mark-and-sweep** collector (generational and incremental in V8's case): starting from the roots, mark everything reachable by following references, then sweep everything unmarked.
+
+```js
+let user = { name: "Ada" };
+const admins = [user];
+
+user = null;
+// The object is still reachable through `admins[0]`, so it stays in memory.
+```
+
+To find a leak, you must find the **retaining path**: the chain of references from a root to the object that shouldn't be there anymore.
+
+## The five usual suspects
+
+### 1. Forgotten event listeners and subscriptions
+
+```js
+function mountChart(el) {
+  const chart = createHugeChart(el);
+  window.addEventListener("resize", () => chart.resize()); // never removed
+}
+```
+
+`window` lives forever, so it keeps the listener alive, the listener's closure keeps `chart`, and `chart` keeps its DOM node and data. Mount and unmount this ten times and you have ten charts in memory.
+
+```js
+function mountChart(el) {
+  const chart = createHugeChart(el);
+  const controller = new AbortController();
+  window.addEventListener("resize", () => chart.resize(), { signal: controller.signal });
+  return () => {
+    controller.abort(); // removes every listener registered with this signal
+    chart.destroy();
+  };
+}
+```
+
+`AbortController` is the cleanest way to remove many listeners at once. In React, return the cleanup from `useEffect`.
+
+### 2. Timers and intervals
+
+```js
+useEffect(() => {
+  const id = setInterval(() => poll(store), 5000);
+  // ❌ no cleanup: the interval and everything its callback references live forever
+}, []);
+
+useEffect(() => {
+  const id = setInterval(() => poll(store), 5000);
+  return () => clearInterval(id); // ✅
+}, []);
+```
+
+### 3. Detached DOM nodes
+
+A DOM node removed from the document but still referenced from JavaScript can't be collected — and it keeps its **whole subtree** alive.
+
+```js
+const cache = new Map();
+
+function showRow(id) {
+  const row = document.createElement("tr");
+  cache.set(id, row);       // reference kept forever
+  table.appendChild(row);
+}
+
+function clearTable() {
+  table.innerHTML = "";     // rows are detached, but the Map still holds them
+}
+```
+
+Heap snapshots let you filter for **"Detached"** nodes, which makes this pattern easy to spot.
+
+### 4. Unbounded caches
+
+Memoisation without eviction is a leak with a nice name:
+
+```js
+const cache = {};
+function getUserView(user) {
+  return (cache[user.id] ??= renderExpensiveView(user)); // grows forever
+}
+```
+
+Fix it with a size limit (LRU), a TTL, or by keying on objects with a `WeakMap`:
+
+```js
+const cache = new WeakMap();
+function getUserView(user) {
+  let view = cache.get(user);
+  if (!view) cache.set(user, (view = renderExpensiveView(user)));
+  return view;
+}
+// When `user` becomes unreachable elsewhere, the cache entry can be collected too.
+```
+
+### 5. Closures capturing more than you think
+
+Closures created in the same scope can share a context object in V8. A long-lived closure can therefore keep alive a large variable that only a *short-lived* sibling closure used:
+
+```js
+function setup() {
+  const hugeData = new Array(1e6).fill("x");
+  const unused = () => hugeData.length;  // references hugeData
+  return () => console.log("tick");      // may still retain hugeData via the shared context
+}
+const tick = setup();
+```
+
+If a heap snapshot shows a large object retained by a `context` of a function that doesn't use it, this is why. The fix is to avoid capturing big values in scopes that also create long-lived callbacks, or to set them to `null` when done.
+
+## A repeatable DevTools workflow
+
+### Step 1: confirm there is a leak
+
+Open **Performance monitor** (Command menu → "Show Performance monitor") and watch *JS heap size* and *DOM Nodes* while repeating an action — open and close a modal 20 times, navigate between two routes, and so on. Force GC with the trash-can button in the Memory panel. If the baseline keeps climbing after GC, something is leaking.
+
+### Step 2: three-snapshot technique
+
+1. Load the page, do the action once (to warm caches), force GC, take **Snapshot 1**.
+2. Repeat the action several times, force GC, take **Snapshot 2**.
+3. Repeat again, force GC, take **Snapshot 3**.
+4. In Snapshot 3, choose **"Objects allocated between Snapshot 1 and Snapshot 2"**.
+
+Objects created during the middle phase that *survive into snapshot 3* are your strongest leak candidates. Sort by **Retained Size**, not Shallow Size — retained size is how much memory would be freed if that object were collected.
+
+### Step 3: read the retainers
+
+Select a suspicious object and read the **Retainers** panel from bottom to top. You'll see something like:
+
+```text
+ChartInstance
+  ← chart in system / Context
+  ← context in () @ chart.js:14
+  ← [3] in Array (event listeners)
+  ← resize in Window
+```
+
+That's the leak: the `resize` listener on `window`, created at `chart.js:14`.
+
+### Step 4: allocation timeline for the tricky cases
+
+The **Allocations on timeline** profile records allocations as blue bars over time; bars that stay blue (rather than turning grey) were never freed. Click one to see the allocation stack trace.
+
+## WeakRef and FinalizationRegistry
+
+`WeakRef` holds a reference that doesn't prevent collection, and `FinalizationRegistry` runs a callback some time after an object is collected:
+
+```js
+const registry = new FinalizationRegistry((key) => {
+  console.log(`${key} was garbage-collected`);
+});
+registry.register(chartInstance, "chart#1");
+```
+
+They're useful for caches of expensive, recreatable objects and for **verifying** fixes during development. But GC timing is non-deterministic and finalizers may never run, so don't use them for program logic or essential cleanup.
+
+## Preventing leaks by design
+
+- Every `add` has a matching `remove`: listeners, intervals, observers (`ResizeObserver`, `IntersectionObserver`), subscriptions and WebSockets.
+- Tie lifetimes to a single `AbortSignal` per component or feature.
+- Bound every cache. Prefer `WeakMap` when keys are objects.
+- Add a memory test to CI for critical flows: drive the UI with Playwright, read `performance.measureUserAgentSpecificMemory()` (it requires cross-origin isolation) or snapshot via the Chrome DevTools Protocol, and fail when growth passes a threshold.
+
+## Conclusion
+
+Most leaks come from one of five patterns: listeners, timers, detached DOM, unbounded caches and over-capturing closures. Confirm the leak with the performance monitor, isolate it with the three-snapshot technique, and follow the retainer chain to the exact line. With cleanup tied to clear lifetimes, long-running apps stay fast after hours of use.

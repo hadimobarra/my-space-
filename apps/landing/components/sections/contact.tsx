@@ -1,7 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Send, Mail, MapPin, Phone, Check, AlertCircle } from "lucide-react";
+import { Send, Mail, MapPin, Phone, Check, AlertCircle, Copy } from "lucide-react";
+import { toast } from "sonner";
+import { SpotlightCard } from "@/components/shared/spotlight-card";
 import { useTranslation } from "react-i18next";
 import { SectionWrapper } from "@/components/shared/section-wrapper";
 import { AnimatedElement } from "@/components/shared/animated-element";
@@ -60,10 +62,19 @@ export function Contact() {
   };
 
   const contactInfo = [
-    { icon: Mail, label: t("contact.email"), value: siteConfig.links.email },
+    { icon: Mail, label: t("contact.email"), value: siteConfig.links.email, href: `mailto:${siteConfig.links.email}`, copy: true },
+    { icon: Phone, label: t("contact.phone"), value: t("contact.phoneValue"), href: `tel:${siteConfig.links.phone}`, copy: true },
     { icon: MapPin, label: t("contact.location"), value: t("contact.locationValue") },
-    { icon: Phone, label: t("contact.phone"), value: t("contact.phoneValue") },
   ];
+
+  const copy = async (value: string) => {
+    try {
+      await navigator.clipboard.writeText(value);
+      toast.success(t("contact.copied"));
+    } catch {
+      /* clipboard unavailable — ignore */
+    }
+  };
 
   const isSending = status === "sending";
   const buttonLabel =
@@ -80,28 +91,44 @@ export function Contact() {
       id="contact"
       title={t("contact.title")}
       subtitle={t("contact.subtitle")}
-      className="bg-surface/50"
+      className="bg-surface/60"
     >
       <div className="grid lg:grid-cols-5 gap-12 lg:gap-16">
         <AnimatedElement direction="left" className="lg:col-span-2 space-y-6">
           <p className="text-muted leading-relaxed">{t("contact.description")}</p>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {contactInfo.map((info) => (
-              <div key={info.label} className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
+              <SpotlightCard key={info.label} className="flex items-center gap-4 p-4 group">
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/15 to-violet/10 flex items-center justify-center shrink-0 transition-transform group-hover:scale-110">
                   <info.icon size={18} className="text-primary" />
                 </div>
-                <div>
+                <div className="min-w-0 flex-1">
                   <p className="text-xs text-muted">{info.label}</p>
-                  <p className="text-sm font-medium">{info.value}</p>
+                  {info.href ? (
+                    <a href={info.href} className="text-sm font-medium hover:text-primary transition-colors break-all" dir="ltr">
+                      {info.value}
+                    </a>
+                  ) : (
+                    <p className="text-sm font-medium">{info.value}</p>
+                  )}
                 </div>
-              </div>
+                {info.copy && (
+                  <button
+                    type="button"
+                    onClick={() => copy(info.value)}
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-muted hover:text-primary hover:bg-primary/10 opacity-60 group-hover:opacity-100 transition-all"
+                    aria-label={`Copy ${info.label}`}
+                  >
+                    <Copy size={14} />
+                  </button>
+                )}
+              </SpotlightCard>
             ))}
           </div>
         </AnimatedElement>
 
         <AnimatedElement direction="right" delay={0.2} className="lg:col-span-3">
-          <form ref={formRef} onSubmit={handleSubmit} className="glass-card rounded-2xl p-8">
+          <form ref={formRef} onSubmit={handleSubmit} className="glass-card border-beam rounded-3xl p-6 sm:p-8 shadow-xl shadow-primary/5">
             <div className="grid sm:grid-cols-2 gap-4 mb-4">
               <Input
                 name="name"
@@ -148,7 +175,8 @@ export function Contact() {
             <Button
               type="submit"
               size="lg"
-              className="w-full bg-gradient-to-r from-primary via-secondary to-accent text-white"
+              variant="gradient"
+              className="w-full"
               disabled={isSending}
             >
               {status === "sent" ? (

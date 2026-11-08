@@ -1,0 +1,180 @@
+---
+title: "Type-Level Programming in TypeScript: Conditional, Mapped and Template Literal Types"
+description: "Treat TypeScript's type system as a small functional language. Learn conditional types and infer, distributive behaviour, key remapping, recursive types and template literals, then build a type-safe router and a deep-path getter."
+date: "2026-06-02"
+tags: ["TypeScript", "Type System", "Advanced"]
+---
+
+## Types are a programming language
+
+TypeScript's type system is Turing-complete, which in practice means you can compute types from other types. Once you see it as a small functional language — with *functions* (generic types), *conditionals* (conditional types), *loops* (recursion and mapped types) and *string manipulation* (template literal types) — advanced library types stop looking like magic.
+
+## Generic types are functions
+
+```ts
+type Box<T> = { value: T };       // a function from T to a type
+type StringBox = Box<string>;     // calling it
+```
+
+## Conditional types are `if` statements
+
+```ts
+type IsString<T> = T extends string ? true : false;
+
+type A = IsString<"hi">; // true
+type B = IsString<42>;   // false
+```
+
+`extends` here means "is assignable to". Combined with **`infer`**, conditional types also do pattern matching — they can pull pieces out of a type:
+
+```ts
+type ElementType<T> = T extends readonly (infer U)[] ? U : never;
+type Awaited2<T> = T extends Promise<infer U> ? Awaited2<U> : T;
+type ReturnOf<F> = F extends (...args: any[]) => infer R ? R : never;
+
+type E = ElementType<string[]>;            // string
+type P = Awaited2<Promise<Promise<number>>>; // number (recursion!)
+```
+
+## The distributive surprise
+
+When the checked type is a **naked type parameter** and you pass a union, the conditional is applied to each member separately:
+
+```ts
+type ToArray<T> = T extends unknown ? T[] : never;
+type X = ToArray<string | number>; // string[] | number[]  (not (string | number)[])
+```
+
+That's usually what you want (it's how `Exclude` and `Extract` work), but sometimes it isn't. Wrap both sides in a tuple to turn distribution off:
+
+```ts
+type ToArrayNonDist<T> = [T] extends [unknown] ? T[] : never;
+type Y = ToArrayNonDist<string | number>; // (string | number)[]
+```
+
+The same trick gives a reliable `IsNever` check, because `never` is an empty union and distributing over it yields `never`:
+
+```ts
+type IsNever<T> = [T] extends [never] ? true : false;
+```
+
+## Mapped types are loops over keys
+
+```ts
+type ReadonlyDeep<T> = {
+  readonly [K in keyof T]: T[K] extends object ? ReadonlyDeep<T[K]> : T[K];
+};
+```
+
+Since TypeScript 4.1, the **`as` clause** lets you rename or filter keys while mapping:
+
+```ts
+type Getters<T> = {
+  [K in keyof T as `get${Capitalize<string & K>}`]: () => T[K];
+};
+
+type User = { name: string; age: number };
+type UserGetters = Getters<User>;
+// { getName: () => string; getAge: () => number }
+
+// Filtering: returning `never` from `as` removes the key
+type OnlyFunctions<T> = {
+  [K in keyof T as T[K] extends (...args: any[]) => any ? K : never]: T[K];
+};
+```
+
+## Template literal types are string functions
+
+Template literal types concatenate and — with `infer` — *parse* strings at the type level:
+
+```ts
+type Split<S extends string, D extends string> =
+  S extends `${infer Head}${D}${infer Tail}`
+    ? [Head, ...Split<Tail, D>]
+    : [S];
+
+type Parts = Split<"a.b.c", ".">; // ["a", "b", "c"]
+```
+
+## Project 1: a type-safe router
+
+Let's extract route parameters from a path string, so `params` is fully typed:
+
+```ts
+type ExtractParams<Path extends string> =
+  Path extends `${string}:${infer Param}/${infer Rest}`
+    ? { [K in Param | keyof ExtractParams<`/${Rest}`>]: string }
+    : Path extends `${string}:${infer Param}`
+      ? { [K in Param]: string }
+      : {};
+
+function route<P extends string>(
+  path: P,
+  handler: (params: ExtractParams<P>) => void
+) {
+  /* register the route */
+}
+
+route("/users/:userId/posts/:postId", (params) => {
+  params.userId; // string ✅
+  params.postId; // string ✅
+  params.foo;    // ❌ Property 'foo' does not exist
+});
+```
+
+The type recursively peels off `:param/` segments and merges the found names into one object type. This is the same technique used by typed routers such as those in Hono and TanStack Router.
+
+## Project 2: a typed deep `get`
+
+```ts
+type Paths<T> = T extends object
+  ? {
+      [K in keyof T & string]: T[K] extends object
+        ? K | `${K}.${Paths<T[K]>}`
+        : K;
+    }[keyof T & string]
+  : never;
+
+type PathValue<T, P extends string> =
+  P extends `${infer K}.${infer Rest}`
+    ? K extends keyof T
+      ? PathValue<T[K], Rest>
+      : never
+    : P extends keyof T
+      ? T[P]
+      : never;
+
+function get<T, P extends Paths<T>>(obj: T, path: P): PathValue<T, P> {
+  return path.split(".").reduce<any>((acc, key) => acc?.[key], obj);
+}
+
+const config = { server: { port: 8080, tls: { enabled: true } } };
+
+get(config, "server.port");        // number
+get(config, "server.tls.enabled"); // boolean
+get(config, "server.host");        // ❌ not assignable to the allowed paths
+```
+
+The `{ ... }[keyof T]` pattern at the end of `Paths` is a common idiom: build an object type whose *values* are what you want, then index it with all its keys to get a union of the values.
+
+## Keeping the compiler happy
+
+Type-level code has real costs:
+
+- **Recursion limits.** TypeScript caps instantiation depth (about 50 for non-tail recursion, and up to 1,000 for tail-recursive conditional types). Write recursive types in tail position by passing an accumulator:
+
+```ts
+type Join<T extends string[], D extends string, Acc extends string = ""> =
+  T extends [infer H extends string, ...infer R extends string[]]
+    ? Join<R, D, Acc extends "" ? H : `${Acc}${D}${H}`>
+    : Acc;
+
+type J = Join<["a", "b", "c"], "-">; // "a-b-c"
+```
+
+- **Editor performance.** Deep types on hot paths slow down IntelliSense for everyone. Check with `tsc --extendedDiagnostics` and `--generateTrace`.
+- **Readability.** Name intermediate types and add a short comment explaining *what* the type computes. Future you will need it.
+
+## Conclusion
+
+Conditional types are branching, `infer` is pattern matching, mapped types are loops, and template literals are string processing. Use them at the **edges** of your system — routers, API clients, form libraries, config loaders — where a strong type stops whole categories of bugs, and keep everyday application types simple.

@@ -1,0 +1,218 @@
+---
+title: "Building a Fine-Grained Reactivity System (Signals) From Scratch"
+description: "Signals power Solid, Preact, Angular and Vue's reactivity. Build one in under 100 lines to understand dependency tracking, computed values, effects and glitch-free updates."
+date: "2026-09-30"
+tags: ["JavaScript", "Reactivity", "Architecture"]
+---
+
+## Why signals are everywhere
+
+Solid, Preact Signals, Angular, Vue, Svelte 5 runes and the TC39 Signals proposal all share one idea: **track exactly which computations read which values, and re-run only those when a value changes.** Instead of re-rendering a component tree and diffing, a signal-based UI updates the one text node that depends on the changed value.
+
+The best way to understand it is to build one. We'll write `signal`, `computed` and `effect` in plain JavaScript.
+
+## Step 1: a signal is a value with subscribers
+
+```js
+let currentObserver = null;
+
+export function signal(initial) {
+  let value = initial;
+  const subscribers = new Set();
+
+  const read = () => {
+    // Auto-tracking: whoever is running right now depends on us
+    if (currentObserver) {
+      subscribers.add(currentObserver);
+      currentObserver.dependencies.add(subscribers);
+    }
+    return value;
+  };
+
+  const write = (next) => {
+    if (Object.is(next, value)) return;
+    value = next;
+    // Copy first: running effects may modify the set
+    for (const sub of [...subscribers]) sub.schedule();
+  };
+
+  return [read, write];
+}
+```
+
+The key trick is `currentObserver`: a global pointer to "the computation currently executing". Any signal read while it's set records a dependency. This is **automatic dependency tracking** — no dependency arrays.
+
+## Step 2: effects
+
+An effect runs a function, tracking everything it reads. When any of those change, it re-runs.
+
+```js
+function cleanup(observer) {
+  for (const dep of observer.dependencies) dep.delete(observer);
+  observer.dependencies.clear();
+}
+
+export function effect(fn) {
+  const observer = {
+    dependencies: new Set(),
+    schedule() {
+      run();
+    },
+  };
+
+  function run() {
+    cleanup(observer); // dependencies can change between runs
+    const prev = currentObserver;
+    currentObserver = observer;
+    try {
+      fn();
+    } finally {
+      currentObserver = prev;
+    }
+  }
+
+  run();
+  return () => cleanup(observer); // dispose
+}
+```
+
+Why `cleanup` before every run? Consider conditional reads:
+
+```js
+const [showName, setShowName] = signal(true);
+const [name, setName] = signal("Ada");
+
+effect(() => {
+  console.log(showName() ? name() : "hidden");
+});
+
+setShowName(false); // logs "hidden"
+setName("Grace");   // should NOT re-run — name is no longer read
+```
+
+Re-collecting dependencies on each run means the effect stops listening to `name` once the branch that read it is gone. This **dynamic dependency tracking** is something React's static dependency arrays can't express.
+
+## Step 3: computed values
+
+A `computed` is both an observer (it reads signals) and a source (others read it). It should be **lazy** and **cached**: only recompute when read *and* stale.
+
+```js
+export function computed(fn) {
+  let value;
+  let dirty = true;
+  const subscribers = new Set();
+
+  const observer = {
+    dependencies: new Set(),
+    schedule() {
+      if (dirty) return;
+      dirty = true;
+      // Propagate staleness, don't recompute yet
+      for (const sub of [...subscribers]) sub.schedule();
+    },
+  };
+
+  return () => {
+    if (currentObserver) {
+      subscribers.add(currentObserver);
+      currentObserver.dependencies.add(subscribers);
+    }
+    if (dirty) {
+      cleanup(observer);
+      const prev = currentObserver;
+      currentObserver = observer;
+      try {
+        value = fn();
+      } finally {
+        currentObserver = prev;
+      }
+      dirty = false;
+    }
+    return value;
+  };
+}
+```
+
+```js
+const [first, setFirst] = signal("Ada");
+const [last, setLast] = signal("Lovelace");
+const fullName = computed(() => `${first()} ${last()}`);
+
+effect(() => console.log(fullName())); // "Ada Lovelace"
+setLast("Byron");                        // "Ada Byron"
+```
+
+## Step 4: batching and the glitch problem
+
+Our naive implementation has a flaw. Look at this "diamond" graph:
+
+```js
+const [a, setA] = signal(1);
+const b = computed(() => a() * 2);
+const c = computed(() => a() + 1);
+
+effect(() => console.log(b(), c()));
+setA(2);
+```
+
+The effect depends on `a` twice (through `b` and `c`). With eager scheduling, it can run once after `b` is marked dirty and again after `c` — the first run might even see an inconsistent mix of old and new values. That intermediate state is called a **glitch**.
+
+The fix used by real libraries is two-phase propagation: first **mark** everything downstream as stale, then **run** effects once, after the write completes. A simple version uses a queue and a batch depth:
+
+```js
+let batchDepth = 0;
+const pendingEffects = new Set();
+
+export function batch(fn) {
+  batchDepth++;
+  try {
+    fn();
+  } finally {
+    batchDepth--;
+    if (batchDepth === 0) flush();
+  }
+}
+
+function flush() {
+  for (const run of [...pendingEffects]) {
+    pendingEffects.delete(run);
+    run();
+  }
+}
+```
+
+Then change the effect's `schedule` to enqueue instead of running immediately, and have `write` wrap its notifications in `batch`:
+
+```js
+schedule() {
+  pendingEffects.add(run);
+},
+
+// inside signal's write():
+batch(() => {
+  for (const sub of [...subscribers]) sub.schedule();
+});
+```
+
+Now the diamond logs `4 3` exactly once. Because `computed` values are lazy and only recompute when read, the effect always sees a consistent snapshot. Production libraries go further, tracking per-node versions or colours ("clean / check / dirty") so that a computed whose inputs changed but whose *output* didn't stops propagation early.
+
+## How this maps to real frameworks
+
+| Concept | Our version | Solid | Preact Signals | Vue |
+| --- | --- | --- | --- | --- |
+| Source | `signal()` | `createSignal` | `signal` | `ref` |
+| Derived | `computed()` | `createMemo` | `computed` | `computed` |
+| Side effect | `effect()` | `createEffect` | `effect` | `watchEffect` |
+| Batching | `batch()` | `batch` | `batch` | scheduler |
+
+The JSX compiler in Solid wraps each dynamic expression in an effect, which is why only the text node that reads a signal updates when it changes — components run exactly once.
+
+## Trade-offs worth knowing
+
+- **Memory:** every dependency edge is a `Set` entry. Large graphs need cleanup on disposal or they leak.
+- **Debuggability:** implicit tracking is convenient but can hide why something re-ran. Good devtools matter.
+- **Equality:** `Object.is` means mutating an object in place won't notify. Treat signal values as immutable, or use a custom equality function.
+
+## Conclusion
+
+Signals come down to a global "current observer" pointer, sets of subscribers, lazy cached derivations and a scheduler that avoids glitches. With those four ideas you can read the source of Solid or Preact Signals and recognise every part, and you'll understand why the TC39 proposal aims to standardise exactly this core.
