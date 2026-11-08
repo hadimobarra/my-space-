@@ -1,0 +1,201 @@
+---
+title: "Metaprogramming in JavaScript with Proxy and Reflect"
+description: "Intercept property access, validation, and function calls with Proxy traps. Learn the invariants, the role of Reflect and receivers, and build a tiny reactive store, a validation layer and a negative-index array."
+date: "2026-08-18"
+tags: ["JavaScript", "Metaprogramming", "Advanced"]
+---
+
+## What a Proxy actually is
+
+A `Proxy` wraps a **target** object and lets you intercept the internal operations the engine performs on it — `[[Get]]`, `[[Set]]`, `[[HasProperty]]`, `[[Delete]]`, `[[OwnPropertyKeys]]`, `[[Call]]` and more. Each interceptable operation is a **trap** on the handler object.
+
+```js
+const target = { greeting: "hello" };
+
+const proxy = new Proxy(target, {
+  get(target, key, receiver) {
+    console.log(`read ${String(key)}`);
+    return Reflect.get(target, key, receiver);
+  },
+});
+
+proxy.greeting; // logs "read greeting", returns "hello"
+```
+
+That's the whole API surface. The interesting part is using it correctly.
+
+## Why you should always forward with `Reflect`
+
+`Reflect` has one method per trap with the exact same signature. It performs the *default* behaviour. Using it instead of `target[key]` matters because of the `receiver` argument:
+
+```js
+const base = {
+  _name: "base",
+  get name() {
+    return this._name;
+  },
+};
+
+const proxy = new Proxy(base, {
+  get(target, key, receiver) {
+    return target[key]; // ❌ the getter runs with this === target
+  },
+});
+
+const child = Object.create(proxy);
+child._name = "child";
+child.name; // "base" — wrong!
+```
+
+When `child.name` walks up the prototype chain into the proxy, `receiver` is `child`. `target[key]` drops it and calls the getter on `target`. `Reflect.get(target, key, receiver)` preserves `this === child` and returns `"child"`. The same applies to `set` and setters.
+
+## Trap invariants: what you cannot lie about
+
+Proxies can't violate certain invariants of the target, or the engine throws a `TypeError`. For example:
+
+- `get` must return the actual value for a **non-writable, non-configurable** data property.
+- `has` can't hide a non-configurable property.
+- `ownKeys` must include all non-configurable own keys, and must not add keys if the target is non-extensible.
+
+```js
+const frozen = Object.freeze({ x: 1 });
+const liar = new Proxy(frozen, { get: () => 42 });
+liar.x; // TypeError: 'get' on proxy: property 'x' is a read-only and
+        // non-configurable data property ... but the proxy did not return its actual value
+```
+
+These invariants exist so that security guarantees like `Object.freeze` can't be undermined by a proxy.
+
+## Example 1: negative array indices
+
+```js
+function withNegativeIndices(array) {
+  return new Proxy(array, {
+    get(target, key, receiver) {
+      if (typeof key === "string" && /^-\d+$/.test(key)) {
+        key = String(target.length + Number(key));
+      }
+      return Reflect.get(target, key, receiver);
+    },
+  });
+}
+
+const list = withNegativeIndices(["a", "b", "c"]);
+list[-1]; // "c"
+list.at(-2); // "b" — all normal methods still work
+```
+
+Note that property keys always arrive as **strings or symbols**, never numbers — `list[-1]` reaches the trap as `"-1"`.
+
+## Example 2: a validation layer
+
+```js
+function typed(schema) {
+  return new Proxy({}, {
+    set(target, key, value, receiver) {
+      const expected = schema[key];
+      if (!expected) {
+        throw new TypeError(`Unknown field "${String(key)}"`);
+      }
+      if (typeof value !== expected) {
+        throw new TypeError(`"${String(key)}" must be ${expected}, got ${typeof value}`);
+      }
+      return Reflect.set(target, key, value, receiver);
+    },
+  });
+}
+
+const user = typed({ name: "string", age: "number" });
+user.name = "Ada";
+user.age = "36"; // TypeError: "age" must be number, got string
+```
+
+The `set` trap must return `true` on success. Returning `false` throws a `TypeError` in strict mode — which is what modules and classes always are.
+
+## Example 3: a tiny reactive store (how Vue 3 works)
+
+Vue 3's reactivity is built on proxies. Here's the core idea in a few lines:
+
+```js
+const targetMap = new WeakMap(); // target -> key -> Set<effect>
+let activeEffect = null;
+
+function track(target, key) {
+  if (!activeEffect) return;
+  let deps = targetMap.get(target);
+  if (!deps) targetMap.set(target, (deps = new Map()));
+  let set = deps.get(key);
+  if (!set) deps.set(key, (set = new Set()));
+  set.add(activeEffect);
+}
+
+function trigger(target, key) {
+  targetMap.get(target)?.get(key)?.forEach((fn) => fn());
+}
+
+export function reactive(obj) {
+  return new Proxy(obj, {
+    get(target, key, receiver) {
+      track(target, key);
+      const value = Reflect.get(target, key, receiver);
+      // Lazily make nested objects reactive
+      return value !== null && typeof value === "object" ? reactive(value) : value;
+    },
+    set(target, key, value, receiver) {
+      const old = target[key];
+      const ok = Reflect.set(target, key, value, receiver);
+      if (ok && !Object.is(old, value)) trigger(target, key);
+      return ok;
+    },
+  });
+}
+
+export function watchEffect(fn) {
+  const run = () => {
+    activeEffect = run;
+    try { fn(); } finally { activeEffect = null; }
+  };
+  run();
+}
+```
+
+```js
+const state = reactive({ user: { name: "Ada" } });
+watchEffect(() => console.log(state.user.name));
+state.user.name = "Grace"; // logs "Grace"
+```
+
+Using a `WeakMap` keyed by the raw target means dependency data is garbage-collected with the object. A production version also caches proxies per target (so `reactive(obj) === reactive(obj)`), and handles arrays, `Map`/`Set`, and `has`/`ownKeys` traps for `in` and iteration.
+
+## Revocable proxies for capability security
+
+`Proxy.revocable` returns a proxy plus a `revoke` function. After revoking, *every* operation on the proxy throws. That's useful for handing a third-party plugin temporary access:
+
+```js
+const { proxy: api, revoke } = Proxy.revocable(internalApi, {});
+plugin.init(api);
+// later...
+revoke(); // the plugin can no longer touch internalApi through `api`
+```
+
+## Performance and pitfalls
+
+- **Proxies are slower** than plain property access because traps defeat many engine optimisations (inline caches). Don't put them in hot inner loops.
+- **Identity:** `proxy !== target`. Code that uses objects as `Map` keys or does `===` checks can break.
+- **Private fields don't work through proxies.** `#field` access checks the *actual* object, and the proxy isn't the instance:
+
+```js
+class Counter {
+  #count = 0;
+  inc() { return ++this.#count; }
+}
+const p = new Proxy(new Counter(), {});
+p.inc(); // TypeError: Cannot read private member #count
+```
+
+  Fix it by binding methods to the target in the `get` trap when the value is a function.
+- **Built-ins with internal slots** (`Map`, `Set`, `Date`, typed arrays) have the same problem — their methods need `this` to be the real object.
+
+## Conclusion
+
+Use `Reflect` to forward every trap with its receiver, respect the invariants, and keep proxies out of hot paths. Follow those rules and proxies give you validation layers, observable state, API versioning shims and sandboxing without changing the code that uses the object.

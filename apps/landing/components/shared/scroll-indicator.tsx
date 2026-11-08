@@ -1,16 +1,18 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 export function ScrollIndicator() {
+  const { t } = useTranslation();
   return (
     <motion.div
-      className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+      className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: 2, duration: 1 }}
     >
-      <span className="text-xs text-muted font-medium">Scroll</span>
+      <span className="text-xs text-muted font-medium">{t("hero.scroll")}</span>
       <motion.div
         className="w-5 h-8 rounded-full border-2 border-muted/30 flex justify-center pt-1.5"
         animate={{ opacity: [0.5, 1, 0.5] }}

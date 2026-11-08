@@ -1,0 +1,221 @@
+---
+title: "Inside the JavaScript Event Loop: Tasks, Microtasks and the Rendering Steps"
+description: "A precise mental model of how the browser schedules your code — tasks, microtasks, requestAnimationFrame and rendering — and how to use it to write UIs that never freeze."
+date: "2026-10-21"
+tags: ["JavaScript", "Browser Internals", "Performance"]
+featured: true
+---
+
+## Why the event loop still trips up senior engineers
+
+Most of us learned the event loop as "JavaScript is single-threaded, async things go into a queue". That model is good enough until it isn't: a `Promise` chain that starves the renderer, a `setTimeout(fn, 0)` that fires *after* a frame you expected it to beat, or a `requestAnimationFrame` callback that runs twice as often as you thought.
+
+This article builds a precise model based on the HTML specification, then uses it to answer real production questions.
+
+## The model in one picture
+
+Every browser tab's main thread runs a loop that, simplified, looks like this:
+
+```js
+while (true) {
+  // 1. Run ONE task (macrotask) from a task queue
+  const task = pickTaskFromSomeQueue();
+  if (task) run(task);
+
+  // 2. Drain the ENTIRE microtask queue
+  while (microtaskQueue.length) {
+    run(microtaskQueue.shift());
+  }
+
+  // 3. Maybe render (roughly every 16.7ms on a 60Hz display)
+  if (isRenderingOpportunity()) {
+    runResizeAndScrollSteps();
+    runAnimationFrameCallbacks(); // requestAnimationFrame
+    recalcStyle();
+    layout();
+    runResizeObserverCallbacks();
+    paint();
+  }
+
+  // 4. If idle, run requestIdleCallback callbacks
+}
+```
+
+Three rules fall out of this pseudo-code, and nearly every event-loop puzzle reduces to them:
+
+1. **One task per turn.** Tasks never run back-to-back without giving microtasks (and possibly rendering) a chance.
+2. **Microtasks drain completely.** If a microtask schedules another microtask, that one runs too, before anything else.
+3. **Rendering is opportunistic.** The browser decides when a frame is due; your code can only *ask* to run right before it, via `requestAnimationFrame`.
+
+## Tasks vs microtasks
+
+**Tasks** (often called macrotasks) come from: `setTimeout`/`setInterval`, user input events, `MessageChannel` messages, network callbacks, and parsing HTML.
+
+**Microtasks** come from: promise reactions (`.then`, `await` continuations), `queueMicrotask`, and `MutationObserver`.
+
+Here's the classic quiz:
+
+```js
+console.log("1: script");
+
+setTimeout(() => console.log("2: timeout"), 0);
+
+Promise.resolve()
+  .then(() => console.log("3: microtask A"))
+  .then(() => console.log("4: microtask B"));
+
+queueMicrotask(() => console.log("5: queueMicrotask"));
+
+console.log("6: script end");
+```
+
+Output:
+
+```text
+1: script
+6: script end
+3: microtask A
+5: queueMicrotask
+4: microtask B
+2: timeout
+```
+
+The whole script is itself a task. When it finishes, the microtask queue holds `A` and `5`. Running `A` enqueues `B` at the *end* of the queue, so `5` goes first. Only after the queue is empty does the loop pick the next task — the timeout.
+
+## `await` is just a microtask boundary
+
+Every `await` splits a function: everything after it becomes a promise reaction. This is why `async` code that "looks" synchronous can still interleave with other microtasks:
+
+```js
+async function a() {
+  console.log("a1");
+  await null;
+  console.log("a2");
+}
+
+async function b() {
+  console.log("b1");
+  await null;
+  console.log("b2");
+}
+
+a();
+b();
+// a1, b1, a2, b2
+```
+
+> **Rule of thumb:** an `await` never yields to rendering or to user input. It only yields to *other microtasks*. If you want the browser to paint, you need a task boundary or a frame boundary.
+
+## Starving the renderer with microtasks
+
+Because microtasks drain completely, a recursive microtask chain blocks the page exactly like an infinite `while` loop:
+
+```js
+function spin() {
+  queueMicrotask(spin); // the page is now frozen
+}
+spin();
+```
+
+A more realistic version: processing a big array with `await` in a loop and expecting the UI to stay responsive.
+
+```js
+// ❌ Looks async, still blocks painting until all 50k items are done
+async function processAll(items) {
+  for (const item of items) {
+    await processItem(item); // resolves synchronously → microtask
+  }
+}
+```
+
+If `processItem` resolves immediately, every iteration is a microtask and the browser never gets a rendering opportunity.
+
+## Yielding to the main thread properly
+
+To let the browser paint and handle input, yield with a **task**, not a microtask. The modern API is `scheduler.yield()`, with a `setTimeout` fallback:
+
+```js
+function yieldToMain() {
+  if (globalThis.scheduler?.yield) {
+    return scheduler.yield();
+  }
+  return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
+async function processAll(items) {
+  let lastYield = performance.now();
+  for (const item of items) {
+    processItem(item);
+    // Yield roughly every 50ms (the "long task" threshold)
+    if (performance.now() - lastYield > 50) {
+      await yieldToMain();
+      lastYield = performance.now();
+    }
+  }
+}
+```
+
+`scheduler.yield()` has a nice property over `setTimeout`: the continuation is placed at the *front* of the task queue, so your work resumes before other, lower-priority tasks that were queued in the meantime.
+
+## Where `requestAnimationFrame` fits
+
+`rAF` callbacks run in the rendering step, right before style and layout. That makes it the right place for visual updates and the wrong place for heavy computation.
+
+```js
+// Measuring before the browser has applied a change
+el.classList.add("expanded");
+
+requestAnimationFrame(() => {
+  // Still before layout for this frame. Reading layout here forces it.
+  requestAnimationFrame(() => {
+    // Runs in the *next* frame — the previous one has been painted.
+    el.classList.add("animate");
+  });
+});
+```
+
+The "double rAF" trick is a well-known way to guarantee a style has been committed to a frame before you change it again, which is needed to trigger CSS transitions from an initial state.
+
+Two other facts worth knowing:
+
+- `rAF` is **paused in background tabs**. Don't use it for logic that must keep running.
+- `rAF` fires at the display's refresh rate. On a 120Hz screen, a `rAF`-driven animation that assumes 16.7ms per frame will run twice as fast. Always use the timestamp argument to compute deltas.
+
+```js
+let last;
+function tick(now) {
+  const dt = last === undefined ? 0 : (now - last) / 1000; // seconds
+  last = now;
+  position += velocity * dt; // frame-rate independent
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+```
+
+## `setTimeout(fn, 0)` is not zero
+
+Timers are clamped: after 5 levels of nesting, browsers enforce a minimum of about 4ms, and in background tabs timers can be throttled to once per second or less. If you need "as soon as possible, but after rendering and input", `MessageChannel` is the classic zero-delay task primitive (React's scheduler used it for years):
+
+```js
+const channel = new MessageChannel();
+const queue = [];
+channel.port1.onmessage = () => queue.shift()?.();
+
+function postTask(fn) {
+  queue.push(fn);
+  channel.port2.postMessage(null);
+}
+```
+
+## A debugging checklist
+
+When something runs in the "wrong" order, ask:
+
+1. **Is it a task or a microtask?** Promise reactions always beat timers.
+2. **Did the microtask queue drain?** A long chain of `then`s delays everything else, including paint.
+3. **Do I need a frame or a task?** Visual changes belong in `rAF`; yielding for responsiveness needs a task (`scheduler.yield`, `setTimeout`, `MessageChannel`).
+4. **Is the tab in the background?** `rAF` stops and timers are throttled.
+
+## Conclusion
+
+Learn the loop as three rules — one task per turn, microtasks drain fully, rendering is opportunistic — and most "weird async bugs" become predictable. That predictability is what lets you break long work into chunks, keep Interaction to Next Paint low, and write animations that stay smooth on every refresh rate.

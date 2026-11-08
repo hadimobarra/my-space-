@@ -1,68 +1,41 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, Calendar } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { SectionWrapper } from "@/components/shared/section-wrapper";
-import { AnimatedElement } from "@/components/shared/animated-element";
+import { AnimatedElement, StaggerContainer, StaggerItem } from "@/components/shared/animated-element";
+import { PostCard } from "@/components/blog/post-card";
+import type { PostMeta } from "@/lib/mdx";
 
-interface BlogPost {
-  title: string;
-  description: string;
-  slug: string;
-  date: string;
-}
-
-export function BlogPreview() {
+export function BlogPreview({ posts }: { posts: PostMeta[] }) {
   const { t } = useTranslation();
-  const posts = t("blog.previewPosts", { returnObjects: true }) as BlogPost[];
+  const featured = posts.find((p) => p.frontmatter.featured) ?? posts[0];
+  const others = posts.filter((p) => p.slug !== featured?.slug).slice(0, 3);
+
+  if (!featured) return null;
 
   return (
-    <SectionWrapper
-      id="blog"
-      title={t("blog.title")}
-      subtitle={t("blog.subtitle")}
-    >
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {posts.map((post, i) => (
-          <BlogCard key={post.slug} post={post} index={i} />
+    <SectionWrapper id="blog" title={t("blog.title")} subtitle={t("blog.subtitle")}>
+      <AnimatedElement className="mb-6">
+        <PostCard post={featured} featured />
+      </AnimatedElement>
+      <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" staggerDelay={0.1}>
+        {others.map((post) => (
+          <StaggerItem key={post.slug} className="h-full">
+            <PostCard post={post} />
+          </StaggerItem>
         ))}
-      </div>
-      <AnimatedElement delay={0.3} direction="up" className="text-center mt-10">
+      </StaggerContainer>
+      <AnimatedElement delay={0.2} className="text-center mt-12">
         <Link
           href="/blog"
-          className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+          className="group inline-flex items-center gap-2 h-12 px-7 rounded-full border border-border bg-card text-sm font-semibold hover:border-primary/40 hover:text-primary transition-all"
         >
-          {t("blog.viewAll")}
-          <ArrowRight size={16} />
+          {t("blog.viewAll")} ({posts.length})
+          <ArrowRight size={16} className="transition-transform group-hover:translate-x-1 rtl:rotate-180" />
         </Link>
       </AnimatedElement>
     </SectionWrapper>
-  );
-}
-
-function BlogCard({ post, index }: { post: BlogPost; index: number }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-50px" });
-
-  return (
-    <AnimatedElement ref={ref} delay={index * 0.1} direction="up">
-      <Link href={`/blog/${post.slug}`}>
-        <div className="glass-card rounded-2xl p-6 h-full group hover:shadow-lg transition-all">
-          <span className="inline-flex items-center gap-1.5 text-xs text-muted mb-3">
-            <Calendar size={12} />
-            {post.date}
-          </span>
-          <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
-            {post.title}
-          </h3>
-          <p className="text-sm text-muted leading-relaxed">
-            {post.description}
-          </p>
-        </div>
-      </Link>
-    </AnimatedElement>
   );
 }

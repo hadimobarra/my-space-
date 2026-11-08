@@ -1,8 +1,6 @@
-import { getAllPosts } from "@/lib/mdx";
+import { getAllPostMeta } from "@/lib/mdx";
 import { BlogListing } from "@/components/blog/blog-listing";
 
 export default function BlogPage() {
-  const posts = getAllPosts();
-
-  return <BlogListing posts={posts} />;
+  return <BlogListing posts={getAllPostMeta()} />;
 }

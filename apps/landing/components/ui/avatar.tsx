@@ -7,6 +7,8 @@ interface AvatarProps {
   size?: "sm" | "md" | "lg" | "xl";
   className?: string;
   fallback?: string;
+  /** Extra classes for the <img>, e.g. to zoom past baked-in margins */
+  imageClassName?: string;
 }
 
 const sizeMap = {
@@ -22,6 +24,7 @@ export function Avatar({
   size = "md",
   className,
   fallback,
+  imageClassName,
 }: AvatarProps) {
   if (src) {
     return (
@@ -36,8 +39,9 @@ export function Avatar({
           src={src}
           alt={alt}
           fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, 200px"
+          className={cn("object-cover", imageClassName)}
+          sizes="(max-width: 768px) 60vw, 240px"
+          priority
         />
       </div>
     );

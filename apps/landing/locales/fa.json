@@ -12,11 +12,20 @@
   "hero": {
     "greeting": "سلام، من",
     "name": "هادی مبرا",
-    "roles": ["مهندس فرانت‌اند", "توسعه‌دهنده React", "توسعه‌دهنده TypeScript", "مشارکت‌کننده متن‌باز"],
+    "roles": [
+      "مهندس فرانت‌اند",
+      "توسعه‌دهنده React",
+      "توسعه‌دهنده TypeScript",
+      "مشارکت‌کننده متن‌باز"
+    ],
     "description": "مهندس فرانت‌اند با مدرک کارشناسی ارشد مهندسی کامپیوتر و ۳+ سال تجربه حرفه‌ای. مشارکت‌کننده فعال در پروژه‌های متن‌باز و سازنده برنامه‌های وب داده‌محور.",
     "contactMe": "ارتباط با من",
     "viewProjects": "مشاهده پروژه‌ها",
-    "scroll": "اسکرول"
+    "scroll": "اسکرول",
+    "available": "آماده برای فرصت‌های جدید",
+    "resume": "رزومه",
+    "chipYears": "سال تجربه در محصولات واقعی",
+    "chipOss": "مشارکت‌کننده متن‌باز"
   },
   "about": {
     "title": "درباره من",
@@ -53,58 +62,139 @@
     {
       "title": "زبان‌ها",
       "skills": [
-        { "name": "TypeScript", "level": 90 },
-        { "name": "JavaScript (ES2024)", "level": 90 },
-        { "name": "HTML5", "level": 95 },
-        { "name": "CSS3", "level": 90 }
+        {
+          "name": "TypeScript",
+          "level": 90
+        },
+        {
+          "name": "JavaScript (ES2024)",
+          "level": 90
+        },
+        {
+          "name": "HTML5",
+          "level": 95
+        },
+        {
+          "name": "CSS3",
+          "level": 90
+        }
       ]
     },
     {
       "title": "فریم‌ورک‌ها و کتابخانه‌ها",
       "skills": [
-        { "name": "React 18", "level": 92 },
-        { "name": "Redux", "level": 80 },
-        { "name": "Zustand", "level": 85 },
-        { "name": "React Query", "level": 80 },
-        { "name": "Next.js", "level": 75 }
+        {
+          "name": "React 18",
+          "level": 92
+        },
+        {
+          "name": "Redux",
+          "level": 80
+        },
+        {
+          "name": "Zustand",
+          "level": 85
+        },
+        {
+          "name": "React Query",
+          "level": 80
+        },
+        {
+          "name": "Next.js",
+          "level": 75
+        }
       ]
     },
     {
       "title": "UI / استایل",
       "skills": [
-        { "name": "Ant Design", "level": 88 },
-        { "name": "Tailwind CSS", "level": 92 },
-        { "name": "Material UI", "level": 80 },
-        { "name": "Sass", "level": 85 },
-        { "name": "RTL / i18n", "level": 90 }
+        {
+          "name": "Ant Design",
+          "level": 88
+        },
+        {
+          "name": "Tailwind CSS",
+          "level": 92
+        },
+        {
+          "name": "Material UI",
+          "level": 80
+        },
+        {
+          "name": "Sass",
+          "level": 85
+        },
+        {
+          "name": "RTL / i18n",
+          "level": 90
+        }
       ]
     },
     {
       "title": "ابزارها",
       "skills": [
-        { "name": "Webpack", "level": 80 },
-        { "name": "Vite", "level": 78 },
-        { "name": "Git", "level": 88 },
-        { "name": "Docker", "level": 75 },
-        { "name": "Nginx", "level": 70 },
-        { "name": "ESLint / Prettier", "level": 85 }
+        {
+          "name": "Webpack",
+          "level": 80
+        },
+        {
+          "name": "Vite",
+          "level": 78
+        },
+        {
+          "name": "Git",
+          "level": 88
+        },
+        {
+          "name": "Docker",
+          "level": 75
+        },
+        {
+          "name": "Nginx",
+          "level": 70
+        },
+        {
+          "name": "ESLint / Prettier",
+          "level": 85
+        }
       ]
     },
     {
       "title": "داده و پروتکل‌ها",
       "skills": [
-        { "name": "Uppy.js", "level": 82 },
-        { "name": "پروتکل TUS", "level": 80 },
-        { "name": "REST APIs", "level": 88 },
-        { "name": "مفاهیم ETL", "level": 75 }
+        {
+          "name": "Uppy.js",
+          "level": 82
+        },
+        {
+          "name": "پروتکل TUS",
+          "level": 80
+        },
+        {
+          "name": "REST APIs",
+          "level": 88
+        },
+        {
+          "name": "مفاهیم ETL",
+          "level": 75
+        }
       ]
     },
     {
       "title": "پلتفرم‌ها",
       "skills": [
-        { "name": "Linux", "level": 80 },
-        { "name": "GitHub Actions CI", "level": 78 },
-        { "name": "OpenMetadata", "level": 85 }
+        {
+          "name": "Linux",
+          "level": 80
+        },
+        {
+          "name": "GitHub Actions CI",
+          "level": 78
+        },
+        {
+          "name": "OpenMetadata",
+          "level": 85
+        }
       ]
     }
   ],
@@ -119,32 +209,53 @@
       {
         "title": "OpenMetadata",
         "description": "مشارکت‌کننده فعال در یک پلتفرم متن‌باز پیشرو در زمینه کاتالوگ داده و حاکمیت اطلاعات. تحویل کامپوننت‌های UI، بومی‌سازی کامل فارسی (RTL) و بهبود ویژگی‌ها با PRهای ادغام‌شده.",
-        "tags": ["React", "TypeScript", "Ant Design", "Tailwind CSS"],
+        "tags": [
+          "React",
+          "TypeScript",
+          "Ant Design",
+          "Tailwind CSS"
+        ],
         "liveUrl": "https://openmetadata.org",
         "githubUrl": "https://github.com/open-metadata/OpenMetadata"
       },
       {
         "title": "Apache Superset",
         "description": "مشارکت در Apache Superset، یک پلتفرم متن‌باز پیشرو برای هوش تجاری و کاوش داده. کار بر روی فرانت‌اند React/TypeScript آن با تمرکز بر ویژگی‌های UI و بهبودها.",
-        "tags": ["React", "TypeScript", "Python"],
+        "tags": [
+          "React",
+          "TypeScript",
+          "Python"
+        ],
         "liveUrl": "https://superset.apache.org",
         "githubUrl": "https://github.com/apache/superset"
       },
       {
         "title": "رابط کاربری کاتالوگ داده سازمانی",
         "description": "ایجاد یک رابط کاربری جستجوپذیر و قدرتمند برای کاتالوگ داده جهت کشف، برچسب‌گذاری و حاکمیت بر داده‌های سازمانی، بهبود قابلیت کشف داده در سراسر تیم‌ها.",
-        "tags": ["React", "TypeScript", "Ant Design", "Zustand"],
+        "tags": [
+          "React",
+          "TypeScript",
+          "Ant Design",
+          "Zustand"
+        ],
         "liveUrl": null,
         "githubUrl": null
       },
       {
         "title": "ماژول آپلود فایل‌های حجیم",
         "description": "طراحی و معماری ماژول آپلود فایل‌های حجیم با قابلیت انتقال چند گیگابایتی با استفاده از Uppy.js و پروتکل TUS همراه با قابلیت توقف/ادامه و تلاش مجدد خودکار.",
-        "tags": ["React", "TypeScript", "Uppy.js", "TUS Protocol"],
+        "tags": [
+          "React",
+          "TypeScript",
+          "Uppy.js",
+          "TUS Protocol"
+        ],
         "liveUrl": null,
         "githubUrl": null
       }
-    ]
+    ],
+    "live": "مشاهده",
+    "source": "کد منبع"
   },
   "experience": {
     "title": "تجربیات کاری",
@@ -155,14 +266,29 @@
         "company": "آدین — تهران، ایران",
         "period": "فروردین ۱۴۰۲ – اکنون",
         "description": "معماری ماژول آپلود فایل‌های حجیم با Uppy.js و پروتکل TUS. ساخت رابط‌های Mapping Table و Mapping Column برای جریان‌های کاری ETL. توسعه رابط کاربری کاتالوگ داده و ماژول مدیریت نقش با کنترل دسترسی پویا. رهبری بومی‌سازی کامل فارسی (RTL) با i18next. بهینه‌سازی عملکرد و کاهش زمان بارگذاری اولیه. تحویل end-to-end صفحه Add Pipeline.",
-        "tags": ["React", "TypeScript", "Ant Design", "Tailwind CSS", "Zustand", "i18n/RTL"]
+        "tags": [
+          "React",
+          "TypeScript",
+          "Ant Design",
+          "Tailwind CSS",
+          "Zustand",
+          "i18n/RTL"
+        ]
       },
       {
         "title": "توسعه‌دهنده فرانت‌اند (کارآموزی تحصیلات تکمیلی)",
         "company": "MCI (همراه اول) — تهران، ایران",
         "period": "آبان ۱۴۰۱ – فروردین ۱۴۰۲",
         "description": "مشارکت در داشبوردهای مخابراتی با React، Redux Saga و Material UI. پیاده‌سازی کامپوننت‌های واکنش‌گرا با Sass/Css. یکپارچه‌سازی خطوط لوله Webpack و استقرار مبتنی بر Docker و Nginx.",
-        "tags": ["React", "Redux", "Redux Saga", "Material UI", "Sass", "Webpack", "Docker"]
+        "tags": [
+          "React",
+          "Redux",
+          "Redux Saga",
+          "Material UI",
+          "Sass",
+          "Webpack",
+          "Docker"
+        ]
       }
     ]
   },
@@ -209,68 +335,105 @@
       {
         "title": "فریم‌ورک‌ها و کتابخانه‌ها",
         "items": [
-          { "name": "React", "icon": "SiReact" },
-          { "name": "Next.js", "icon": "SiNextdotjs" },
-          { "name": "Redux", "icon": "SiRedux" },
-          { "name": "Zustand", "icon": "SiReact" }
+          {
+            "name": "React",
+            "icon": "SiReact"
+          },
+          {
+            "name": "Next.js",
+            "icon": "SiNextdotjs"
+          },
+          {
+            "name": "Redux",
+            "icon": "SiRedux"
+          },
+          {
+            "name": "Zustand",
+            "icon": "SiReact"
+          }
         ]
       },
       {
         "title": "زبان‌ها",
         "items": [
-          { "name": "TypeScript", "icon": "SiTypescript" },
-          { "name": "JavaScript", "icon": "SiJavascript" }
+          {
+            "name": "TypeScript",
+            "icon": "SiTypescript"
+          },
+          {
+            "name": "JavaScript",
+            "icon": "SiJavascript"
+          }
         ]
       },
       {
         "title": "UI و استایل",
         "items": [
-          { "name": "Tailwind CSS", "icon": "SiTailwindcss" },
-          { "name": "Ant Design", "icon": "SiAntdesign" },
-          { "name": "Material UI", "icon": "SiMaterialdesign" }
+          {
+            "name": "Tailwind CSS",
+            "icon": "SiTailwindcss"
+          },
+          {
+            "name": "Ant Design",
+            "icon": "SiAntdesign"
+          },
+          {
+            "name": "Material UI",
+            "icon": "SiMaterialdesign"
+          }
         ]
       },
       {
         "title": "دوآپس و ابزارها",
         "items": [
-          { "name": "Docker", "icon": "SiDocker" },
-          { "name": "Git", "icon": "SiGit" },
-          { "name": "Webpack", "icon": "SiWebpack" },
-          { "name": "Vite", "icon": "SiVite" }
+          {
+            "name": "Docker",
+            "icon": "SiDocker"
+          },
+          {
+            "name": "Git",
+            "icon": "SiGit"
+          },
+          {
+            "name": "Webpack",
+            "icon": "SiWebpack"
+          },
+          {
+            "name": "Vite",
+            "icon": "SiVite"
+          }
         ]
       }
     ]
   },
   "blog": {
     "title": "وبلاگ",
-    "subtitle": "افکار و دیدگاه‌ها درباره توسعه وب",
-    "description": "افکار، آموزش‌ها و دیدگاه‌ها درباره توسعه فرانت‌اند، React، Next.js و فناوری‌های وب مدرن.",
+    "subtitle": "بررسی عمیق جاوااسکریپت، ری‌اکت و پرفورمنس وب",
+    "description": "بررسی عمیق سازوکار درونی جاوااسکریپت، معماری ری‌اکت، تایپ‌اسکریپت و پرفورمنس وب — بر پایه تجربه در محصولات واقعی.",
     "readMore": "ادامه مطلب",
     "viewAll": "مشاهده همه نوشته‌ها",
     "minRead": "دقیقه مطالعه",
     "noPosts": "هنوز نوشته‌ای منتشر نشده. به زودی!",
     "backToBlog": "بازگشت به وبلاگ",
     "comingSoon": "به زودی!",
-    "previewPosts": [
-      {
-        "title": "ساخت معماری React مقیاس‌پذیر",
-        "description": "یاد بگیرید چگونه برنامه‌های React در مقیاس بزرگ را با تمرکز بر قابلیت نگهداری، عملکرد و تجربه توسعه‌دهنده ساختار دهید.",
-        "slug": "react-architecture",
-        "date": "۲۰۲۴-۰۱-۱۵"
-      },
-      {
-        "title": "بهینه‌سازی عملکرد فرانت‌اند",
-        "description": "یک راهنمای جامع برای بهینه‌سازی عملکرد فرانت‌اند، از Core Web Vitals تا تکنیک‌های پیشرفته مانند code splitting و lazy loading.",
-        "slug": "frontend-performance",
-        "date": "۲۰۲۴-۰۲-۲۰"
-      },
-      {
-        "title": "بهترین شیوه‌های Next.js",
-        "description": "الگوها و شیوه‌های ضروری برای ساخت برنامه‌های Next.js آماده تولید با TypeScript و Tailwind CSS.",
-        "slug": "nextjs-best-practices",
-        "date": "۲۰۲۴-۰۳-۱۰"
-      }
-    ]
+    "featured": "ویژه",
+    "articles": "مقاله",
+    "pageTitle": "یادداشت‌های مهندسی",
+    "searchPlaceholder": "جستجوی مقالات، موضوعات و برچسب‌ها…",
+    "allTopics": "همه موضوعات",
+    "noResults": "مقاله‌ای با این جستجو پیدا نشد.",
+    "clearFilters": "پاک کردن فیلترها",
+    "subscribe": "اشتراک از طریق RSS",
+    "onThisPage": "در این صفحه",
+    "copyCode": "کپی کد",
+    "linkCopied": "لینک کپی شد",
+    "copyLink": "کپی لینک",
+    "writtenBy": "نویسنده",
+    "authorBio": "مهندس فرانت‌اند و مشارکت‌کننده متن‌باز. درباره بخش‌هایی از جاوااسکریپت و ری‌اکت می‌نویسم که در اپلیکیشن‌های بزرگ اهمیت پیدا می‌کنند: پرفورمنس، معماری و نحوه کار واقعی مرورگر.",
+    "getInTouch": "در تماس باشید",
+    "previousPost": "قبلی",
+    "nextPost": "بعدی",
+    "relatedPosts": "ادامه مطالعه"
   },
   "openSource": {
     "title": "متن‌باز",
@@ -300,26 +463,55 @@
     "title": "گواهینامه‌ها",
     "subtitle": "گواهینامه‌ها و دستاوردهای حرفه‌ای",
     "items": [
-      { "name": "عضویت در بنیاد ملی نخبگان", "issuer": "بنیاد ملی نخبگان ایران", "date": "۱۴۰۱" },
-      { "name": "کارشناسی ارشد مهندسی کامپیوتر", "issuer": "دانشگاه علم و صنعت ایران", "date": "۱۴۰۳" },
-      { "name": "کارشناسی مهندسی کامپیوتر", "issuer": "دانشگاه محقق اردبیلی", "date": "۱۴۰۰" }
+      {
+        "name": "عضویت در بنیاد ملی نخبگان",
+        "issuer": "بنیاد ملی نخبگان ایران",
+        "date": "۱۴۰۱"
+      },
+      {
+        "name": "کارشناسی ارشد مهندسی کامپیوتر",
+        "issuer": "دانشگاه علم و صنعت ایران",
+        "date": "۱۴۰۳"
+      },
+      {
+        "name": "کارشناسی مهندسی کامپیوتر",
+        "issuer": "دانشگاه محقق اردبیلی",
+        "date": "۱۴۰۰"
+      }
     ]
   },
   "currentlyLearning": {
     "title": "در حال یادگیری",
     "subtitle": "فناوری‌ها و موضوعاتی که در حال کاوش هستم",
     "items": [
-      { "name": "برنامه‌نویسی Rust", "description": "کاوش برنامه‌نویسی سیستمی با Rust برای کامپوننت‌های وب بحرانی از نظر عملکرد." },
-      { "name": "Three.js و WebGL", "description": "غواصی در گرافیک سه‌بعدی و تجربیات وب همه‌جانبه." },
-      { "name": "طراحی سیستم", "description": "مطالعه معماری سیستم‌های توزیع شده و الگوهای مقیاس‌پذیری." }
+      {
+        "name": "برنامه‌نویسی Rust",
+        "description": "کاوش برنامه‌نویسی سیستمی با Rust برای کامپوننت‌های وب بحرانی از نظر عملکرد."
+      },
+      {
+        "name": "Three.js و WebGL",
+        "description": "غواصی در گرافیک سه‌بعدی و تجربیات وب همه‌جانبه."
+      },
+      {
+        "name": "طراحی سیستم",
+        "description": "مطالعه معماری سیستم‌های توزیع شده و الگوهای مقیاس‌پذیری."
+      }
     ]
   },
   "testimonials": {
     "title": "نظرات همکاران",
     "subtitle": "بازخورد همکاران و مشتریان",
     "items": [
-      { "name": "حسین عیوضی", "role": "رهبر تیم داده در میلی | Milli", "content": "همکاری با هادی واقعاً تجربه‌ای عالی بود. او تخصص بالایی در فرانت‌اند دارد و کارش را با ثبات، تعهد و توجه به جزئیات پیش می‌برد. برای هادی، موضوع هرگز فقط تمام کردن کار نیست؛ او همیشه تلاش می‌کند بهترین نتیجه ممکن را ارائه دهد. همین ویژگی او را به فردی تبدیل می‌کند که واقعاً می‌توان به او اعتماد کرد.\n\nفراتر از مهارت‌های فنی، هادی فردی خوش‌برخورد، حرفه‌ای و همکاری با او بسیار لذت‌بخش است. البته تمام زمانی که با هم گذراندیم فقط به کار محدود نمی‌شد؛ رقابت همیشگی ما در دارت بخش جدایی‌ناپذیر روزهای کاری‌مان بود، هرچند هنوز بر سر اینکه بازیکن بهتر چه کسی بود به توافق نرسیده‌ایم!\n\nواقعاً خوشحالم که فرصت همکاری با هادی را داشتم و مطمئنم او عضو ارزشمندی برای هر تیمی خواهد بود." },
-      { "name": "مهدی عالمی", "role": "مهندس هوش مصنوعی | توسعه‌دهنده بک‌اند جاوا | مدیر فنی | مدیر پروژه", "content": "فرصت همکاری با هادی در آدین را داشتم و همواره تحت تأثیر مهارت‌های او به‌عنوان یک توسعه‌دهنده فرانت‌اند بودم. هادی ترکیبی عالی از تخصص فنی و خلاقیت را ارائه می‌دهد و تسلط بالایی بر JavaScript و React دارد. او نقشی کلیدی در توسعه پلتفرم OpenMetadata ایفا کرد. فراتر از توانایی‌های فنی، هادی ارتباط‌گری فوق‌العاده و عضوی تیمی است که همیشه آماده حمایت و به‌اشتراک‌گذاشتن دانش خود با همکاران است. من با اطمینان کامل هادی را برای هر موقعیت توسعه فرانت‌اند پیشنهاد می‌کنم؛ او دارایی ارزشمندی برای هر تیمی خواهد بود." }
+      {
+        "name": "حسین عیوضی",
+        "role": "رهبر تیم داده در میلی | Milli",
+        "content": "همکاری با هادی واقعاً تجربه‌ای عالی بود. او تخصص بالایی در فرانت‌اند دارد و کارش را با ثبات، تعهد و توجه به جزئیات پیش می‌برد. برای هادی، موضوع هرگز فقط تمام کردن کار نیست؛ او همیشه تلاش می‌کند بهترین نتیجه ممکن را ارائه دهد. همین ویژگی او را به فردی تبدیل می‌کند که واقعاً می‌توان به او اعتماد کرد.\n\nفراتر از مهارت‌های فنی، هادی فردی خوش‌برخورد، حرفه‌ای و همکاری با او بسیار لذت‌بخش است. البته تمام زمانی که با هم گذراندیم فقط به کار محدود نمی‌شد؛ رقابت همیشگی ما در دارت بخش جدایی‌ناپذیر روزهای کاری‌مان بود، هرچند هنوز بر سر اینکه بازیکن بهتر چه کسی بود به توافق نرسیده‌ایم!\n\nواقعاً خوشحالم که فرصت همکاری با هادی را داشتم و مطمئنم او عضو ارزشمندی برای هر تیمی خواهد بود."
+      },
+      {
+        "name": "مهدی عالمی",
+        "role": "مهندس هوش مصنوعی | توسعه‌دهنده بک‌اند جاوا | مدیر فنی | مدیر پروژه",
+        "content": "فرصت همکاری با هادی در آدین را داشتم و همواره تحت تأثیر مهارت‌های او به‌عنوان یک توسعه‌دهنده فرانت‌اند بودم. هادی ترکیبی عالی از تخصص فنی و خلاقیت را ارائه می‌دهد و تسلط بالایی بر JavaScript و React دارد. او نقشی کلیدی در توسعه پلتفرم OpenMetadata ایفا کرد. فراتر از توانایی‌های فنی، هادی ارتباط‌گری فوق‌العاده و عضوی تیمی است که همیشه آماده حمایت و به‌اشتراک‌گذاشتن دانش خود با همکاران است. من با اطمینان کامل هادی را برای هر موقعیت توسعه فرانت‌اند پیشنهاد می‌کنم؛ او دارایی ارزشمندی برای هر تیمی خواهد بود."
+      }
     ]
   },
   "contact": {
@@ -341,13 +533,48 @@
       "sent": "با موفقیت ارسال شد!",
       "error": "ارسال ناموفق بود",
       "subjectPrefix": "[تماس از سایت]"
-    }
+    },
+    "copied": "در کلیپ‌بورد کپی شد"
   },
   "footer": {
-    "backToTop": "بازگشت به بالا"
+    "backToTop": "بازگشت به بالا",
+    "explore": "بخش‌ها",
+    "writing": "نوشته‌ها",
+    "allArticles": "همه مقالات",
+    "resume": "رزومه",
+    "ctaTitle": "پروژه‌ای در ذهن دارید؟",
+    "ctaHighlight": "بیایید بسازیمش.",
+    "ctaText": "برای موقعیت‌های فرانت‌اند، همکاری و پروژه‌های متن‌باز جذاب آماده‌ام.",
+    "builtWith": "ساخته شده با Next.js و کلی"
   },
   "commandMenu": {
-    "placeholder": "یک دستور را تایپ کنید...",
-    "toggleTheme": "تغییر تم"
+    "placeholder": "جستجوی صفحات، مقالات و دستورات…",
+    "toggleTheme": "تغییر تم",
+    "search": "جستجو",
+    "groups": {
+      "navigation": "ناوبری",
+      "articles": "مقالات",
+      "actions": "دستورات"
+    },
+    "allPosts": "همه مقالات",
+    "toggleLanguage": "تغییر زبان (EN / FA)",
+    "empty": "نتیجه‌ای یافت نشد.",
+    "navigate": "حرکت",
+    "select": "انتخاب"
+  },
+  "eyebrows": {
+    "about": "من کی هستم",
+    "education": "سوابق تحصیلی",
+    "skills": "جعبه‌ابزار",
+    "projects": "نمونه‌کارها",
+    "experience": "مسیر شغلی",
+    "services": "خدمات",
+    "tech-stack": "تکنولوژی‌ها",
+    "blog": "نوشته‌ها",
+    "open-source": "متن‌باز",
+    "certifications": "گواهی‌نامه‌ها",
+    "currently-learning": "یادگیری",
+    "testimonials": "توصیه‌نامه‌ها",
+    "contact": "تماس"
   }
 }

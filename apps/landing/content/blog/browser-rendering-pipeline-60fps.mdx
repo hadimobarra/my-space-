@@ -1,0 +1,187 @@
+---
+title: "The Browser Rendering Pipeline: Writing 60fps Animations"
+description: "Style, layout, paint and composite — what each stage costs, which CSS properties trigger which stages, and how to build animations that stay smooth with transforms, will-change, FLIP and the View Transitions API."
+date: "2025-11-17"
+tags: ["CSS", "Performance", "Browser Internals"]
+---
+
+## The pixel pipeline
+
+Every frame the browser produces goes through up to five stages:
+
+```text
+JavaScript → Style → Layout → Paint → Composite
+```
+
+1. **JavaScript** — your code (or CSS animations/transitions) changes something.
+2. **Style** — the browser works out which CSS rules apply to which elements and computes final styles.
+3. **Layout** — it calculates the geometry of every affected box: size and position.
+4. **Paint** — it records drawing commands (text, colours, borders, shadows, images) for each layer.
+5. **Composite** — layers are rasterised (often on the GPU) and assembled into the final image.
+
+At 60Hz you have **16.7ms per frame** for all of this, and in practice closer to 10ms of budget for your own work. At 120Hz it's 8.3ms.
+
+The key optimisation insight: **later stages are cheaper, and you can skip earlier ones.**
+
+## Which properties trigger which stages
+
+| You change… | Layout | Paint | Composite |
+| --- | --- | --- | --- |
+| `width`, `height`, `top`, `left`, `margin`, `padding`, `font-size` | ✅ | ✅ | ✅ |
+| `color`, `background-color`, `box-shadow`, `border-radius` | — | ✅ | ✅ |
+| `transform`, `opacity` (on a composited layer) | — | — | ✅ |
+
+Animating `left` from 0 to 300px re-runs layout and paint every frame. Animating `transform: translateX()` across the same distance only needs compositing — which can even run on the compositor thread while the main thread is busy.
+
+```css
+/* ❌ Layout + paint every frame */
+.drawer { transition: left 300ms ease; }
+.drawer.open { left: 0; }
+
+/* ✅ Composite only */
+.drawer { transition: transform 300ms ease; transform: translateX(-100%); }
+.drawer.open { transform: translateX(0); }
+```
+
+## Layers and `will-change`
+
+To composite an element on its own, the browser must promote it to a **layer**. Elements with active transform/opacity animations get promoted automatically, but promotion at animation start can cause a one-frame hitch. `will-change` tells the browser ahead of time:
+
+```css
+.card:hover { will-change: transform; }
+```
+
+Use it sparingly:
+
+- Every layer costs GPU memory. Putting `will-change: transform` on hundreds of list items can make performance *worse*, especially on mobile.
+- Prefer adding it just before an animation (on hover, or from JS right before starting) and removing it afterwards.
+- Layer promotion changes stacking and can affect text anti-aliasing.
+
+## Forced synchronous layout (layout thrashing)
+
+Browsers batch style and layout work until the end of the frame. But if you **read** a layout property (`offsetHeight`, `getBoundingClientRect()`, `scrollTop`…) after **writing** a style, the browser must calculate layout immediately to give you a correct answer.
+
+```js
+// ❌ Each iteration: write → read → forced layout
+items.forEach((item) => {
+  item.style.width = container.offsetWidth / 3 + "px";
+});
+
+// ✅ Read once, then write
+const width = container.offsetWidth / 3;
+items.forEach((item) => {
+  item.style.width = width + "px";
+});
+```
+
+DevTools' Performance panel flags these as purple **Layout** blocks with a "Forced reflow" warning, pointing to the line that caused them.
+
+## The FLIP technique
+
+Some animations seem to require animating layout — reordering a list, expanding a card into a modal. **FLIP** (First, Last, Invert, Play) turns them into cheap transforms:
+
+```js
+function flip(element, mutate) {
+  // First: record the starting position
+  const first = element.getBoundingClientRect();
+
+  // Apply the DOM/layout change instantly
+  mutate();
+
+  // Last: record the final position
+  const last = element.getBoundingClientRect();
+
+  // Invert: move it back to where it started using a transform
+  const dx = first.left - last.left;
+  const dy = first.top - last.top;
+  const sx = first.width / last.width;
+  const sy = first.height / last.height;
+
+  // Play: animate the transform back to identity
+  element.animate(
+    [
+      { transformOrigin: "top left", transform: `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})` },
+      { transformOrigin: "top left", transform: "none" },
+    ],
+    { duration: 400, easing: "cubic-bezier(0.16, 1, 0.3, 1)" }
+  );
+}
+```
+
+The expensive layout happens once, and the animation itself is composite-only. This is exactly what Framer Motion's `layout` prop does under the hood.
+
+## The View Transitions API
+
+For transitions between whole UI states — or even between pages — the browser can now do the FLIP work for you:
+
+```js
+function updateView(render) {
+  if (!document.startViewTransition) return render();
+  document.startViewTransition(() => render());
+}
+```
+
+```css
+/* Give elements a shared identity across the two states */
+.product-thumb { view-transition-name: product-hero; }
+
+/* Customise the default cross-fade */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 250ms;
+}
+```
+
+The browser snapshots the old state, runs your update, snapshots the new state and animates between them with pseudo-elements. Elements that share a `view-transition-name` morph from one position and size to the other. Cross-document view transitions (for multi-page apps) are enabled with a CSS opt-in: `@view-transition { navigation: auto; }`.
+
+## Paint cost is real too
+
+Even without layout, some paints are expensive:
+
+- Large `box-shadow` and `filter: blur()` values, especially when animated.
+- `backdrop-filter` over large or frequently changing areas.
+- Huge areas invalidated by small changes. Use DevTools → Rendering → **Paint flashing** to see what repaints.
+
+A useful trick for animated shadows: put the shadow on a pseudo-element and animate its `opacity` instead of the shadow itself.
+
+```css
+.card { position: relative; }
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 20px 40px rgb(0 0 0 / 0.2);
+  opacity: 0;
+  transition: opacity 200ms;
+}
+.card:hover::after { opacity: 1; }
+```
+
+## Containment
+
+The `contain` property tells the browser an element's internals don't affect the outside, so it can limit how far style, layout and paint work spreads:
+
+```css
+.widget { contain: layout paint; }
+.offscreen-section { content-visibility: auto; contain-intrinsic-size: auto 600px; }
+```
+
+`content-visibility: auto` skips rendering off-screen subtrees entirely — often the biggest single win on long pages.
+
+## Respect user preferences
+
+Smooth isn't the same as necessary. Users with vestibular disorders can be made physically unwell by large motion:
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+```
+
+## Conclusion
+
+Animate `transform` and `opacity`, batch layout reads before writes, use FLIP or View Transitions when layout really must change, and keep layers and expensive paints under control. Once you know which pipeline stages each change triggers, hitting 60fps (or 120fps) becomes a design decision rather than luck.

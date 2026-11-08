@@ -13,6 +13,7 @@ import { CurrentlyLearning } from "@/components/sections/currently-learning";
 import { Testimonials } from "@/components/sections/testimonials";
 import { Contact } from "@/components/sections/contact";
 import { Footer } from "@/components/sections/footer";
+import { getAllPostMeta } from "@/lib/mdx";
 
 export default function Home() {
   return (
@@ -25,7 +26,7 @@ export default function Home() {
       <Experience />
       <Services />
       <TechStack />
-      <BlogPreview />
+      <BlogPreview posts={getAllPostMeta()} />
       <OpenSource />
       <Certifications />
       <CurrentlyLearning />

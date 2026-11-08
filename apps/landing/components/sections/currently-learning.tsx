@@ -1,12 +1,8 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { SectionWrapper } from "@/components/shared/section-wrapper";
-import { AnimatedElement } from "@/components/shared/animated-element";
-import { Marquee } from "@/components/shared/marquee";
 
 interface LearningItem {
   name: string;
@@ -16,29 +12,33 @@ interface LearningItem {
 export function CurrentlyLearning() {
   const { t } = useTranslation();
   const items = t("currentlyLearning.items", { returnObjects: true }) as LearningItem[];
+  const loop = [...items, ...items];
 
   return (
     <SectionWrapper
       id="currently-learning"
       title={t("currentlyLearning.title")}
       subtitle={t("currentlyLearning.subtitle")}
+      className="bg-surface/60 overflow-hidden"
     >
-      <Marquee>
-        {items.map((item, i) => (
-          <div
-            key={i}
-            className="glass-card rounded-2xl p-5 mx-3 min-w-[280px] group hover:shadow-md transition-all"
-          >
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles size={14} className="text-primary" />
-              <span className="text-sm font-semibold group-hover:text-primary transition-colors">
-                {item.name}
-              </span>
+      <div className="relative flex overflow-hidden mask-fade-x group" dir="ltr">
+        <div className="flex shrink-0 gap-4 pe-4 animate-marquee [animation-duration:45s] group-hover:[animation-play-state:paused]">
+          {loop.map((item, i) => (
+            <div
+              key={i}
+              className="glass-card rounded-2xl p-5 w-[300px] shrink-0 hover:border-primary/40 transition-colors"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-primary/20 to-violet/20 flex items-center justify-center">
+                  <Sparkles size={13} className="text-primary" />
+                </span>
+                <span className="text-sm font-semibold">{item.name}</span>
+              </div>
+              <p className="text-xs text-muted leading-relaxed">{item.description}</p>
             </div>
-            <p className="text-xs text-muted">{item.description}</p>
-          </div>
-        ))}
-      </Marquee>
+          ))}
+        </div>
+      </div>
     </SectionWrapper>
   );
 }

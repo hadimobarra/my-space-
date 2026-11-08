@@ -1,0 +1,212 @@
+---
+title: "Async Iterators, Generators and Web Streams in Practice"
+description: "Process data incrementally instead of all at once. A practical tour of generators, async iteration, backpressure, and the Web Streams API — with examples for paginated APIs, streaming fetch responses and LLM-style token streams."
+date: "2026-01-26"
+tags: ["JavaScript", "Async", "Streams"]
+---
+
+## Why incremental processing matters
+
+Loading a 200MB CSV into memory before showing anything, or waiting for a whole LLM response before rendering a word, are both symptoms of one habit: treating data as a single value instead of a **sequence over time**. JavaScript has three tools for sequences: generators, async iterators and streams.
+
+## Generators: pausable functions
+
+A generator function returns an iterator. Each `yield` pauses execution until the consumer asks for the next value:
+
+```js
+function* range(start, end, step = 1) {
+  for (let i = start; i < end; i += step) yield i;
+}
+
+for (const n of range(0, 10, 3)) console.log(n); // 0 3 6 9
+```
+
+Because they're lazy, generators can describe infinite sequences and compose without creating intermediate arrays:
+
+```js
+function* map(iter, fn) { for (const x of iter) yield fn(x); }
+function* filter(iter, fn) { for (const x of iter) if (fn(x)) yield x; }
+function* take(iter, n) {
+  if (n <= 0) return;
+  for (const x of iter) {
+    yield x;
+    if (--n <= 0) return; // closes the source iterator too
+  }
+}
+
+function* naturals() { let n = 0; while (true) yield n++; }
+
+const firstFiveEvenSquares = [...take(filter(map(naturals(), (n) => n * n), (n) => n % 2 === 0), 5)];
+// [0, 4, 16, 36, 64]
+```
+
+Modern engines also ship **iterator helpers** natively, so the same pipeline can be written as `naturals().map(...).filter(...).take(5).toArray()`.
+
+## Async generators: sequences that arrive over time
+
+Add `async` and you can `await` inside and `yield` values as they become available. Consumers use `for await...of`.
+
+A classic use: hiding pagination behind a simple loop.
+
+```js
+async function* fetchAllIssues(repo) {
+  let url = `https://api.github.com/repos/${repo}/issues?per_page=100`;
+  while (url) {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    yield* await res.json();                       // yield each issue individually
+    url = parseNextLink(res.headers.get("link"));  // null when there are no more pages
+  }
+}
+
+for await (const issue of fetchAllIssues("facebook/react")) {
+  if (issue.title.includes("hydration")) {
+    console.log(issue.number, issue.title);
+    break; // stops fetching further pages
+  }
+}
+```
+
+That `break` matters: leaving a `for await` loop calls the generator's `return()`, which runs any `finally` blocks. Pages after the one you needed are never requested. The consumer controls the pace — that's **pull-based backpressure**.
+
+## Cleanup with `finally`
+
+Generators are a natural place to tie resource lifetime to iteration:
+
+```js
+async function* watchEvents(url) {
+  const source = new EventSource(url);
+  const queue = [];
+  let notify;
+  source.onmessage = (e) => { queue.push(JSON.parse(e.data)); notify?.(); };
+  try {
+    while (true) {
+      while (queue.length) yield queue.shift();
+      await new Promise((r) => (notify = r));
+    }
+  } finally {
+    source.close(); // runs on break, return or throw
+  }
+}
+```
+
+## Web Streams: the platform's streaming primitive
+
+`ReadableStream`, `WritableStream` and `TransformStream` are standard in browsers, Node.js, Deno, Bun and edge runtimes. `fetch` response bodies are `ReadableStream`s, which means you can process a download **as it arrives**:
+
+```js
+const res = await fetch("/api/large-export.ndjson");
+
+const lines = res.body
+  .pipeThrough(new TextDecoderStream())   // bytes -> text chunks
+  .pipeThrough(splitLines());             // text chunks -> lines
+
+let count = 0;
+for await (const line of lines) {         // ReadableStream is async iterable
+  if (!line) continue;
+  const record = JSON.parse(line);
+  count++;
+  if (count % 1000 === 0) renderProgress(count);
+}
+```
+
+The `splitLines` transform buffers partial lines across chunk boundaries — the classic streaming bug to avoid:
+
+```js
+function splitLines() {
+  let buffer = "";
+  return new TransformStream({
+    transform(chunk, controller) {
+      buffer += chunk;
+      const lines = buffer.split("\n");
+      buffer = lines.pop(); // the last item may be an incomplete line
+      for (const line of lines) controller.enqueue(line);
+    },
+    flush(controller) {
+      if (buffer) controller.enqueue(buffer);
+    },
+  });
+}
+```
+
+> Async iteration of `ReadableStream` is supported in Node, Deno, Firefox and recent Chromium. Where it's missing, use `stream.getReader()` and call `read()` in a loop.
+
+## Streaming text into the UI
+
+The same technique renders streamed AI responses token by token:
+
+```jsx
+function useStreamedText(url, body) {
+  const [text, setText] = useState("");
+
+  useEffect(() => {
+    const controller = new AbortController();
+    (async () => {
+      const res = await fetch(url, { method: "POST", body, signal: controller.signal });
+      const stream = res.body.pipeThrough(new TextDecoderStream());
+      for await (const chunk of stream) {
+        setText((prev) => prev + chunk);
+      }
+    })().catch((err) => {
+      if (err.name !== "AbortError") console.error(err);
+    });
+    return () => controller.abort(); // cancels the request on unmount
+  }, [url, body]);
+
+  return text;
+}
+```
+
+`AbortController` is the cancellation signal for the whole pipeline: aborting the fetch cancels the stream, which ends the `for await` loop.
+
+## Producing streams
+
+You can create streams from any source, including an async generator:
+
+```js
+function fromAsyncIterable(iterable) {
+  const iterator = iterable[Symbol.asyncIterator]();
+  return new ReadableStream({
+    async pull(controller) {
+      const { value, done } = await iterator.next();
+      done ? controller.close() : controller.enqueue(value);
+    },
+    async cancel(reason) {
+      await iterator.return?.(reason);
+    },
+  });
+}
+```
+
+Using `pull` (instead of pushing everything in `start`) means the generator only advances when the consumer has room in its queue, so backpressure flows from the consumer back to the source. Newer runtimes provide `ReadableStream.from(iterable)` which does this for you.
+
+On the server, a streamed `Response` is just a stream in the body:
+
+```js
+// Route handler (Next.js, Remix, Hono, Workers...)
+export async function GET() {
+  const encoder = new TextEncoder();
+  async function* events() {
+    for (let i = 0; i < 5; i++) {
+      await new Promise((r) => setTimeout(r, 500));
+      yield encoder.encode(`data: tick ${i}\n\n`);
+    }
+  }
+  return new Response(fromAsyncIterable(events()), {
+    headers: { "Content-Type": "text/event-stream" },
+  });
+}
+```
+
+## Choosing the right tool
+
+| Need | Use |
+| --- | --- |
+| Lazy, synchronous sequence | Generator / iterator helpers |
+| Values that arrive over time, consumer-paced | Async generator + `for await` |
+| Bytes or text across network/file boundaries, piping, compression | Web Streams (`pipeThrough`, `CompressionStream`) |
+| Cancellation | `AbortController` + `break` / `return()` |
+
+## Conclusion
+
+When you model data as a sequence over time, users see the first result sooner, memory stays flat regardless of input size, and cancellation works naturally. Generators make sequences easy to write, async iteration makes them easy to consume, and Web Streams connect them to the network on every modern JavaScript runtime.

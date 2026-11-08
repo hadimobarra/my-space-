@@ -5,12 +5,14 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatDate(date: string) {
-  return new Date(date).toLocaleDateString("en-US", {
+export function formatDate(date: string, locale = "en") {
+  const d = new Date(date);
+  if (Number.isNaN(d.getTime())) return date;
+  return new Intl.DateTimeFormat(locale === "fa" ? "fa-IR" : "en-US", {
     year: "numeric",
-    month: "long",
+    month: "short",
     day: "numeric",
-  });
+  }).format(d);
 }
 
 export function readingTime(text: string) {
@@ -27,3 +29,4 @@ export function slugify(text: string) {
     .replace(/-+/g, "-")
     .trim();
 }
+

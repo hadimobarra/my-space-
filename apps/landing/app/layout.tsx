@@ -6,6 +6,9 @@ import { siteConfig, personJsonLd, websiteJsonLd } from "@/lib/seo";
 import { Header } from "@/components/layout/header";
 import { CommandMenu } from "@/components/layout/command-menu";
 import { I18nProvider } from "@/components/shared/i18n-provider";
+import { MotionProvider } from "@/components/shared/motion-provider";
+import { BackToTop } from "@/components/shared/back-to-top";
+import { getAllPosts } from "@/lib/mdx";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -34,6 +37,9 @@ export const metadata: Metadata = {
     "Web Developer",
     "TypeScript",
     "Portfolio",
+    "JavaScript",
+    "Web Performance",
+    "Front-End Blog",
   ],
   authors: [{ name: siteConfig.author }],
   creator: siteConfig.author,
@@ -64,7 +70,10 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  alternates: { canonical: siteConfig.url },
+  alternates: {
+    canonical: siteConfig.url,
+    types: { "application/rss+xml": `${siteConfig.url}/rss.xml` },
+  },
 };
 
 export default function RootLayout({
@@ -72,6 +81,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const commandPosts = getAllPosts().map((p) => ({ slug: p.slug, title: p.frontmatter.title }));
+
   return (
     <html
       lang="en"
@@ -99,9 +110,12 @@ export default function RootLayout({
           enableSystem={false}
         >
           <I18nProvider>
-            <Header />
-            <CommandMenu />
-            <main className="flex-1">{children}</main>
+            <MotionProvider>
+              <Header />
+              <CommandMenu posts={commandPosts} />
+              <main className="flex-1">{children}</main>
+              <BackToTop />
+            </MotionProvider>
           </I18nProvider>
           <Toaster
             position="top-center"
