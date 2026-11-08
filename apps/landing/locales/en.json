@@ -532,7 +532,11 @@
       "sending": "Sending...",
       "sent": "Sent Successfully!",
       "error": "Failed to Send",
-      "subjectPrefix": "[Portfolio Contact]"
+      "subjectPrefix": "[Portfolio Contact]",
+      "errorTitle": "Message couldn't be sent",
+      "errorText": "Something went wrong. You can email me directly instead.",
+      "emailInstead": "Email instead",
+      "sentText": "Thanks! I'll get back to you soon."
     },
     "copied": "Copied to clipboard"
   },
