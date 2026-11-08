@@ -22,7 +22,7 @@ export function About() {
       <div className="grid lg:grid-cols-[1.2fr_1fr] gap-12 lg:gap-16 items-center">
         <AnimatedElement direction="right">
           <div className="relative">
-            <div aria-hidden className="absolute -inset-x-6 -inset-y-8 rounded-3xl bg-gradient-to-br from-primary/5 via-transparent to-violet/5 -z-10" />
+            <div aria-hidden className="absolute -inset-x-2 sm:-inset-x-6 -inset-y-8 rounded-3xl bg-gradient-to-br from-primary/5 via-transparent to-violet/5 -z-10" />
             <div className="space-y-5 [&_strong]:text-foreground [&_strong]:font-semibold">
               {["para1", "para2", "para3"].map((k) => (
                 <p

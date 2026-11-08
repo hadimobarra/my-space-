@@ -23,21 +23,38 @@ export function Contact() {
     e.preventDefault();
     if (status === "sending") return;
 
+    const formData = new FormData(e.currentTarget);
+    const name = String(formData.get("name") || "").trim();
+    const email = String(formData.get("email") || "").trim();
+    const subject = `${t("contact.form.subjectPrefix")} ${String(formData.get("subject") || "").trim()}`;
+    const message = String(formData.get("message") || "").trim();
+
+    // Fallback: open the visitor's mail client with everything pre-filled.
+    const mailtoHref = `mailto:${siteConfig.links.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
+      `${message}\n\n— ${name} <${email}>`
+    )}`;
+    const fail = (reason?: string) => {
+      setStatus("error");
+      toast.error(t("contact.form.errorTitle"), {
+        description: reason || t("contact.form.errorText"),
+        action: { label: t("contact.form.emailInstead"), onClick: () => (window.location.href = mailtoHref) },
+        duration: 10000,
+      });
+      window.setTimeout(() => setStatus("idle"), 5000);
+    };
+
     const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
     if (!accessKey) {
-      setStatus("error");
-      window.setTimeout(() => setStatus("idle"), 5000);
+      fail();
       return;
     }
 
-    const form = e.currentTarget;
-    const formData = new FormData(form);
     const payload = {
       access_key: accessKey,
-      subject: `${t("contact.form.subjectPrefix")} ${String(formData.get("subject") || "").trim()}`,
-      from_name: String(formData.get("name") || "").trim(),
-      email: String(formData.get("email") || "").trim(),
-      message: String(formData.get("message") || "").trim(),
+      subject,
+      from_name: name,
+      email,
+      message,
       site: siteConfig.url,
     };
 
@@ -53,11 +70,11 @@ export function Contact() {
         throw new Error(data?.message || "failed");
       }
       setStatus("sent");
+      toast.success(t("contact.form.sentText"));
       formRef.current?.reset();
       window.setTimeout(() => setStatus("idle"), 4000);
-    } catch {
-      setStatus("error");
-      window.setTimeout(() => setStatus("idle"), 5000);
+    } catch (err) {
+      fail(err instanceof Error && err.message !== "failed" ? err.message : undefined);
     }
   };
 
