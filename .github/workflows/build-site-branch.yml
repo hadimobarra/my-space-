@@ -1,7 +1,8 @@
 name: Build site to branch (temporary)
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [main]
 
 permissions:
   contents: write
