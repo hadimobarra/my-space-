@@ -1,0 +1,54 @@
+1:"$Sreact.fragment"
+2:I[64233,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js","/_next/static/chunks/00mgaiaj6~rb~.js","/_next/static/chunks/03uyn3wrd30ix.js"],"BlogPostContent"]
+7:I[97367,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"OutletBoundary"]
+8:"$Sreact.suspense"
+3:Tb46,<h2 id="introduction">Introduction</h2>
+<p>Performance is critical for user experience and SEO. Google's Core Web Vitals have made performance optimization more important than ever.</p>
+<h2 id="core-web-vitals">Core Web Vitals</h2>
+<h3 id="largest-contentful-paint-lcp">Largest Contentful Paint (LCP)</h3>
+<p>LCP measures loading performance. Aim for LCP under 2.5 seconds.</p>
+<ul>
+<li>Optimize images with proper formats (WebP, AVIF)</li>
+<li>Use CDN for static assets</li>
+<li>Implement lazy loading</li>
+</ul>
+<h3 id="first-input-delay-fid">First Input Delay (FID)</h3>
+<p>FID measures interactivity. Aim for FID under 100ms.</p>
+<ul>
+<li>Code splitting</li>
+<li>Reduce JavaScript execution time</li>
+<li>Use web workers for heavy computations</li>
+</ul>
+<h3 id="cumulative-layout-shift-cls">Cumulative Layout Shift (CLS)</h3>
+<p>CLS measures visual stability. Aim for CLS under 0.1.</p>
+<ul>
+<li>Set explicit dimensions for images</li>
+<li>Reserve space for dynamic content</li>
+<li>Avoid inserting content above existing content</li>
+</ul>
+<h2 id="image-optimization">Image Optimization</h2>
+<p>Images are often the largest assets on a page. Use the following strategies:</p>
+<pre><code class="hljs language-typescript"><span class="hljs-keyword">import</span> <span class="hljs-title class_">Image</span> <span class="hljs-keyword">from</span> <span class="hljs-string">'next/image'</span>;
+
+<span class="xml"><span class="hljs-tag">&#x3C;<span class="hljs-name">Image</span>
+  <span class="hljs-attr">src</span>=<span class="hljs-string">"/hero.jpg"</span>
+  <span class="hljs-attr">alt</span>=<span class="hljs-string">"Hero Image"</span>
+  <span class="hljs-attr">width</span>=<span class="hljs-string">{1200}</span>
+  <span class="hljs-attr">height</span>=<span class="hljs-string">{630}</span>
+  <span class="hljs-attr">priority</span>
+/></span></span>
+</code></pre>
+<h2 id="code-splitting">Code Splitting</h2>
+<p>Split your code into smaller chunks that load on demand:</p>
+<pre><code class="hljs language-typescript"><span class="hljs-keyword">import</span> dynamic <span class="hljs-keyword">from</span> <span class="hljs-string">'next/dynamic'</span>;
+
+<span class="hljs-keyword">const</span> <span class="hljs-title class_">HeavyComponent</span> = <span class="hljs-title function_">dynamic</span>(<span class="hljs-function">() =></span> <span class="hljs-keyword">import</span>(<span class="hljs-string">'./HeavyComponent'</span>), {
+  <span class="hljs-attr">loading</span>: <span class="hljs-function">() =></span> <span class="xml"><span class="hljs-tag">&#x3C;<span class="hljs-name">p</span>></span>Loading...<span class="hljs-tag">&#x3C;/<span class="hljs-name">p</span>></span></span>,
+});
+</code></pre>
+<h2 id="conclusion">Conclusion</h2>
+<p>Performance optimization is an ongoing process. Monitor your metrics regularly and make incremental improvements.</p>0:{"rsc":["$","$1","c",{"children":[[["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"{\"@context\":\"https://schema.org\",\"@type\":\"BlogPosting\",\"headline\":\"Front-End Performance Optimization Guide\",\"description\":\"A comprehensive guide to optimizing front-end performance, covering Core Web Vitals, lazy loading, code splitting, and more.\",\"datePublished\":\"2024-11-20\",\"keywords\":\"Performance, Web Development, Optimization\",\"author\":{\"@type\":\"Person\",\"name\":\"Hadi Mobarra\",\"url\":\"https://hadimobarra.github.io\"},\"url\":\"https://hadimobarra.github.io/blog/frontend-performance/\"}"}}],["$","$L2",null,{"slug":"frontend-performance","title":"Front-End Performance Optimization Guide","description":"A comprehensive guide to optimizing front-end performance, covering Core Web Vitals, lazy loading, code splitting, and more.","date":"2024-11-20","readingTime":1,"tags":["Performance","Web Development","Optimization"],"htmlContent":"$3","headings":[{"id":"introduction","text":"Introduction","level":2},{"id":"core-web-vitals","text":"Core Web Vitals","level":2},{"id":"largest-contentful-paint-lcp","text":"Largest Contentful Paint (LCP)","level":3},{"id":"first-input-delay-fid","text":"First Input Delay (FID)","level":3},{"id":"cumulative-layout-shift-cls","text":"Cumulative Layout Shift (CLS)","level":3},{"id":"image-optimization","text":"Image Optimization","level":2},{"id":"code-splitting","text":"Code Splitting","level":2},{"id":"conclusion","text":"Conclusion","level":2}],"prev":{"slug":"react-architecture","frontmatter":{"title":"React Architecture: Building Maintainable Applications","description":"Explore proven architectural patterns for building large-scale React applications that are easy to maintain and extend.","date":"2024-10-10","tags":["React","Architecture","TypeScript"]},"readingTime":1},"next":{"slug":"nextjs-best-practices","frontmatter":{"title":"Next.js Best Practices for Building Scalable Applications","description":"Learn the essential best practices for building production-ready Next.js applications that scale well and remain maintainable.","date":"2024-12-15","tags":["Next.js","React","Web Development"]},"readingTime":2},"related":[{"slug":"javascript-event-loop-deep-dive","frontmatter":{"title":"Inside the JavaScript Event Loop: Tasks, Microtasks and the Rendering Steps","description":"A precise mental model of how the browser schedules your code — tasks, microtasks, requestAnimationFrame and rendering — and how to use it to write UIs that never freeze.","date":"2026-10-21","tags":["JavaScript","Browser Internals","Performance"],"featured":true},"readingTime":6},{"slug":"taming-inp-interaction-to-next-paint","frontmatter":{"title":"Taming INP: A Practical Guide to Interaction to Next Paint","description":"INP replaced FID as a Core Web Vital. Learn how it's measured, how to find the slow interactions in your app, and the concrete techniques that cut it: yielding, deferring non-urgent work, React transitions and smaller DOMs.","date":"2026-07-14","tags":["Performance","Core Web Vitals","React"]},"readingTime":5},{"slug":"web-workers-off-main-thread","frontmatter":{"title":"Off the Main Thread: Web Workers, Transferables and RPC in Practice","description":"Move expensive work off the UI thread. Covers dedicated workers in modern bundlers, structured clone costs, zero-copy transferables, a promise-based RPC layer, SharedArrayBuffer with Atomics, and OffscreenCanvas.","date":"2026-04-20","tags":["JavaScript","Performance","Web Workers"]},"readingTime":5}]}]],["$L4","$L5"],"$L6"]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"E6xvaCzEOilM2NUsVbGPT"}
+4:["$","script","script-0",{"src":"/_next/static/chunks/00mgaiaj6~rb~.js","async":true}]
+5:["$","script","script-1",{"src":"/_next/static/chunks/03uyn3wrd30ix.js","async":true}]
+6:["$","$L7",null,{"children":["$","$8",null,{"name":"Next.MetadataOutlet","children":"$@9"}]}]
+9:null

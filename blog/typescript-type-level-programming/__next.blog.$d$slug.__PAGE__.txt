@@ -1,0 +1,138 @@
+1:"$Sreact.fragment"
+2:I[64233,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js","/_next/static/chunks/00mgaiaj6~rb~.js","/_next/static/chunks/03uyn3wrd30ix.js"],"BlogPostContent"]
+7:I[97367,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"OutletBoundary"]
+8:"$Sreact.suspense"
+3:T41f4,<h2 id="types-are-a-programming-language">Types are a programming language</h2>
+<p>TypeScript's type system is Turing-complete, which in practice means you can compute types from other types. Once you see it as a small functional language — with <em>functions</em> (generic types), <em>conditionals</em> (conditional types), <em>loops</em> (recursion and mapped types) and <em>string manipulation</em> (template literal types) — advanced library types stop looking like magic.</p>
+<h2 id="generic-types-are-functions">Generic types are functions</h2>
+<pre><code class="hljs language-ts"><span class="hljs-keyword">type</span> <span class="hljs-title class_">Box</span>&#x3C;T> = { <span class="hljs-attr">value</span>: T };       <span class="hljs-comment">// a function from T to a type</span>
+<span class="hljs-keyword">type</span> <span class="hljs-title class_">StringBox</span> = <span class="hljs-title class_">Box</span>&#x3C;<span class="hljs-built_in">string</span>>;     <span class="hljs-comment">// calling it</span>
+</code></pre>
+<h2 id="conditional-types-are-if-statements">Conditional types are <code>if</code> statements</h2>
+<pre><code class="hljs language-ts"><span class="hljs-keyword">type</span> <span class="hljs-title class_">IsString</span>&#x3C;T> = T <span class="hljs-keyword">extends</span> <span class="hljs-built_in">string</span> ? <span class="hljs-literal">true</span> : <span class="hljs-literal">false</span>;
+
+<span class="hljs-keyword">type</span> A = <span class="hljs-title class_">IsString</span>&#x3C;<span class="hljs-string">"hi"</span>>; <span class="hljs-comment">// true</span>
+<span class="hljs-keyword">type</span> B = <span class="hljs-title class_">IsString</span>&#x3C;<span class="hljs-number">42</span>>;   <span class="hljs-comment">// false</span>
+</code></pre>
+<p><code>extends</code> here means "is assignable to". Combined with <strong><code>infer</code></strong>, conditional types also do pattern matching — they can pull pieces out of a type:</p>
+<pre><code class="hljs language-ts"><span class="hljs-keyword">type</span> <span class="hljs-title class_">ElementType</span>&#x3C;T> = T <span class="hljs-keyword">extends</span> <span class="hljs-title function_">readonly</span> (infer U)[] ? U : <span class="hljs-built_in">never</span>;
+<span class="hljs-keyword">type</span> <span class="hljs-title class_">Awaited2</span>&#x3C;T> = T <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Promise</span>&#x3C;infer U> ? <span class="hljs-title class_">Awaited2</span>&#x3C;U> : T;
+<span class="hljs-keyword">type</span> <span class="hljs-title class_">ReturnOf</span>&#x3C;F> = F <span class="hljs-title function_">extends</span> (...<span class="hljs-attr">args</span>: <span class="hljs-built_in">any</span>[]) => infer R ? R : <span class="hljs-built_in">never</span>;
+
+<span class="hljs-keyword">type</span> E = <span class="hljs-title class_">ElementType</span>&#x3C;<span class="hljs-built_in">string</span>[]>;            <span class="hljs-comment">// string</span>
+<span class="hljs-keyword">type</span> P = <span class="hljs-title class_">Awaited2</span>&#x3C;<span class="hljs-title class_">Promise</span>&#x3C;<span class="hljs-title class_">Promise</span>&#x3C;<span class="hljs-built_in">number</span>>>>; <span class="hljs-comment">// number (recursion!)</span>
+</code></pre>
+<h2 id="the-distributive-surprise">The distributive surprise</h2>
+<p>When the checked type is a <strong>naked type parameter</strong> and you pass a union, the conditional is applied to each member separately:</p>
+<pre><code class="hljs language-ts"><span class="hljs-keyword">type</span> <span class="hljs-title class_">ToArray</span>&#x3C;T> = T <span class="hljs-keyword">extends</span> <span class="hljs-built_in">unknown</span> ? T[] : <span class="hljs-built_in">never</span>;
+<span class="hljs-keyword">type</span> X = <span class="hljs-title class_">ToArray</span>&#x3C;<span class="hljs-built_in">string</span> | <span class="hljs-built_in">number</span>>; <span class="hljs-comment">// string[] | number[]  (not (string | number)[])</span>
+</code></pre>
+<p>That's usually what you want (it's how <code>Exclude</code> and <code>Extract</code> work), but sometimes it isn't. Wrap both sides in a tuple to turn distribution off:</p>
+<pre><code class="hljs language-ts"><span class="hljs-keyword">type</span> <span class="hljs-title class_">ToArrayNonDist</span>&#x3C;T> = [T] <span class="hljs-keyword">extends</span> [<span class="hljs-built_in">unknown</span>] ? T[] : <span class="hljs-built_in">never</span>;
+<span class="hljs-keyword">type</span> Y = <span class="hljs-title class_">ToArrayNonDist</span>&#x3C;<span class="hljs-built_in">string</span> | <span class="hljs-built_in">number</span>>; <span class="hljs-comment">// (string | number)[]</span>
+</code></pre>
+<p>The same trick gives a reliable <code>IsNever</code> check, because <code>never</code> is an empty union and distributing over it yields <code>never</code>:</p>
+<pre><code class="hljs language-ts"><span class="hljs-keyword">type</span> <span class="hljs-title class_">IsNever</span>&#x3C;T> = [T] <span class="hljs-keyword">extends</span> [<span class="hljs-built_in">never</span>] ? <span class="hljs-literal">true</span> : <span class="hljs-literal">false</span>;
+</code></pre>
+<h2 id="mapped-types-are-loops-over-keys">Mapped types are loops over keys</h2>
+<pre><code class="hljs language-ts"><span class="hljs-keyword">type</span> <span class="hljs-title class_">ReadonlyDeep</span>&#x3C;T> = {
+  <span class="hljs-keyword">readonly</span> [K <span class="hljs-keyword">in</span> keyof T]: T[K] <span class="hljs-keyword">extends</span> <span class="hljs-built_in">object</span> ? <span class="hljs-title class_">ReadonlyDeep</span>&#x3C;T[K]> : T[K];
+};
+</code></pre>
+<p>Since TypeScript 4.1, the <strong><code>as</code> clause</strong> lets you rename or filter keys while mapping:</p>
+<pre><code class="hljs language-ts"><span class="hljs-keyword">type</span> <span class="hljs-title class_">Getters</span>&#x3C;T> = {
+  [K <span class="hljs-keyword">in</span> keyof T <span class="hljs-keyword">as</span> <span class="hljs-string">`get<span class="hljs-subst">${Capitalize&#x3C;<span class="hljs-built_in">string</span> &#x26; K>}</span>`</span>]: <span class="hljs-function">() =></span> T[K];
+};
+
+<span class="hljs-keyword">type</span> <span class="hljs-title class_">User</span> = { <span class="hljs-attr">name</span>: <span class="hljs-built_in">string</span>; <span class="hljs-attr">age</span>: <span class="hljs-built_in">number</span> };
+<span class="hljs-keyword">type</span> <span class="hljs-title class_">UserGetters</span> = <span class="hljs-title class_">Getters</span>&#x3C;<span class="hljs-title class_">User</span>>;
+<span class="hljs-comment">// { getName: () => string; getAge: () => number }</span>
+
+<span class="hljs-comment">// Filtering: returning `never` from `as` removes the key</span>
+<span class="hljs-keyword">type</span> <span class="hljs-title class_">OnlyFunctions</span>&#x3C;T> = {
+  [K <span class="hljs-keyword">in</span> keyof T <span class="hljs-keyword">as</span> T[K] <span class="hljs-title function_">extends</span> (...<span class="hljs-attr">args</span>: <span class="hljs-built_in">any</span>[]) => <span class="hljs-built_in">any</span> ? K : <span class="hljs-built_in">never</span>]: T[K];
+};
+</code></pre>
+<h2 id="template-literal-types-are-string-functions">Template literal types are string functions</h2>
+<p>Template literal types concatenate and — with <code>infer</code> — <em>parse</em> strings at the type level:</p>
+<pre><code class="hljs language-ts"><span class="hljs-keyword">type</span> <span class="hljs-title class_">Split</span>&#x3C;S <span class="hljs-keyword">extends</span> <span class="hljs-built_in">string</span>, D <span class="hljs-keyword">extends</span> <span class="hljs-built_in">string</span>> =
+  S <span class="hljs-keyword">extends</span> <span class="hljs-string">`<span class="hljs-subst">${infer Head}</span><span class="hljs-subst">${D}</span><span class="hljs-subst">${infer Tail}</span>`</span>
+    ? [<span class="hljs-title class_">Head</span>, ...<span class="hljs-title class_">Split</span>&#x3C;<span class="hljs-title class_">Tail</span>, D>]
+    : [S];
+
+<span class="hljs-keyword">type</span> <span class="hljs-title class_">Parts</span> = <span class="hljs-title class_">Split</span>&#x3C;<span class="hljs-string">"a.b.c"</span>, <span class="hljs-string">"."</span>>; <span class="hljs-comment">// ["a", "b", "c"]</span>
+</code></pre>
+<h2 id="project-1-a-type-safe-router">Project 1: a type-safe router</h2>
+<p>Let's extract route parameters from a path string, so <code>params</code> is fully typed:</p>
+<pre><code class="hljs language-ts"><span class="hljs-keyword">type</span> <span class="hljs-title class_">ExtractParams</span>&#x3C;<span class="hljs-title class_">Path</span> <span class="hljs-keyword">extends</span> <span class="hljs-built_in">string</span>> =
+  <span class="hljs-title class_">Path</span> <span class="hljs-keyword">extends</span> <span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-built_in">string</span>}</span>:<span class="hljs-subst">${infer Param}</span>/<span class="hljs-subst">${infer Rest}</span>`</span>
+    ? { [K <span class="hljs-keyword">in</span> <span class="hljs-title class_">Param</span> | keyof <span class="hljs-title class_">ExtractParams</span>&#x3C;<span class="hljs-string">`/<span class="hljs-subst">${Rest}</span>`</span>>]: <span class="hljs-built_in">string</span> }
+    : <span class="hljs-title class_">Path</span> <span class="hljs-keyword">extends</span> <span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-built_in">string</span>}</span>:<span class="hljs-subst">${infer Param}</span>`</span>
+      ? { [K <span class="hljs-keyword">in</span> <span class="hljs-title class_">Param</span>]: <span class="hljs-built_in">string</span> }
+      : {};
+
+<span class="hljs-keyword">function</span> route&#x3C;P <span class="hljs-keyword">extends</span> <span class="hljs-built_in">string</span>>(
+  <span class="hljs-attr">path</span>: P,
+  <span class="hljs-attr">handler</span>: <span class="hljs-function">(<span class="hljs-params"><span class="hljs-attr">params</span>: <span class="hljs-title class_">ExtractParams</span>&#x3C;P></span>) =></span> <span class="hljs-built_in">void</span>
+) {
+  <span class="hljs-comment">/* register the route */</span>
+}
+
+<span class="hljs-title function_">route</span>(<span class="hljs-string">"/users/:userId/posts/:postId"</span>, <span class="hljs-function">(<span class="hljs-params">params</span>) =></span> {
+  params.<span class="hljs-property">userId</span>; <span class="hljs-comment">// string ✅</span>
+  params.<span class="hljs-property">postId</span>; <span class="hljs-comment">// string ✅</span>
+  params.<span class="hljs-property">foo</span>;    <span class="hljs-comment">// ❌ Property 'foo' does not exist</span>
+});
+</code></pre>
+<p>The type recursively peels off <code>:param/</code> segments and merges the found names into one object type. This is the same technique used by typed routers such as those in Hono and TanStack Router.</p>
+<h2 id="project-2-a-typed-deep-get">Project 2: a typed deep <code>get</code></h2>
+<pre><code class="hljs language-ts"><span class="hljs-keyword">type</span> <span class="hljs-title class_">Paths</span>&#x3C;T> = T <span class="hljs-keyword">extends</span> <span class="hljs-built_in">object</span>
+  ? {
+      [K <span class="hljs-keyword">in</span> keyof T &#x26; <span class="hljs-built_in">string</span>]: T[K] <span class="hljs-keyword">extends</span> <span class="hljs-built_in">object</span>
+        ? K | <span class="hljs-string">`<span class="hljs-subst">${K}</span>.<span class="hljs-subst">${Paths&#x3C;T[K]>}</span>`</span>
+        : K;
+    }[keyof T &#x26; <span class="hljs-built_in">string</span>]
+  : <span class="hljs-built_in">never</span>;
+
+<span class="hljs-keyword">type</span> <span class="hljs-title class_">PathValue</span>&#x3C;T, P <span class="hljs-keyword">extends</span> <span class="hljs-built_in">string</span>> =
+  P <span class="hljs-keyword">extends</span> <span class="hljs-string">`<span class="hljs-subst">${infer K}</span>.<span class="hljs-subst">${infer Rest}</span>`</span>
+    ? K <span class="hljs-keyword">extends</span> keyof T
+      ? <span class="hljs-title class_">PathValue</span>&#x3C;T[K], <span class="hljs-title class_">Rest</span>>
+      : <span class="hljs-built_in">never</span>
+    : P <span class="hljs-keyword">extends</span> keyof T
+      ? T[P]
+      : <span class="hljs-built_in">never</span>;
+
+<span class="hljs-keyword">function</span> get&#x3C;T, P <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Paths</span>&#x3C;T>>(<span class="hljs-attr">obj</span>: T, <span class="hljs-attr">path</span>: P): <span class="hljs-title class_">PathValue</span>&#x3C;T, P> {
+  <span class="hljs-keyword">return</span> path.<span class="hljs-title function_">split</span>(<span class="hljs-string">"."</span>).<span class="hljs-property">reduce</span>&#x3C;<span class="hljs-built_in">any</span>>(<span class="hljs-function">(<span class="hljs-params">acc, key</span>) =></span> acc?.[key], obj);
+}
+
+<span class="hljs-keyword">const</span> config = { <span class="hljs-attr">server</span>: { <span class="hljs-attr">port</span>: <span class="hljs-number">8080</span>, <span class="hljs-attr">tls</span>: { <span class="hljs-attr">enabled</span>: <span class="hljs-literal">true</span> } } };
+
+<span class="hljs-title function_">get</span>(config, <span class="hljs-string">"server.port"</span>);        <span class="hljs-comment">// number</span>
+<span class="hljs-title function_">get</span>(config, <span class="hljs-string">"server.tls.enabled"</span>); <span class="hljs-comment">// boolean</span>
+<span class="hljs-title function_">get</span>(config, <span class="hljs-string">"server.host"</span>);        <span class="hljs-comment">// ❌ not assignable to the allowed paths</span>
+</code></pre>
+<p>The <code>{ ... }[keyof T]</code> pattern at the end of <code>Paths</code> is a common idiom: build an object type whose <em>values</em> are what you want, then index it with all its keys to get a union of the values.</p>
+<h2 id="keeping-the-compiler-happy">Keeping the compiler happy</h2>
+<p>Type-level code has real costs:</p>
+<ul>
+<li><strong>Recursion limits.</strong> TypeScript caps instantiation depth (about 50 for non-tail recursion, and up to 1,000 for tail-recursive conditional types). Write recursive types in tail position by passing an accumulator:</li>
+</ul>
+<pre><code class="hljs language-ts"><span class="hljs-keyword">type</span> <span class="hljs-title class_">Join</span>&#x3C;T <span class="hljs-keyword">extends</span> <span class="hljs-built_in">string</span>[], D <span class="hljs-keyword">extends</span> <span class="hljs-built_in">string</span>, <span class="hljs-title class_">Acc</span> <span class="hljs-keyword">extends</span> <span class="hljs-built_in">string</span> = <span class="hljs-string">""</span>> =
+  T <span class="hljs-keyword">extends</span> [infer H <span class="hljs-keyword">extends</span> <span class="hljs-built_in">string</span>, ...infer R <span class="hljs-keyword">extends</span> <span class="hljs-built_in">string</span>[]]
+    ? <span class="hljs-title class_">Join</span>&#x3C;R, D, <span class="hljs-title class_">Acc</span> <span class="hljs-keyword">extends</span> <span class="hljs-string">""</span> ? H : <span class="hljs-string">`<span class="hljs-subst">${Acc}</span><span class="hljs-subst">${D}</span><span class="hljs-subst">${H}</span>`</span>>
+    : <span class="hljs-title class_">Acc</span>;
+
+<span class="hljs-keyword">type</span> J = <span class="hljs-title class_">Join</span>&#x3C;[<span class="hljs-string">"a"</span>, <span class="hljs-string">"b"</span>, <span class="hljs-string">"c"</span>], <span class="hljs-string">"-"</span>>; <span class="hljs-comment">// "a-b-c"</span>
+</code></pre>
+<ul>
+<li><strong>Editor performance.</strong> Deep types on hot paths slow down IntelliSense for everyone. Check with <code>tsc --extendedDiagnostics</code> and <code>--generateTrace</code>.</li>
+<li><strong>Readability.</strong> Name intermediate types and add a short comment explaining <em>what</em> the type computes. Future you will need it.</li>
+</ul>
+<h2 id="conclusion">Conclusion</h2>
+<p>Conditional types are branching, <code>infer</code> is pattern matching, mapped types are loops, and template literals are string processing. Use them at the <strong>edges</strong> of your system — routers, API clients, form libraries, config loaders — where a strong type stops whole categories of bugs, and keep everyday application types simple.</p>0:{"rsc":["$","$1","c",{"children":[[["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"{\"@context\":\"https://schema.org\",\"@type\":\"BlogPosting\",\"headline\":\"Type-Level Programming in TypeScript: Conditional, Mapped and Template Literal Types\",\"description\":\"Treat TypeScript's type system as a small functional language. Learn conditional types and infer, distributive behaviour, key remapping, recursive types and template literals, then build a type-safe router and a deep-path getter.\",\"datePublished\":\"2026-06-02\",\"keywords\":\"TypeScript, Type System, Advanced\",\"author\":{\"@type\":\"Person\",\"name\":\"Hadi Mobarra\",\"url\":\"https://hadimobarra.github.io\"},\"url\":\"https://hadimobarra.github.io/blog/typescript-type-level-programming/\"}"}}],["$","$L2",null,{"slug":"typescript-type-level-programming","title":"Type-Level Programming in TypeScript: Conditional, Mapped and Template Literal Types","description":"Treat TypeScript's type system as a small functional language. Learn conditional types and infer, distributive behaviour, key remapping, recursive types and template literals, then build a type-safe router and a deep-path getter.","date":"2026-06-02","readingTime":5,"tags":["TypeScript","Type System","Advanced"],"htmlContent":"$3","headings":[{"id":"types-are-a-programming-language","text":"Types are a programming language","level":2},{"id":"generic-types-are-functions","text":"Generic types are functions","level":2},{"id":"conditional-types-are-if-statements","text":"Conditional types are if statements","level":2},{"id":"the-distributive-surprise","text":"The distributive surprise","level":2},{"id":"mapped-types-are-loops-over-keys","text":"Mapped types are loops over keys","level":2},{"id":"template-literal-types-are-string-functions","text":"Template literal types are string functions","level":2},{"id":"project-1-a-type-safe-router","text":"Project 1: a type-safe router","level":2},{"id":"project-2-a-typed-deep-get","text":"Project 2: a typed deep get","level":2},{"id":"keeping-the-compiler-happy","text":"Keeping the compiler happy","level":2},{"id":"conclusion","text":"Conclusion","level":2}],"prev":{"slug":"web-workers-off-main-thread","frontmatter":{"title":"Off the Main Thread: Web Workers, Transferables and RPC in Practice","description":"Move expensive work off the UI thread. Covers dedicated workers in modern bundlers, structured clone costs, zero-copy transferables, a promise-based RPC layer, SharedArrayBuffer with Atomics, and OffscreenCanvas.","date":"2026-04-20","tags":["JavaScript","Performance","Web Workers"]},"readingTime":5},"next":{"slug":"taming-inp-interaction-to-next-paint","frontmatter":{"title":"Taming INP: A Practical Guide to Interaction to Next Paint","description":"INP replaced FID as a Core Web Vital. Learn how it's measured, how to find the slow interactions in your app, and the concrete techniques that cut it: yielding, deferring non-urgent work, React transitions and smaller DOMs.","date":"2026-07-14","tags":["Performance","Core Web Vitals","React"]},"readingTime":5},"related":[{"slug":"proxy-and-reflect-metaprogramming","frontmatter":{"title":"Metaprogramming in JavaScript with Proxy and Reflect","description":"Intercept property access, validation, and function calls with Proxy traps. Learn the invariants, the role of Reflect and receivers, and build a tiny reactive store, a validation layer and a negative-index array.","date":"2026-08-18","tags":["JavaScript","Metaprogramming","Advanced"]},"readingTime":5},{"slug":"react-architecture","frontmatter":{"title":"React Architecture: Building Maintainable Applications","description":"Explore proven architectural patterns for building large-scale React applications that are easy to maintain and extend.","date":"2024-10-10","tags":["React","Architecture","TypeScript"]},"readingTime":1},{"slug":"javascript-event-loop-deep-dive","frontmatter":{"title":"Inside the JavaScript Event Loop: Tasks, Microtasks and the Rendering Steps","description":"A precise mental model of how the browser schedules your code — tasks, microtasks, requestAnimationFrame and rendering — and how to use it to write UIs that never freeze.","date":"2026-10-21","tags":["JavaScript","Browser Internals","Performance"],"featured":true},"readingTime":6}]}]],["$L4","$L5"],"$L6"]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"E6xvaCzEOilM2NUsVbGPT"}
+4:["$","script","script-0",{"src":"/_next/static/chunks/00mgaiaj6~rb~.js","async":true}]
+5:["$","script","script-1",{"src":"/_next/static/chunks/03uyn3wrd30ix.js","async":true}]
+6:["$","$L7",null,{"children":["$","$8",null,{"name":"Next.MetadataOutlet","children":"$@9"}]}]
+9:null

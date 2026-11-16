@@ -1,0 +1,159 @@
+1:"$Sreact.fragment"
+2:I[64233,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js","/_next/static/chunks/00mgaiaj6~rb~.js","/_next/static/chunks/03uyn3wrd30ix.js"],"BlogPostContent"]
+7:I[97367,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"OutletBoundary"]
+8:"$Sreact.suspense"
+3:T3bac,<h2 id="the-main-thread-is-shared-and-busy">The main thread is shared and busy</h2>
+<p>Everything that makes your UI responsive — input handling, React rendering, style, layout, paint — competes for one thread. Every millisecond spent parsing a large JSON payload, filtering 100k rows or resizing an image on that thread is a millisecond the user's click has to wait.</p>
+<p><strong>Web Workers</strong> give you real OS threads with their own event loops. They can't touch the DOM, which is exactly why they're safe to run in parallel.</p>
+<h2 id="creating-a-worker-with-a-modern-bundler">Creating a worker with a modern bundler</h2>
+<p>Vite, webpack 5, Turbopack and Parcel all recognise this pattern and bundle the worker file for you:</p>
+<pre><code class="hljs language-js"><span class="hljs-comment">// main.js</span>
+<span class="hljs-keyword">const</span> worker = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Worker</span>(<span class="hljs-keyword">new</span> <span class="hljs-title function_">URL</span>(<span class="hljs-string">"./search.worker.js"</span>, <span class="hljs-keyword">import</span>.<span class="hljs-property">meta</span>.<span class="hljs-property">url</span>), {
+  <span class="hljs-attr">type</span>: <span class="hljs-string">"module"</span>,
+});
+
+worker.<span class="hljs-title function_">postMessage</span>({ <span class="hljs-attr">type</span>: <span class="hljs-string">"index"</span>, docs });
+worker.<span class="hljs-property">onmessage</span> = <span class="hljs-function">(<span class="hljs-params">event</span>) =></span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">"results"</span>, event.<span class="hljs-property">data</span>);
+};
+</code></pre>
+<pre><code class="hljs language-js"><span class="hljs-comment">// search.worker.js</span>
+<span class="hljs-keyword">let</span> index;
+
+self.<span class="hljs-property">onmessage</span> = <span class="hljs-function">(<span class="hljs-params">event</span>) =></span> {
+  <span class="hljs-keyword">const</span> { type, docs, query } = event.<span class="hljs-property">data</span>;
+  <span class="hljs-keyword">if</span> (type === <span class="hljs-string">"index"</span>) index = <span class="hljs-title function_">buildIndex</span>(docs);
+  <span class="hljs-keyword">if</span> (type === <span class="hljs-string">"search"</span>) self.<span class="hljs-title function_">postMessage</span>(<span class="hljs-title function_">search</span>(index, query));
+};
+</code></pre>
+<p><code>type: "module"</code> lets the worker use <code>import</code> statements — supported in all modern browsers.</p>
+<h2 id="the-hidden-cost-structured-clone">The hidden cost: structured clone</h2>
+<p><code>postMessage</code> copies data with the <strong>structured clone algorithm</strong>. It handles <code>Map</code>, <code>Set</code>, <code>Date</code>, typed arrays, cyclic references and more, but it's a deep copy — performed synchronously on the <em>sending</em> thread.</p>
+<p>Sending a 50MB object to a worker can itself block the main thread for tens of milliseconds. Measure before assuming a worker is a win, and design messages to be small:</p>
+<ul>
+<li>send IDs or diffs instead of whole datasets,</li>
+<li>keep large state <em>inside</em> the worker and query it,</li>
+<li>or transfer instead of copying.</li>
+</ul>
+<h2 id="zero-copy-with-transferables">Zero-copy with transferables</h2>
+<p>Some objects — <code>ArrayBuffer</code>, <code>MessagePort</code>, <code>ImageBitmap</code>, <code>OffscreenCanvas</code>, streams — can be <strong>transferred</strong>: ownership moves to the other thread without copying, and the sender's reference becomes unusable.</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> pixels = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Uint8ClampedArray</span>(width * height * <span class="hljs-number">4</span>);
+
+worker.<span class="hljs-title function_">postMessage</span>({ pixels }, [pixels.<span class="hljs-property">buffer</span>]); <span class="hljs-comment">// transfer list</span>
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(pixels.<span class="hljs-property">byteLength</span>); <span class="hljs-comment">// 0 — the buffer is now "detached"</span>
+</code></pre>
+<p>For binary data — images, audio, geometry, parsed file contents — transfer turns an O(n) copy into a constant-time handoff.</p>
+<h2 id="a-promise-based-rpc-layer">A promise-based RPC layer</h2>
+<p>Raw <code>onmessage</code> handlers get messy fast. Wrap them in a request/response protocol with IDs so calls look like async functions. This is the idea behind the popular Comlink library:</p>
+<pre><code class="hljs language-js"><span class="hljs-comment">// rpc.js — shared by both sides</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">expose</span>(<span class="hljs-params">api, endpoint = self</span>) {
+  endpoint.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">"message"</span>, <span class="hljs-title function_">async</span> (event) => {
+    <span class="hljs-keyword">const</span> { id, method, args } = event.<span class="hljs-property">data</span>;
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-keyword">const</span> result = <span class="hljs-keyword">await</span> api[method](...args);
+      endpoint.<span class="hljs-title function_">postMessage</span>({ id, result });
+    } <span class="hljs-keyword">catch</span> (error) {
+      endpoint.<span class="hljs-title function_">postMessage</span>({ id, <span class="hljs-attr">error</span>: { <span class="hljs-attr">message</span>: error.<span class="hljs-property">message</span>, <span class="hljs-attr">stack</span>: error.<span class="hljs-property">stack</span> } });
+    }
+  });
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">wrap</span>(<span class="hljs-params">worker</span>) {
+  <span class="hljs-keyword">let</span> nextId = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">const</span> pending = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Map</span>();
+
+  worker.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">"message"</span>, <span class="hljs-function">(<span class="hljs-params">event</span>) =></span> {
+    <span class="hljs-keyword">const</span> { id, result, error } = event.<span class="hljs-property">data</span>;
+    <span class="hljs-keyword">const</span> call = pending.<span class="hljs-title function_">get</span>(id);
+    <span class="hljs-keyword">if</span> (!call) <span class="hljs-keyword">return</span>;
+    pending.<span class="hljs-title function_">delete</span>(id);
+    error ? call.<span class="hljs-title function_">reject</span>(<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">assign</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(error.<span class="hljs-property">message</span>), error)) : call.<span class="hljs-title function_">resolve</span>(result);
+  });
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Proxy</span>({}, {
+    <span class="hljs-attr">get</span>: <span class="hljs-function">(<span class="hljs-params">_, method</span>) =></span> <span class="hljs-function">(<span class="hljs-params">...args</span>) =></span>
+      <span class="hljs-keyword">new</span> <span class="hljs-title class_">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve, reject</span>) =></span> {
+        <span class="hljs-keyword">const</span> id = nextId++;
+        pending.<span class="hljs-title function_">set</span>(id, { resolve, reject });
+        worker.<span class="hljs-title function_">postMessage</span>({ id, method, args });
+      }),
+  });
+}
+</code></pre>
+<pre><code class="hljs language-js"><span class="hljs-comment">// image.worker.js</span>
+<span class="hljs-keyword">import</span> { expose } <span class="hljs-keyword">from</span> <span class="hljs-string">"./rpc.js"</span>;
+<span class="hljs-title function_">expose</span>({
+  <span class="hljs-keyword">async</span> <span class="hljs-title function_">blur</span>(<span class="hljs-params">bitmap, radius</span>) { <span class="hljs-comment">/* ... */</span> },
+  <span class="hljs-keyword">async</span> <span class="hljs-title function_">parseCsv</span>(<span class="hljs-params">text</span>) { <span class="hljs-comment">/* ... */</span> },
+});
+
+<span class="hljs-comment">// main.js</span>
+<span class="hljs-keyword">import</span> { wrap } <span class="hljs-keyword">from</span> <span class="hljs-string">"./rpc.js"</span>;
+<span class="hljs-keyword">const</span> api = <span class="hljs-title function_">wrap</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Worker</span>(<span class="hljs-keyword">new</span> <span class="hljs-title function_">URL</span>(<span class="hljs-string">"./image.worker.js"</span>, <span class="hljs-keyword">import</span>.<span class="hljs-property">meta</span>.<span class="hljs-property">url</span>), { <span class="hljs-attr">type</span>: <span class="hljs-string">"module"</span> }));
+<span class="hljs-keyword">const</span> rows = <span class="hljs-keyword">await</span> api.<span class="hljs-title function_">parseCsv</span>(fileText); <span class="hljs-comment">// looks local, runs in parallel</span>
+</code></pre>
+<h2 id="using-workers-from-react">Using workers from React</h2>
+<p>Create the worker once, and terminate it on unmount:</p>
+<pre><code class="hljs language-jsx"><span class="hljs-keyword">function</span> <span class="hljs-title function_">useWorker</span>(<span class="hljs-params">factory</span>) {
+  <span class="hljs-keyword">const</span> ref = <span class="hljs-title function_">useRef</span>(<span class="hljs-literal">null</span>);
+  <span class="hljs-title function_">useEffect</span>(<span class="hljs-function">() =></span> {
+    <span class="hljs-keyword">const</span> worker = <span class="hljs-title function_">factory</span>();
+    ref.<span class="hljs-property">current</span> = <span class="hljs-title function_">wrap</span>(worker);
+    <span class="hljs-keyword">return</span> <span class="hljs-function">() =></span> worker.<span class="hljs-title function_">terminate</span>();
+  }, []);
+  <span class="hljs-keyword">return</span> ref;
+}
+</code></pre>
+<p>Combine it with <code>useTransition</code> or a loading state so the UI stays interactive while the worker computes.</p>
+<h2 id="shared-memory-sharedarraybuffer-and-atomics">Shared memory: SharedArrayBuffer and Atomics</h2>
+<p>When copying or transferring isn't enough — for example, a physics simulation that both threads read every frame — <code>SharedArrayBuffer</code> gives both threads the <em>same</em> memory.</p>
+<p>It requires the page to be <strong>cross-origin isolated</strong>, which means serving two headers:</p>
+<pre><code class="hljs language-text">Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Embedder-Policy: require-corp
+</code></pre>
+<p>Shared memory brings data races, so use <code>Atomics</code> for coordination:</p>
+<pre><code class="hljs language-js"><span class="hljs-comment">// main.js</span>
+<span class="hljs-keyword">const</span> shared = <span class="hljs-keyword">new</span> <span class="hljs-title class_">SharedArrayBuffer</span>(<span class="hljs-number">4</span>);
+<span class="hljs-keyword">const</span> flag = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Int32Array</span>(shared);
+worker.<span class="hljs-title function_">postMessage</span>({ shared });
+
+<span class="hljs-comment">// worker.js</span>
+self.<span class="hljs-property">onmessage</span> = <span class="hljs-function">(<span class="hljs-params">{ data }</span>) =></span> {
+  <span class="hljs-keyword">const</span> flag = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Int32Array</span>(data.<span class="hljs-property">shared</span>);
+  <span class="hljs-title function_">doWork</span>();
+  <span class="hljs-title class_">Atomics</span>.<span class="hljs-title function_">store</span>(flag, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
+  <span class="hljs-title class_">Atomics</span>.<span class="hljs-title function_">notify</span>(flag, <span class="hljs-number">0</span>); <span class="hljs-comment">// wake anyone waiting on index 0</span>
+};
+</code></pre>
+<p><code>Atomics.wait</code> blocks a thread and isn't allowed on the main thread; use <code>Atomics.waitAsync</code> there instead, where supported.</p>
+<h2 id="offscreencanvas-rendering-in-a-worker">OffscreenCanvas: rendering in a worker</h2>
+<p>Charts, maps and visualisations can render entirely off the main thread:</p>
+<pre><code class="hljs language-js"><span class="hljs-comment">// main.js</span>
+<span class="hljs-keyword">const</span> canvas = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">querySelector</span>(<span class="hljs-string">"canvas"</span>);
+<span class="hljs-keyword">const</span> offscreen = canvas.<span class="hljs-title function_">transferControlToOffscreen</span>();
+worker.<span class="hljs-title function_">postMessage</span>({ <span class="hljs-attr">canvas</span>: offscreen }, [offscreen]);
+
+<span class="hljs-comment">// render.worker.js</span>
+self.<span class="hljs-property">onmessage</span> = <span class="hljs-function">(<span class="hljs-params">{ data }</span>) =></span> {
+  <span class="hljs-keyword">const</span> ctx = data.<span class="hljs-property">canvas</span>.<span class="hljs-title function_">getContext</span>(<span class="hljs-string">"2d"</span>);
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">frame</span>(<span class="hljs-params">t</span>) {
+    <span class="hljs-title function_">draw</span>(ctx, t);
+    <span class="hljs-title function_">requestAnimationFrame</span>(frame); <span class="hljs-comment">// rAF is available in dedicated workers</span>
+  }
+  <span class="hljs-title function_">requestAnimationFrame</span>(frame);
+};
+</code></pre>
+<p>The canvas keeps animating smoothly even when the main thread is busy with a heavy React render.</p>
+<h2 id="when-not-to-use-a-worker">When <em>not</em> to use a worker</h2>
+<ul>
+<li>The work takes under ~10ms — messaging overhead and complexity aren't worth it.</li>
+<li>The work needs the DOM or layout information.</li>
+<li>The payload is huge and can't be transferred — the clone may cost more than the computation.</li>
+</ul>
+<h2 id="conclusion">Conclusion</h2>
+<p>Workers are the only way to get real parallelism in the browser. Start with a plain dedicated worker behind a small RPC wrapper, transfer binary data instead of cloning it, keep heavy state on the worker side, and reach for <code>SharedArrayBuffer</code> or <code>OffscreenCanvas</code> only when profiling shows you need them.</p>0:{"rsc":["$","$1","c",{"children":[[["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"{\"@context\":\"https://schema.org\",\"@type\":\"BlogPosting\",\"headline\":\"Off the Main Thread: Web Workers, Transferables and RPC in Practice\",\"description\":\"Move expensive work off the UI thread. Covers dedicated workers in modern bundlers, structured clone costs, zero-copy transferables, a promise-based RPC layer, SharedArrayBuffer with Atomics, and OffscreenCanvas.\",\"datePublished\":\"2026-04-20\",\"keywords\":\"JavaScript, Performance, Web Workers\",\"author\":{\"@type\":\"Person\",\"name\":\"Hadi Mobarra\",\"url\":\"https://hadimobarra.github.io\"},\"url\":\"https://hadimobarra.github.io/blog/web-workers-off-main-thread/\"}"}}],["$","$L2",null,{"slug":"web-workers-off-main-thread","title":"Off the Main Thread: Web Workers, Transferables and RPC in Practice","description":"Move expensive work off the UI thread. Covers dedicated workers in modern bundlers, structured clone costs, zero-copy transferables, a promise-based RPC layer, SharedArrayBuffer with Atomics, and OffscreenCanvas.","date":"2026-04-20","readingTime":5,"tags":["JavaScript","Performance","Web Workers"],"htmlContent":"$3","headings":[{"id":"the-main-thread-is-shared-and-busy","text":"The main thread is shared and busy","level":2},{"id":"creating-a-worker-with-a-modern-bundler","text":"Creating a worker with a modern bundler","level":2},{"id":"the-hidden-cost-structured-clone","text":"The hidden cost: structured clone","level":2},{"id":"zero-copy-with-transferables","text":"Zero-copy with transferables","level":2},{"id":"a-promise-based-rpc-layer","text":"A promise-based RPC layer","level":2},{"id":"using-workers-from-react","text":"Using workers from React","level":2},{"id":"shared-memory-sharedarraybuffer-and-atomics","text":"Shared memory: SharedArrayBuffer and Atomics","level":2},{"id":"offscreencanvas-rendering-in-a-worker","text":"OffscreenCanvas: rendering in a worker","level":2},{"id":"when-not-to-use-a-worker","text":"When not to use a worker","level":2},{"id":"conclusion","text":"Conclusion","level":2}],"prev":{"slug":"react-server-components-mental-model","frontmatter":{"title":"A Mental Model for React Server Components and Streaming","description":"Server Components, Client Components, the RSC payload, Suspense streaming and Server Actions — explained as one coherent model, with the composition patterns and pitfalls that matter in a real Next.js codebase.","date":"2026-03-09","tags":["React","Next.js","Architecture"]},"readingTime":6},"next":{"slug":"typescript-type-level-programming","frontmatter":{"title":"Type-Level Programming in TypeScript: Conditional, Mapped and Template Literal Types","description":"Treat TypeScript's type system as a small functional language. Learn conditional types and infer, distributive behaviour, key remapping, recursive types and template literals, then build a type-safe router and a deep-path getter.","date":"2026-06-02","tags":["TypeScript","Type System","Advanced"]},"readingTime":5},"related":[{"slug":"javascript-event-loop-deep-dive","frontmatter":{"title":"Inside the JavaScript Event Loop: Tasks, Microtasks and the Rendering Steps","description":"A precise mental model of how the browser schedules your code — tasks, microtasks, requestAnimationFrame and rendering — and how to use it to write UIs that never freeze.","date":"2026-10-21","tags":["JavaScript","Browser Internals","Performance"],"featured":true},"readingTime":6},{"slug":"hunting-memory-leaks-javascript","frontmatter":{"title":"Hunting Memory Leaks in JavaScript Applications","description":"How garbage collection really decides what to keep, the five leak patterns behind most SPA memory issues, and a repeatable DevTools workflow using heap snapshots, allocation timelines and WeakRef-aware design.","date":"2025-09-29","tags":["JavaScript","Performance","Debugging"]},"readingTime":6},{"slug":"build-signals-from-scratch","frontmatter":{"title":"Building a Fine-Grained Reactivity System (Signals) From Scratch","description":"Signals power Solid, Preact, Angular and Vue's reactivity. Build one in under 100 lines to understand dependency tracking, computed values, effects and glitch-free updates.","date":"2026-09-30","tags":["JavaScript","Reactivity","Architecture"]},"readingTime":5}]}]],["$L4","$L5"],"$L6"]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"E6xvaCzEOilM2NUsVbGPT"}
+4:["$","script","script-0",{"src":"/_next/static/chunks/00mgaiaj6~rb~.js","async":true}]
+5:["$","script","script-1",{"src":"/_next/static/chunks/03uyn3wrd30ix.js","async":true}]
+6:["$","$L7",null,{"children":["$","$8",null,{"name":"Next.MetadataOutlet","children":"$@9"}]}]
+9:null

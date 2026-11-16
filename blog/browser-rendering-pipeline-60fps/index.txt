@@ -1,0 +1,194 @@
+1:"$Sreact.fragment"
+2:I[63178,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"ThemeProvider"]
+3:I[66382,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"I18nProvider"]
+4:I[53701,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"MotionProvider"]
+5:I[49786,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"Header"]
+6:I[54621,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"CommandMenu"]
+f:I[68027,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"default",1]
+:HL["/_next/static/chunks/13io2s3y4zmud.css","style"]
+:HL["/_next/static/media/797e433ab948586e-s.p.08e28id.o-okb.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/caa3a2e1cccd8315-s.p.09~u27dqhyhd6.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+0:{"P":null,"c":["","blog","browser-rendering-pipeline-60fps",""],"q":"","i":false,"f":[[["",{"children":["blog",{"children":[["slug","browser-rendering-pipeline-60fps","d",null],{"children":["__PAGE__",{}]}]}]},"$undefined","$undefined",16],[["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/13io2s3y4zmud.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","script","script-0",{"src":"/_next/static/chunks/0i-uuc70u4wfl.js","async":true,"nonce":"$undefined"}],["$","script","script-1",{"src":"/_next/static/chunks/02e34ux_g911k.js","async":true,"nonce":"$undefined"}],["$","script","script-2",{"src":"/_next/static/chunks/0x_gzhsm7.0z..js","async":true,"nonce":"$undefined"}],["$","script","script-3",{"src":"/_next/static/chunks/03j8m-3wu2-id.js","async":true,"nonce":"$undefined"}],["$","script","script-4",{"src":"/_next/static/chunks/0d3shmwh5_nmn.js","async":true,"nonce":"$undefined"}]],["$","html",null,{"lang":"en","suppressHydrationWarning":true,"className":"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable","children":[["$","head",null,{"children":[["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"{\"@context\":\"https://schema.org\",\"@type\":\"Person\",\"name\":\"Hadi Mobarra\",\"givenName\":\"Hadi\",\"familyName\":\"Mobarra\",\"jobTitle\":\"Front-End Engineer\",\"description\":\"Front-End Engineer specializing in React and TypeScript for data platforms. Apache Superset contributor.\",\"url\":\"https://hadimobarra.github.io\",\"email\":\"hadimobarra@gmail.com\",\"sameAs\":[\"https://github.com/hadimobarra\",\"https://www.linkedin.com/in/hadi-mobarra/\"],\"knowsAbout\":[\"React\",\"Next.js\",\"TypeScript\",\"JavaScript\",\"Front-End Development\",\"Web Development\",\"Apache Superset\",\"OpenMetadata\",\"Data Visualization\"],\"alumniOf\":{\"@type\":\"CollegeOrUniversity\",\"name\":\"Iran University of Science and Technology\"},\"image\":\"https://hadimobarra.github.io/images/profile.jpeg\"}"}}],["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"Hadi Mobarra\",\"url\":\"https://hadimobarra.github.io\",\"author\":{\"@type\":\"Person\",\"name\":\"Hadi Mobarra\"},\"description\":\"Front-End Engineer with 4+ years building data-intensive React and TypeScript apps: data catalogs, ETL interfaces and dashboards. Apache Superset contributor. Open to remote roles.\"}"}}]]}],["$","body",null,{"className":"min-h-screen flex flex-col antialiased","children":["$","$L2",null,{"attribute":"class","defaultTheme":"light","enableSystem":false,"children":[["$","$L3",null,{"children":["$","$L4",null,{"children":[["$","$L5",null,{}],["$","$L6",null,{"posts":[{"slug":"javascript-event-loop-deep-dive","title":"Inside the JavaScript Event Loop: Tasks, Microtasks and the Rendering Steps"},{"slug":"build-signals-from-scratch","title":"Building a Fine-Grained Reactivity System (Signals) From Scratch"},{"slug":"proxy-and-reflect-metaprogramming","title":"Metaprogramming in JavaScript with Proxy and Reflect"},{"slug":"taming-inp-interaction-to-next-paint","title":"Taming INP: A Practical Guide to Interaction to Next Paint"},{"slug":"typescript-type-level-programming","title":"Type-Level Programming in TypeScript: Conditional, Mapped and Template Literal Types"},{"slug":"web-workers-off-main-thread","title":"Off the Main Thread: Web Workers, Transferables and RPC in Practice"},{"slug":"react-server-components-mental-model","title":"A Mental Model for React Server Components and Streaming"},{"slug":"async-iterators-generators-streams","title":"Async Iterators, Generators and Web Streams in Practice"},{"slug":"browser-rendering-pipeline-60fps","title":"The Browser Rendering Pipeline: Writing 60fps Animations"},{"slug":"hunting-memory-leaks-javascript","title":"Hunting Memory Leaks in JavaScript Applications"},{"slug":"nextjs-best-practices","title":"Next.js Best Practices for Building Scalable Applications"},{"slug":"frontend-performance","title":"Front-End Performance Optimization Guide"},{"slug":"react-architecture","title":"React Architecture: Building Maintainable Applications"}]}],"$L7","$L8"]}]}],"$L9"]}]}]]}]]}],{"children":["$La",{"children":["$Lb",{"children":["$Lc",{},null,false,null]},null,false,"$@d"]},null,false,null]},null,false,null],"$Le",false]],"m":"$undefined","G":["$f",["$L10"]],"S":true,"h":null,"s":"$undefined","l":"$undefined","p":"$undefined","d":"$undefined","b":"E6xvaCzEOilM2NUsVbGPT"}
+11:I[39756,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"default"]
+12:I[37457,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"default"]
+13:I[65112,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"BackToTop"]
+14:I[46696,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"Toaster"]
+16:I[97367,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"OutletBoundary"]
+17:"$Sreact.suspense"
+1a:I[97367,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"ViewportBoundary"]
+1c:I[97367,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"MetadataBoundary"]
+7:["$","main",null,{"className":"flex-1","children":["$","$L11",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L12",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]}]
+8:["$","$L13",null,{}]
+9:["$","$L14",null,{"position":"top-center","richColors":true,"closeButton":true}]
+a:["$","$1","c",{"children":[null,["$","$L11",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L12",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}]
+b:["$","$1","c",{"children":[null,["$","$L11",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L12",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}]
+c:["$","$1","c",{"children":["$L15",[["$","script","script-0",{"src":"/_next/static/chunks/00mgaiaj6~rb~.js","async":true,"nonce":"$undefined"}],["$","script","script-1",{"src":"/_next/static/chunks/03uyn3wrd30ix.js","async":true,"nonce":"$undefined"}]],["$","$L16",null,{"children":["$","$17",null,{"name":"Next.MetadataOutlet","children":"$@18"}]}]]}]
+19:[]
+d:"$W19"
+e:["$","$1","h",{"children":[null,["$","$L1a",null,{"children":"$L1b"}],["$","div",null,{"hidden":true,"children":["$","$L1c",null,{"children":["$","$17",null,{"name":"Next.Metadata","children":"$L1d"}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}]
+10:["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/13io2s3y4zmud.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]
+1e:I[64233,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js","/_next/static/chunks/00mgaiaj6~rb~.js","/_next/static/chunks/03uyn3wrd30ix.js"],"BlogPostContent"]
+1f:T3656,<h2 id="the-pixel-pipeline">The pixel pipeline</h2>
+<p>Every frame the browser produces goes through up to five stages:</p>
+<pre><code class="hljs language-text">JavaScript → Style → Layout → Paint → Composite
+</code></pre>
+<ol>
+<li><strong>JavaScript</strong> — your code (or CSS animations/transitions) changes something.</li>
+<li><strong>Style</strong> — the browser works out which CSS rules apply to which elements and computes final styles.</li>
+<li><strong>Layout</strong> — it calculates the geometry of every affected box: size and position.</li>
+<li><strong>Paint</strong> — it records drawing commands (text, colours, borders, shadows, images) for each layer.</li>
+<li><strong>Composite</strong> — layers are rasterised (often on the GPU) and assembled into the final image.</li>
+</ol>
+<p>At 60Hz you have <strong>16.7ms per frame</strong> for all of this, and in practice closer to 10ms of budget for your own work. At 120Hz it's 8.3ms.</p>
+<p>The key optimisation insight: <strong>later stages are cheaper, and you can skip earlier ones.</strong></p>
+<h2 id="which-properties-trigger-which-stages">Which properties trigger which stages</h2>
+<table>
+<thead>
+<tr>
+<th>You change…</th>
+<th>Layout</th>
+<th>Paint</th>
+<th>Composite</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>width</code>, <code>height</code>, <code>top</code>, <code>left</code>, <code>margin</code>, <code>padding</code>, <code>font-size</code></td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>color</code>, <code>background-color</code>, <code>box-shadow</code>, <code>border-radius</code></td>
+<td>—</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>transform</code>, <code>opacity</code> (on a composited layer)</td>
+<td>—</td>
+<td>—</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<p>Animating <code>left</code> from 0 to 300px re-runs layout and paint every frame. Animating <code>transform: translateX()</code> across the same distance only needs compositing — which can even run on the compositor thread while the main thread is busy.</p>
+<pre><code class="hljs language-css"><span class="hljs-comment">/* ❌ Layout + paint every frame */</span>
+<span class="hljs-selector-class">.drawer</span> { <span class="hljs-attribute">transition</span>: left <span class="hljs-number">300ms</span> ease; }
+<span class="hljs-selector-class">.drawer</span><span class="hljs-selector-class">.open</span> { <span class="hljs-attribute">left</span>: <span class="hljs-number">0</span>; }
+
+<span class="hljs-comment">/* ✅ Composite only */</span>
+<span class="hljs-selector-class">.drawer</span> { <span class="hljs-attribute">transition</span>: transform <span class="hljs-number">300ms</span> ease; <span class="hljs-attribute">transform</span>: <span class="hljs-built_in">translateX</span>(-<span class="hljs-number">100%</span>); }
+<span class="hljs-selector-class">.drawer</span><span class="hljs-selector-class">.open</span> { <span class="hljs-attribute">transform</span>: <span class="hljs-built_in">translateX</span>(<span class="hljs-number">0</span>); }
+</code></pre>
+<h2 id="layers-and-will-change">Layers and <code>will-change</code></h2>
+<p>To composite an element on its own, the browser must promote it to a <strong>layer</strong>. Elements with active transform/opacity animations get promoted automatically, but promotion at animation start can cause a one-frame hitch. <code>will-change</code> tells the browser ahead of time:</p>
+<pre><code class="hljs language-css"><span class="hljs-selector-class">.card</span><span class="hljs-selector-pseudo">:hover</span> { <span class="hljs-attribute">will-change</span>: transform; }
+</code></pre>
+<p>Use it sparingly:</p>
+<ul>
+<li>Every layer costs GPU memory. Putting <code>will-change: transform</code> on hundreds of list items can make performance <em>worse</em>, especially on mobile.</li>
+<li>Prefer adding it just before an animation (on hover, or from JS right before starting) and removing it afterwards.</li>
+<li>Layer promotion changes stacking and can affect text anti-aliasing.</li>
+</ul>
+<h2 id="forced-synchronous-layout-layout-thrashing">Forced synchronous layout (layout thrashing)</h2>
+<p>Browsers batch style and layout work until the end of the frame. But if you <strong>read</strong> a layout property (<code>offsetHeight</code>, <code>getBoundingClientRect()</code>, <code>scrollTop</code>…) after <strong>writing</strong> a style, the browser must calculate layout immediately to give you a correct answer.</p>
+<pre><code class="hljs language-js"><span class="hljs-comment">// ❌ Each iteration: write → read → forced layout</span>
+items.<span class="hljs-title function_">forEach</span>(<span class="hljs-function">(<span class="hljs-params">item</span>) =></span> {
+  item.<span class="hljs-property">style</span>.<span class="hljs-property">width</span> = container.<span class="hljs-property">offsetWidth</span> / <span class="hljs-number">3</span> + <span class="hljs-string">"px"</span>;
+});
+
+<span class="hljs-comment">// ✅ Read once, then write</span>
+<span class="hljs-keyword">const</span> width = container.<span class="hljs-property">offsetWidth</span> / <span class="hljs-number">3</span>;
+items.<span class="hljs-title function_">forEach</span>(<span class="hljs-function">(<span class="hljs-params">item</span>) =></span> {
+  item.<span class="hljs-property">style</span>.<span class="hljs-property">width</span> = width + <span class="hljs-string">"px"</span>;
+});
+</code></pre>
+<p>DevTools' Performance panel flags these as purple <strong>Layout</strong> blocks with a "Forced reflow" warning, pointing to the line that caused them.</p>
+<h2 id="the-flip-technique">The FLIP technique</h2>
+<p>Some animations seem to require animating layout — reordering a list, expanding a card into a modal. <strong>FLIP</strong> (First, Last, Invert, Play) turns them into cheap transforms:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">flip</span>(<span class="hljs-params">element, mutate</span>) {
+  <span class="hljs-comment">// First: record the starting position</span>
+  <span class="hljs-keyword">const</span> first = element.<span class="hljs-title function_">getBoundingClientRect</span>();
+
+  <span class="hljs-comment">// Apply the DOM/layout change instantly</span>
+  <span class="hljs-title function_">mutate</span>();
+
+  <span class="hljs-comment">// Last: record the final position</span>
+  <span class="hljs-keyword">const</span> last = element.<span class="hljs-title function_">getBoundingClientRect</span>();
+
+  <span class="hljs-comment">// Invert: move it back to where it started using a transform</span>
+  <span class="hljs-keyword">const</span> dx = first.<span class="hljs-property">left</span> - last.<span class="hljs-property">left</span>;
+  <span class="hljs-keyword">const</span> dy = first.<span class="hljs-property">top</span> - last.<span class="hljs-property">top</span>;
+  <span class="hljs-keyword">const</span> sx = first.<span class="hljs-property">width</span> / last.<span class="hljs-property">width</span>;
+  <span class="hljs-keyword">const</span> sy = first.<span class="hljs-property">height</span> / last.<span class="hljs-property">height</span>;
+
+  <span class="hljs-comment">// Play: animate the transform back to identity</span>
+  element.<span class="hljs-title function_">animate</span>(
+    [
+      { <span class="hljs-attr">transformOrigin</span>: <span class="hljs-string">"top left"</span>, <span class="hljs-attr">transform</span>: <span class="hljs-string">`translate(<span class="hljs-subst">${dx}</span>px, <span class="hljs-subst">${dy}</span>px) scale(<span class="hljs-subst">${sx}</span>, <span class="hljs-subst">${sy}</span>)`</span> },
+      { <span class="hljs-attr">transformOrigin</span>: <span class="hljs-string">"top left"</span>, <span class="hljs-attr">transform</span>: <span class="hljs-string">"none"</span> },
+    ],
+    { <span class="hljs-attr">duration</span>: <span class="hljs-number">400</span>, <span class="hljs-attr">easing</span>: <span class="hljs-string">"cubic-bezier(0.16, 1, 0.3, 1)"</span> }
+  );
+}
+</code></pre>
+<p>The expensive layout happens once, and the animation itself is composite-only. This is exactly what Framer Motion's <code>layout</code> prop does under the hood.</p>
+<h2 id="the-view-transitions-api">The View Transitions API</h2>
+<p>For transitions between whole UI states — or even between pages — the browser can now do the FLIP work for you:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">updateView</span>(<span class="hljs-params">render</span>) {
+  <span class="hljs-keyword">if</span> (!<span class="hljs-variable language_">document</span>.<span class="hljs-property">startViewTransition</span>) <span class="hljs-keyword">return</span> <span class="hljs-title function_">render</span>();
+  <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">startViewTransition</span>(<span class="hljs-function">() =></span> <span class="hljs-title function_">render</span>());
+}
+</code></pre>
+<pre><code class="hljs language-css"><span class="hljs-comment">/* Give elements a shared identity across the two states */</span>
+<span class="hljs-selector-class">.product-thumb</span> { <span class="hljs-attribute">view-transition-name</span>: product-hero; }
+
+<span class="hljs-comment">/* Customise the default cross-fade */</span>
+::<span class="hljs-built_in">view-transition-old</span>(root),
+::<span class="hljs-built_in">view-transition-new</span>(root) {
+  <span class="hljs-attribute">animation-duration</span>: <span class="hljs-number">250ms</span>;
+}
+</code></pre>
+<p>The browser snapshots the old state, runs your update, snapshots the new state and animates between them with pseudo-elements. Elements that share a <code>view-transition-name</code> morph from one position and size to the other. Cross-document view transitions (for multi-page apps) are enabled with a CSS opt-in: <code>@view-transition { navigation: auto; }</code>.</p>
+<h2 id="paint-cost-is-real-too">Paint cost is real too</h2>
+<p>Even without layout, some paints are expensive:</p>
+<ul>
+<li>Large <code>box-shadow</code> and <code>filter: blur()</code> values, especially when animated.</li>
+<li><code>backdrop-filter</code> over large or frequently changing areas.</li>
+<li>Huge areas invalidated by small changes. Use DevTools → Rendering → <strong>Paint flashing</strong> to see what repaints.</li>
+</ul>
+<p>A useful trick for animated shadows: put the shadow on a pseudo-element and animate its <code>opacity</code> instead of the shadow itself.</p>
+<pre><code class="hljs language-css"><span class="hljs-selector-class">.card</span> { <span class="hljs-attribute">position</span>: relative; }
+<span class="hljs-selector-class">.card</span><span class="hljs-selector-pseudo">::after</span> {
+  <span class="hljs-attribute">content</span>: <span class="hljs-string">""</span>;
+  <span class="hljs-attribute">position</span>: absolute;
+  <span class="hljs-attribute">inset</span>: <span class="hljs-number">0</span>;
+  <span class="hljs-attribute">border-radius</span>: inherit;
+  <span class="hljs-attribute">box-shadow</span>: <span class="hljs-number">0</span> <span class="hljs-number">20px</span> <span class="hljs-number">40px</span> <span class="hljs-built_in">rgb</span>(<span class="hljs-number">0</span> <span class="hljs-number">0</span> <span class="hljs-number">0</span> / <span class="hljs-number">0.2</span>);
+  <span class="hljs-attribute">opacity</span>: <span class="hljs-number">0</span>;
+  <span class="hljs-attribute">transition</span>: opacity <span class="hljs-number">200ms</span>;
+}
+<span class="hljs-selector-class">.card</span><span class="hljs-selector-pseudo">:hover</span><span class="hljs-selector-pseudo">::after</span> { <span class="hljs-attribute">opacity</span>: <span class="hljs-number">1</span>; }
+</code></pre>
+<h2 id="containment">Containment</h2>
+<p>The <code>contain</code> property tells the browser an element's internals don't affect the outside, so it can limit how far style, layout and paint work spreads:</p>
+<pre><code class="hljs language-css"><span class="hljs-selector-class">.widget</span> { <span class="hljs-attribute">contain</span>: layout paint; }
+<span class="hljs-selector-class">.offscreen-section</span> { <span class="hljs-attribute">content-visibility</span>: auto; <span class="hljs-attribute">contain-intrinsic-size</span>: auto <span class="hljs-number">600px</span>; }
+</code></pre>
+<p><code>content-visibility: auto</code> skips rendering off-screen subtrees entirely — often the biggest single win on long pages.</p>
+<h2 id="respect-user-preferences">Respect user preferences</h2>
+<p>Smooth isn't the same as necessary. Users with vestibular disorders can be made physically unwell by large motion:</p>
+<pre><code class="hljs language-css"><span class="hljs-keyword">@media</span> (<span class="hljs-attribute">prefers-reduced-motion</span>: reduce) {
+  *, *<span class="hljs-selector-pseudo">::before</span>, *<span class="hljs-selector-pseudo">::after</span> {
+    <span class="hljs-attribute">animation-duration</span>: <span class="hljs-number">0.01ms</span> <span class="hljs-meta">!important</span>;
+    <span class="hljs-attribute">transition-duration</span>: <span class="hljs-number">0.01ms</span> <span class="hljs-meta">!important</span>;
+  }
+}
+</code></pre>
+<h2 id="conclusion">Conclusion</h2>
+<p>Animate <code>transform</code> and <code>opacity</code>, batch layout reads before writes, use FLIP or View Transitions when layout really must change, and keep layers and expensive paints under control. Once you know which pipeline stages each change triggers, hitting 60fps (or 120fps) becomes a design decision rather than luck.</p>15:[["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"{\"@context\":\"https://schema.org\",\"@type\":\"BlogPosting\",\"headline\":\"The Browser Rendering Pipeline: Writing 60fps Animations\",\"description\":\"Style, layout, paint and composite — what each stage costs, which CSS properties trigger which stages, and how to build animations that stay smooth with transforms, will-change, FLIP and the View Transitions API.\",\"datePublished\":\"2025-11-17\",\"keywords\":\"CSS, Performance, Browser Internals\",\"author\":{\"@type\":\"Person\",\"name\":\"Hadi Mobarra\",\"url\":\"https://hadimobarra.github.io\"},\"url\":\"https://hadimobarra.github.io/blog/browser-rendering-pipeline-60fps/\"}"}}],["$","$L1e",null,{"slug":"browser-rendering-pipeline-60fps","title":"The Browser Rendering Pipeline: Writing 60fps Animations","description":"Style, layout, paint and composite — what each stage costs, which CSS properties trigger which stages, and how to build animations that stay smooth with transforms, will-change, FLIP and the View Transitions API.","date":"2025-11-17","readingTime":6,"tags":["CSS","Performance","Browser Internals"],"htmlContent":"$1f","headings":[{"id":"the-pixel-pipeline","text":"The pixel pipeline","level":2},{"id":"which-properties-trigger-which-stages","text":"Which properties trigger which stages","level":2},{"id":"layers-and-will-change","text":"Layers and will-change","level":2},{"id":"forced-synchronous-layout-layout-thrashing","text":"Forced synchronous layout (layout thrashing)","level":2},{"id":"the-flip-technique","text":"The FLIP technique","level":2},{"id":"the-view-transitions-api","text":"The View Transitions API","level":2},{"id":"paint-cost-is-real-too","text":"Paint cost is real too","level":2},{"id":"containment","text":"Containment","level":2},{"id":"respect-user-preferences","text":"Respect user preferences","level":2},{"id":"conclusion","text":"Conclusion","level":2}],"prev":{"slug":"hunting-memory-leaks-javascript","frontmatter":{"title":"Hunting Memory Leaks in JavaScript Applications","description":"How garbage collection really decides what to keep, the five leak patterns behind most SPA memory issues, and a repeatable DevTools workflow using heap snapshots, allocation timelines and WeakRef-aware design.","date":"2025-09-29","tags":["JavaScript","Performance","Debugging"]},"readingTime":6},"next":{"slug":"async-iterators-generators-streams","frontmatter":{"title":"Async Iterators, Generators and Web Streams in Practice","description":"Process data incrementally instead of all at once. A practical tour of generators, async iteration, backpressure, and the Web Streams API — with examples for paginated APIs, streaming fetch responses and LLM-style token streams.","date":"2026-01-26","tags":["JavaScript","Async","Streams"]},"readingTime":6},"related":[{"slug":"javascript-event-loop-deep-dive","frontmatter":{"title":"Inside the JavaScript Event Loop: Tasks, Microtasks and the Rendering Steps","description":"A precise mental model of how the browser schedules your code — tasks, microtasks, requestAnimationFrame and rendering — and how to use it to write UIs that never freeze.","date":"2026-10-21","tags":["JavaScript","Browser Internals","Performance"],"featured":true},"readingTime":6},{"slug":"taming-inp-interaction-to-next-paint","frontmatter":{"title":"Taming INP: A Practical Guide to Interaction to Next Paint","description":"INP replaced FID as a Core Web Vital. Learn how it's measured, how to find the slow interactions in your app, and the concrete techniques that cut it: yielding, deferring non-urgent work, React transitions and smaller DOMs.","date":"2026-07-14","tags":["Performance","Core Web Vitals","React"]},"readingTime":5},{"slug":"web-workers-off-main-thread","frontmatter":{"title":"Off the Main Thread: Web Workers, Transferables and RPC in Practice","description":"Move expensive work off the UI thread. Covers dedicated workers in modern bundlers, structured clone costs, zero-copy transferables, a promise-based RPC layer, SharedArrayBuffer with Atomics, and OffscreenCanvas.","date":"2026-04-20","tags":["JavaScript","Performance","Web Workers"]},"readingTime":5}]}]]
+1b:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+20:I[27201,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"IconMark"]
+18:null
+1d:[["$","title","0",{"children":"The Browser Rendering Pipeline: Writing 60fps Animations"}],["$","meta","1",{"name":"description","content":"Style, layout, paint and composite — what each stage costs, which CSS properties trigger which stages, and how to build animations that stay smooth with transforms, will-change, FLIP and the View Transitions API."}],["$","meta","2",{"name":"author","content":"Hadi Mobarra"}],["$","link","3",{"rel":"manifest","href":"/manifest.webmanifest","crossOrigin":"$undefined"}],["$","meta","4",{"name":"keywords","content":"Hadi Mobarra,Front-End Engineer,React,TypeScript,Data Platform UI,Apache Superset,Remote"}],["$","meta","5",{"name":"creator","content":"Hadi Mobarra"}],["$","meta","6",{"name":"robots","content":"index, follow"}],["$","meta","7",{"name":"googlebot","content":"index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"}],["$","link","8",{"rel":"canonical","href":"https://hadimobarra.github.io/blog/browser-rendering-pipeline-60fps/"}],["$","meta","9",{"property":"og:title","content":"The Browser Rendering Pipeline: Writing 60fps Animations | Hadi Mobarra"}],["$","meta","10",{"property":"og:description","content":"Style, layout, paint and composite — what each stage costs, which CSS properties trigger which stages, and how to build animations that stay smooth with transforms, will-change, FLIP and the View Transitions API."}],["$","meta","11",{"property":"og:url","content":"https://hadimobarra.github.io/blog/browser-rendering-pipeline-60fps/"}],["$","meta","12",{"property":"og:type","content":"article"}],["$","meta","13",{"property":"article:published_time","content":"2025-11-17"}],["$","meta","14",{"property":"article:tag","content":"CSS"}],["$","meta","15",{"property":"article:tag","content":"Performance"}],["$","meta","16",{"property":"article:tag","content":"Browser Internals"}],["$","meta","17",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","18",{"name":"twitter:title","content":"The Browser Rendering Pipeline: Writing 60fps Animations"}],["$","meta","19",{"name":"twitter:description","content":"Style, layout, paint and composite — what each stage costs, which CSS properties trigger which stages, and how to build animations that stay smooth with transforms, will-change, FLIP and the View Transitions API."}],["$","link","20",{"rel":"icon","href":"/favicon.ico?favicon.0x3dzn~oxb6tn.ico","sizes":"256x256","type":"image/x-icon"}],["$","$L20","21",{}]]

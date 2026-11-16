@@ -1,0 +1,62 @@
+1:"$Sreact.fragment"
+2:I[64233,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js","/_next/static/chunks/00mgaiaj6~rb~.js","/_next/static/chunks/03uyn3wrd30ix.js"],"BlogPostContent"]
+7:I[97367,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"OutletBoundary"]
+8:"$Sreact.suspense"
+3:Tc61,<h2 id="introduction">Introduction</h2>
+<p>As React applications grow, maintaining a clean architecture becomes crucial. This guide covers proven patterns for building scalable React applications.</p>
+<h2 id="component-architecture">Component Architecture</h2>
+<h3 id="presentational-vs-container-components">Presentational vs Container Components</h3>
+<p>Separate presentation from logic:</p>
+<ul>
+<li><strong>Presentational Components</strong>: Focus on how things look</li>
+<li><strong>Container Components</strong>: Focus on how things work</li>
+</ul>
+<h3 id="compound-components">Compound Components</h3>
+<p>Create flexible, reusable components:</p>
+<pre><code class="hljs language-tsx"><span class="hljs-keyword">function</span> <span class="hljs-title function_">Tabs</span>(<span class="hljs-params">{ children }</span>) {
+  <span class="hljs-keyword">const</span> [active, setActive] = <span class="hljs-title function_">useState</span>(<span class="hljs-number">0</span>);
+  <span class="hljs-keyword">return</span> (
+    <span class="xml"><span class="hljs-tag">&#x3C;<span class="hljs-name">TabsContext.Provider</span> <span class="hljs-attr">value</span>=<span class="hljs-string">{{</span> <span class="hljs-attr">active</span>, <span class="hljs-attr">setActive</span> }}></span>
+      {children}
+    <span class="hljs-tag">&#x3C;/<span class="hljs-name">TabsContext.Provider</span>></span></span>
+  );
+}
+</code></pre>
+<h2 id="state-management">State Management</h2>
+<h3 id="choose-the-right-tool">Choose the Right Tool</h3>
+<ul>
+<li><strong>Local State</strong>: useState, useReducer</li>
+<li><strong>Global State</strong>: Zustand, Context API</li>
+<li><strong>Server State</strong>: React Query, SWR</li>
+</ul>
+<h3 id="zustand-example">Zustand Example</h3>
+<pre><code class="hljs language-typescript"><span class="hljs-keyword">import</span> { create } <span class="hljs-keyword">from</span> <span class="hljs-string">'zustand'</span>;
+
+<span class="hljs-keyword">const</span> useStore = <span class="hljs-title function_">create</span>(<span class="hljs-function">(<span class="hljs-params">set</span>) =></span> ({
+  <span class="hljs-attr">count</span>: <span class="hljs-number">0</span>,
+  <span class="hljs-attr">increment</span>: <span class="hljs-function">() =></span> <span class="hljs-title function_">set</span>(<span class="hljs-function">(<span class="hljs-params">state</span>) =></span> ({ <span class="hljs-attr">count</span>: state.<span class="hljs-property">count</span> + <span class="hljs-number">1</span> })),
+}));
+</code></pre>
+<h2 id="folder-structure">Folder Structure</h2>
+<p>A scalable folder structure:</p>
+<pre><code class="hljs language-css"><span class="hljs-attribute">src</span>/
+  components/
+  hooks/
+  lib/
+  pages/
+  types/
+  utils/
+</code></pre>
+<h2 id="testing">Testing</h2>
+<p>Implement comprehensive testing:</p>
+<ul>
+<li>Unit tests with Vitest</li>
+<li>Integration tests with React Testing Library</li>
+<li>E2E tests with Playwright</li>
+</ul>
+<h2 id="conclusion">Conclusion</h2>
+<p>Good architecture is an investment that pays off as your application grows. Start with clean patterns from the beginning.</p>0:{"rsc":["$","$1","c",{"children":[[["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"{\"@context\":\"https://schema.org\",\"@type\":\"BlogPosting\",\"headline\":\"React Architecture: Building Maintainable Applications\",\"description\":\"Explore proven architectural patterns for building large-scale React applications that are easy to maintain and extend.\",\"datePublished\":\"2024-10-10\",\"keywords\":\"React, Architecture, TypeScript\",\"author\":{\"@type\":\"Person\",\"name\":\"Hadi Mobarra\",\"url\":\"https://hadimobarra.github.io\"},\"url\":\"https://hadimobarra.github.io/blog/react-architecture/\"}"}}],["$","$L2",null,{"slug":"react-architecture","title":"React Architecture: Building Maintainable Applications","description":"Explore proven architectural patterns for building large-scale React applications that are easy to maintain and extend.","date":"2024-10-10","readingTime":1,"tags":["React","Architecture","TypeScript"],"htmlContent":"$3","headings":[{"id":"introduction","text":"Introduction","level":2},{"id":"component-architecture","text":"Component Architecture","level":2},{"id":"presentational-vs-container-components","text":"Presentational vs Container Components","level":3},{"id":"compound-components","text":"Compound Components","level":3},{"id":"state-management","text":"State Management","level":2},{"id":"choose-the-right-tool","text":"Choose the Right Tool","level":3},{"id":"zustand-example","text":"Zustand Example","level":3},{"id":"folder-structure","text":"Folder Structure","level":2},{"id":"testing","text":"Testing","level":2},{"id":"conclusion","text":"Conclusion","level":2}],"prev":null,"next":{"slug":"frontend-performance","frontmatter":{"title":"Front-End Performance Optimization Guide","description":"A comprehensive guide to optimizing front-end performance, covering Core Web Vitals, lazy loading, code splitting, and more.","date":"2024-11-20","tags":["Performance","Web Development","Optimization"]},"readingTime":1},"related":[{"slug":"react-server-components-mental-model","frontmatter":{"title":"A Mental Model for React Server Components and Streaming","description":"Server Components, Client Components, the RSC payload, Suspense streaming and Server Actions — explained as one coherent model, with the composition patterns and pitfalls that matter in a real Next.js codebase.","date":"2026-03-09","tags":["React","Next.js","Architecture"]},"readingTime":6},{"slug":"build-signals-from-scratch","frontmatter":{"title":"Building a Fine-Grained Reactivity System (Signals) From Scratch","description":"Signals power Solid, Preact, Angular and Vue's reactivity. Build one in under 100 lines to understand dependency tracking, computed values, effects and glitch-free updates.","date":"2026-09-30","tags":["JavaScript","Reactivity","Architecture"]},"readingTime":5},{"slug":"taming-inp-interaction-to-next-paint","frontmatter":{"title":"Taming INP: A Practical Guide to Interaction to Next Paint","description":"INP replaced FID as a Core Web Vital. Learn how it's measured, how to find the slow interactions in your app, and the concrete techniques that cut it: yielding, deferring non-urgent work, React transitions and smaller DOMs.","date":"2026-07-14","tags":["Performance","Core Web Vitals","React"]},"readingTime":5}]}]],["$L4","$L5"],"$L6"]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"E6xvaCzEOilM2NUsVbGPT"}
+4:["$","script","script-0",{"src":"/_next/static/chunks/00mgaiaj6~rb~.js","async":true}]
+5:["$","script","script-1",{"src":"/_next/static/chunks/03uyn3wrd30ix.js","async":true}]
+6:["$","$L7",null,{"children":["$","$8",null,{"name":"Next.MetadataOutlet","children":"$@9"}]}]
+9:null

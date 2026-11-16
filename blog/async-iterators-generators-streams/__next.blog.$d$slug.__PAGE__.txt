@@ -1,0 +1,191 @@
+1:"$Sreact.fragment"
+2:I[64233,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js","/_next/static/chunks/00mgaiaj6~rb~.js","/_next/static/chunks/03uyn3wrd30ix.js"],"BlogPostContent"]
+7:I[97367,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"OutletBoundary"]
+8:"$Sreact.suspense"
+3:T4b2b,<h2 id="why-incremental-processing-matters">Why incremental processing matters</h2>
+<p>Loading a 200MB CSV into memory before showing anything, or waiting for a whole LLM response before rendering a word, are both symptoms of one habit: treating data as a single value instead of a <strong>sequence over time</strong>. JavaScript has three tools for sequences: generators, async iterators and streams.</p>
+<h2 id="generators-pausable-functions">Generators: pausable functions</h2>
+<p>A generator function returns an iterator. Each <code>yield</code> pauses execution until the consumer asks for the next value:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">function</span>* <span class="hljs-title function_">range</span>(<span class="hljs-params">start, end, step = <span class="hljs-number">1</span></span>) {
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = start; i &#x3C; end; i += step) <span class="hljs-keyword">yield</span> i;
+}
+
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> n <span class="hljs-keyword">of</span> <span class="hljs-title function_">range</span>(<span class="hljs-number">0</span>, <span class="hljs-number">10</span>, <span class="hljs-number">3</span>)) <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(n); <span class="hljs-comment">// 0 3 6 9</span>
+</code></pre>
+<p>Because they're lazy, generators can describe infinite sequences and compose without creating intermediate arrays:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">function</span>* <span class="hljs-title function_">map</span>(<span class="hljs-params">iter, fn</span>) { <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> x <span class="hljs-keyword">of</span> iter) <span class="hljs-keyword">yield</span> <span class="hljs-title function_">fn</span>(x); }
+<span class="hljs-keyword">function</span>* <span class="hljs-title function_">filter</span>(<span class="hljs-params">iter, fn</span>) { <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> x <span class="hljs-keyword">of</span> iter) <span class="hljs-keyword">if</span> (<span class="hljs-title function_">fn</span>(x)) <span class="hljs-keyword">yield</span> x; }
+<span class="hljs-keyword">function</span>* <span class="hljs-title function_">take</span>(<span class="hljs-params">iter, n</span>) {
+  <span class="hljs-keyword">if</span> (n &#x3C;= <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span>;
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> x <span class="hljs-keyword">of</span> iter) {
+    <span class="hljs-keyword">yield</span> x;
+    <span class="hljs-keyword">if</span> (--n &#x3C;= <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span>; <span class="hljs-comment">// closes the source iterator too</span>
+  }
+}
+
+<span class="hljs-keyword">function</span>* <span class="hljs-title function_">naturals</span>(<span class="hljs-params"></span>) { <span class="hljs-keyword">let</span> n = <span class="hljs-number">0</span>; <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) <span class="hljs-keyword">yield</span> n++; }
+
+<span class="hljs-keyword">const</span> firstFiveEvenSquares = [...<span class="hljs-title function_">take</span>(<span class="hljs-title function_">filter</span>(<span class="hljs-title function_">map</span>(<span class="hljs-title function_">naturals</span>(), <span class="hljs-function">(<span class="hljs-params">n</span>) =></span> n * n), <span class="hljs-function">(<span class="hljs-params">n</span>) =></span> n % <span class="hljs-number">2</span> === <span class="hljs-number">0</span>), <span class="hljs-number">5</span>)];
+<span class="hljs-comment">// [0, 4, 16, 36, 64]</span>
+</code></pre>
+<p>Modern engines also ship <strong>iterator helpers</strong> natively, so the same pipeline can be written as <code>naturals().map(...).filter(...).take(5).toArray()</code>.</p>
+<h2 id="async-generators-sequences-that-arrive-over-time">Async generators: sequences that arrive over time</h2>
+<p>Add <code>async</code> and you can <code>await</code> inside and <code>yield</code> values as they become available. Consumers use <code>for await...of</code>.</p>
+<p>A classic use: hiding pagination behind a simple loop.</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span>* <span class="hljs-title function_">fetchAllIssues</span>(<span class="hljs-params">repo</span>) {
+  <span class="hljs-keyword">let</span> url = <span class="hljs-string">`https://api.github.com/repos/<span class="hljs-subst">${repo}</span>/issues?per_page=100`</span>;
+  <span class="hljs-keyword">while</span> (url) {
+    <span class="hljs-keyword">const</span> res = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(url);
+    <span class="hljs-keyword">if</span> (!res.<span class="hljs-property">ok</span>) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">`HTTP <span class="hljs-subst">${res.status}</span>`</span>);
+    <span class="hljs-keyword">yield</span>* <span class="hljs-keyword">await</span> res.<span class="hljs-title function_">json</span>();                       <span class="hljs-comment">// yield each issue individually</span>
+    url = <span class="hljs-title function_">parseNextLink</span>(res.<span class="hljs-property">headers</span>.<span class="hljs-title function_">get</span>(<span class="hljs-string">"link"</span>));  <span class="hljs-comment">// null when there are no more pages</span>
+  }
+}
+
+<span class="hljs-keyword">for</span> <span class="hljs-title function_">await</span> (<span class="hljs-keyword">const</span> issue <span class="hljs-keyword">of</span> <span class="hljs-title function_">fetchAllIssues</span>(<span class="hljs-string">"facebook/react"</span>)) {
+  <span class="hljs-keyword">if</span> (issue.<span class="hljs-property">title</span>.<span class="hljs-title function_">includes</span>(<span class="hljs-string">"hydration"</span>)) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(issue.<span class="hljs-property">number</span>, issue.<span class="hljs-property">title</span>);
+    <span class="hljs-keyword">break</span>; <span class="hljs-comment">// stops fetching further pages</span>
+  }
+}
+</code></pre>
+<p>That <code>break</code> matters: leaving a <code>for await</code> loop calls the generator's <code>return()</code>, which runs any <code>finally</code> blocks. Pages after the one you needed are never requested. The consumer controls the pace — that's <strong>pull-based backpressure</strong>.</p>
+<h2 id="cleanup-with-finally">Cleanup with <code>finally</code></h2>
+<p>Generators are a natural place to tie resource lifetime to iteration:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span>* <span class="hljs-title function_">watchEvents</span>(<span class="hljs-params">url</span>) {
+  <span class="hljs-keyword">const</span> source = <span class="hljs-keyword">new</span> <span class="hljs-title class_">EventSource</span>(url);
+  <span class="hljs-keyword">const</span> queue = [];
+  <span class="hljs-keyword">let</span> notify;
+  source.<span class="hljs-property">onmessage</span> = <span class="hljs-function">(<span class="hljs-params">e</span>) =></span> { queue.<span class="hljs-title function_">push</span>(<span class="hljs-title class_">JSON</span>.<span class="hljs-title function_">parse</span>(e.<span class="hljs-property">data</span>)); notify?.(); };
+  <span class="hljs-keyword">try</span> {
+    <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) {
+      <span class="hljs-keyword">while</span> (queue.<span class="hljs-property">length</span>) <span class="hljs-keyword">yield</span> queue.<span class="hljs-title function_">shift</span>();
+      <span class="hljs-keyword">await</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Promise</span>(<span class="hljs-function">(<span class="hljs-params">r</span>) =></span> (notify = r));
+    }
+  } <span class="hljs-keyword">finally</span> {
+    source.<span class="hljs-title function_">close</span>(); <span class="hljs-comment">// runs on break, return or throw</span>
+  }
+}
+</code></pre>
+<h2 id="web-streams-the-platforms-streaming-primitive">Web Streams: the platform's streaming primitive</h2>
+<p><code>ReadableStream</code>, <code>WritableStream</code> and <code>TransformStream</code> are standard in browsers, Node.js, Deno, Bun and edge runtimes. <code>fetch</code> response bodies are <code>ReadableStream</code>s, which means you can process a download <strong>as it arrives</strong>:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> res = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(<span class="hljs-string">"/api/large-export.ndjson"</span>);
+
+<span class="hljs-keyword">const</span> lines = res.<span class="hljs-property">body</span>
+  .<span class="hljs-title function_">pipeThrough</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">TextDecoderStream</span>())   <span class="hljs-comment">// bytes -> text chunks</span>
+  .<span class="hljs-title function_">pipeThrough</span>(<span class="hljs-title function_">splitLines</span>());             <span class="hljs-comment">// text chunks -> lines</span>
+
+<span class="hljs-keyword">let</span> count = <span class="hljs-number">0</span>;
+<span class="hljs-keyword">for</span> <span class="hljs-title function_">await</span> (<span class="hljs-keyword">const</span> line <span class="hljs-keyword">of</span> lines) {         <span class="hljs-comment">// ReadableStream is async iterable</span>
+  <span class="hljs-keyword">if</span> (!line) <span class="hljs-keyword">continue</span>;
+  <span class="hljs-keyword">const</span> record = <span class="hljs-title class_">JSON</span>.<span class="hljs-title function_">parse</span>(line);
+  count++;
+  <span class="hljs-keyword">if</span> (count % <span class="hljs-number">1000</span> === <span class="hljs-number">0</span>) <span class="hljs-title function_">renderProgress</span>(count);
+}
+</code></pre>
+<p>The <code>splitLines</code> transform buffers partial lines across chunk boundaries — the classic streaming bug to avoid:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">splitLines</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">let</span> buffer = <span class="hljs-string">""</span>;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TransformStream</span>({
+    <span class="hljs-title function_">transform</span>(<span class="hljs-params">chunk, controller</span>) {
+      buffer += chunk;
+      <span class="hljs-keyword">const</span> lines = buffer.<span class="hljs-title function_">split</span>(<span class="hljs-string">"\n"</span>);
+      buffer = lines.<span class="hljs-title function_">pop</span>(); <span class="hljs-comment">// the last item may be an incomplete line</span>
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> line <span class="hljs-keyword">of</span> lines) controller.<span class="hljs-title function_">enqueue</span>(line);
+    },
+    <span class="hljs-title function_">flush</span>(<span class="hljs-params">controller</span>) {
+      <span class="hljs-keyword">if</span> (buffer) controller.<span class="hljs-title function_">enqueue</span>(buffer);
+    },
+  });
+}
+</code></pre>
+<blockquote>
+<p>Async iteration of <code>ReadableStream</code> is supported in Node, Deno, Firefox and recent Chromium. Where it's missing, use <code>stream.getReader()</code> and call <code>read()</code> in a loop.</p>
+</blockquote>
+<h2 id="streaming-text-into-the-ui">Streaming text into the UI</h2>
+<p>The same technique renders streamed AI responses token by token:</p>
+<pre><code class="hljs language-jsx"><span class="hljs-keyword">function</span> <span class="hljs-title function_">useStreamedText</span>(<span class="hljs-params">url, body</span>) {
+  <span class="hljs-keyword">const</span> [text, setText] = <span class="hljs-title function_">useState</span>(<span class="hljs-string">""</span>);
+
+  <span class="hljs-title function_">useEffect</span>(<span class="hljs-function">() =></span> {
+    <span class="hljs-keyword">const</span> controller = <span class="hljs-keyword">new</span> <span class="hljs-title class_">AbortController</span>();
+    (<span class="hljs-title function_">async</span> () => {
+      <span class="hljs-keyword">const</span> res = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(url, { <span class="hljs-attr">method</span>: <span class="hljs-string">"POST"</span>, body, <span class="hljs-attr">signal</span>: controller.<span class="hljs-property">signal</span> });
+      <span class="hljs-keyword">const</span> stream = res.<span class="hljs-property">body</span>.<span class="hljs-title function_">pipeThrough</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">TextDecoderStream</span>());
+      <span class="hljs-keyword">for</span> <span class="hljs-title function_">await</span> (<span class="hljs-keyword">const</span> chunk <span class="hljs-keyword">of</span> stream) {
+        <span class="hljs-title function_">setText</span>(<span class="hljs-function">(<span class="hljs-params">prev</span>) =></span> prev + chunk);
+      }
+    })().<span class="hljs-title function_">catch</span>(<span class="hljs-function">(<span class="hljs-params">err</span>) =></span> {
+      <span class="hljs-keyword">if</span> (err.<span class="hljs-property">name</span> !== <span class="hljs-string">"AbortError"</span>) <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(err);
+    });
+    <span class="hljs-keyword">return</span> <span class="hljs-function">() =></span> controller.<span class="hljs-title function_">abort</span>(); <span class="hljs-comment">// cancels the request on unmount</span>
+  }, [url, body]);
+
+  <span class="hljs-keyword">return</span> text;
+}
+</code></pre>
+<p><code>AbortController</code> is the cancellation signal for the whole pipeline: aborting the fetch cancels the stream, which ends the <code>for await</code> loop.</p>
+<h2 id="producing-streams">Producing streams</h2>
+<p>You can create streams from any source, including an async generator:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">fromAsyncIterable</span>(<span class="hljs-params">iterable</span>) {
+  <span class="hljs-keyword">const</span> iterator = iterable[<span class="hljs-title class_">Symbol</span>.<span class="hljs-property">asyncIterator</span>]();
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ReadableStream</span>({
+    <span class="hljs-keyword">async</span> <span class="hljs-title function_">pull</span>(<span class="hljs-params">controller</span>) {
+      <span class="hljs-keyword">const</span> { value, done } = <span class="hljs-keyword">await</span> iterator.<span class="hljs-title function_">next</span>();
+      done ? controller.<span class="hljs-title function_">close</span>() : controller.<span class="hljs-title function_">enqueue</span>(value);
+    },
+    <span class="hljs-keyword">async</span> <span class="hljs-title function_">cancel</span>(<span class="hljs-params">reason</span>) {
+      <span class="hljs-keyword">await</span> iterator.<span class="hljs-property">return</span>?.(reason);
+    },
+  });
+}
+</code></pre>
+<p>Using <code>pull</code> (instead of pushing everything in <code>start</code>) means the generator only advances when the consumer has room in its queue, so backpressure flows from the consumer back to the source. Newer runtimes provide <code>ReadableStream.from(iterable)</code> which does this for you.</p>
+<p>On the server, a streamed <code>Response</code> is just a stream in the body:</p>
+<pre><code class="hljs language-js"><span class="hljs-comment">// Route handler (Next.js, Remix, Hono, Workers...)</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">GET</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">const</span> encoder = <span class="hljs-keyword">new</span> <span class="hljs-title class_">TextEncoder</span>();
+  <span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span>* <span class="hljs-title function_">events</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &#x3C; <span class="hljs-number">5</span>; i++) {
+      <span class="hljs-keyword">await</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Promise</span>(<span class="hljs-function">(<span class="hljs-params">r</span>) =></span> <span class="hljs-built_in">setTimeout</span>(r, <span class="hljs-number">500</span>));
+      <span class="hljs-keyword">yield</span> encoder.<span class="hljs-title function_">encode</span>(<span class="hljs-string">`data: tick <span class="hljs-subst">${i}</span>\n\n`</span>);
+    }
+  }
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Response</span>(<span class="hljs-title function_">fromAsyncIterable</span>(<span class="hljs-title function_">events</span>()), {
+    <span class="hljs-attr">headers</span>: { <span class="hljs-string">"Content-Type"</span>: <span class="hljs-string">"text/event-stream"</span> },
+  });
+}
+</code></pre>
+<h2 id="choosing-the-right-tool">Choosing the right tool</h2>
+<table>
+<thead>
+<tr>
+<th>Need</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lazy, synchronous sequence</td>
+<td>Generator / iterator helpers</td>
+</tr>
+<tr>
+<td>Values that arrive over time, consumer-paced</td>
+<td>Async generator + <code>for await</code></td>
+</tr>
+<tr>
+<td>Bytes or text across network/file boundaries, piping, compression</td>
+<td>Web Streams (<code>pipeThrough</code>, <code>CompressionStream</code>)</td>
+</tr>
+<tr>
+<td>Cancellation</td>
+<td><code>AbortController</code> + <code>break</code> / <code>return()</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="conclusion">Conclusion</h2>
+<p>When you model data as a sequence over time, users see the first result sooner, memory stays flat regardless of input size, and cancellation works naturally. Generators make sequences easy to write, async iteration makes them easy to consume, and Web Streams connect them to the network on every modern JavaScript runtime.</p>0:{"rsc":["$","$1","c",{"children":[[["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"{\"@context\":\"https://schema.org\",\"@type\":\"BlogPosting\",\"headline\":\"Async Iterators, Generators and Web Streams in Practice\",\"description\":\"Process data incrementally instead of all at once. A practical tour of generators, async iteration, backpressure, and the Web Streams API — with examples for paginated APIs, streaming fetch responses and LLM-style token streams.\",\"datePublished\":\"2026-01-26\",\"keywords\":\"JavaScript, Async, Streams\",\"author\":{\"@type\":\"Person\",\"name\":\"Hadi Mobarra\",\"url\":\"https://hadimobarra.github.io\"},\"url\":\"https://hadimobarra.github.io/blog/async-iterators-generators-streams/\"}"}}],["$","$L2",null,{"slug":"async-iterators-generators-streams","title":"Async Iterators, Generators and Web Streams in Practice","description":"Process data incrementally instead of all at once. A practical tour of generators, async iteration, backpressure, and the Web Streams API — with examples for paginated APIs, streaming fetch responses and LLM-style token streams.","date":"2026-01-26","readingTime":6,"tags":["JavaScript","Async","Streams"],"htmlContent":"$3","headings":[{"id":"why-incremental-processing-matters","text":"Why incremental processing matters","level":2},{"id":"generators-pausable-functions","text":"Generators: pausable functions","level":2},{"id":"async-generators-sequences-that-arrive-over-time","text":"Async generators: sequences that arrive over time","level":2},{"id":"cleanup-with-finally","text":"Cleanup with finally","level":2},{"id":"web-streams-the-platforms-streaming-primitive","text":"Web Streams: the platform's streaming primitive","level":2},{"id":"streaming-text-into-the-ui","text":"Streaming text into the UI","level":2},{"id":"producing-streams","text":"Producing streams","level":2},{"id":"choosing-the-right-tool","text":"Choosing the right tool","level":2},{"id":"conclusion","text":"Conclusion","level":2}],"prev":{"slug":"browser-rendering-pipeline-60fps","frontmatter":{"title":"The Browser Rendering Pipeline: Writing 60fps Animations","description":"Style, layout, paint and composite — what each stage costs, which CSS properties trigger which stages, and how to build animations that stay smooth with transforms, will-change, FLIP and the View Transitions API.","date":"2025-11-17","tags":["CSS","Performance","Browser Internals"]},"readingTime":6},"next":{"slug":"react-server-components-mental-model","frontmatter":{"title":"A Mental Model for React Server Components and Streaming","description":"Server Components, Client Components, the RSC payload, Suspense streaming and Server Actions — explained as one coherent model, with the composition patterns and pitfalls that matter in a real Next.js codebase.","date":"2026-03-09","tags":["React","Next.js","Architecture"]},"readingTime":6},"related":[{"slug":"javascript-event-loop-deep-dive","frontmatter":{"title":"Inside the JavaScript Event Loop: Tasks, Microtasks and the Rendering Steps","description":"A precise mental model of how the browser schedules your code — tasks, microtasks, requestAnimationFrame and rendering — and how to use it to write UIs that never freeze.","date":"2026-10-21","tags":["JavaScript","Browser Internals","Performance"],"featured":true},"readingTime":6},{"slug":"build-signals-from-scratch","frontmatter":{"title":"Building a Fine-Grained Reactivity System (Signals) From Scratch","description":"Signals power Solid, Preact, Angular and Vue's reactivity. Build one in under 100 lines to understand dependency tracking, computed values, effects and glitch-free updates.","date":"2026-09-30","tags":["JavaScript","Reactivity","Architecture"]},"readingTime":5},{"slug":"proxy-and-reflect-metaprogramming","frontmatter":{"title":"Metaprogramming in JavaScript with Proxy and Reflect","description":"Intercept property access, validation, and function calls with Proxy traps. Learn the invariants, the role of Reflect and receivers, and build a tiny reactive store, a validation layer and a negative-index array.","date":"2026-08-18","tags":["JavaScript","Metaprogramming","Advanced"]},"readingTime":5}]}]],["$L4","$L5"],"$L6"]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"E6xvaCzEOilM2NUsVbGPT"}
+4:["$","script","script-0",{"src":"/_next/static/chunks/00mgaiaj6~rb~.js","async":true}]
+5:["$","script","script-1",{"src":"/_next/static/chunks/03uyn3wrd30ix.js","async":true}]
+6:["$","$L7",null,{"children":["$","$8",null,{"name":"Next.MetadataOutlet","children":"$@9"}]}]
+9:null

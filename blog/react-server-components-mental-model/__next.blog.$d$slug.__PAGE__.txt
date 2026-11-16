@@ -1,0 +1,131 @@
+1:"$Sreact.fragment"
+2:I[64233,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js","/_next/static/chunks/00mgaiaj6~rb~.js","/_next/static/chunks/03uyn3wrd30ix.js"],"BlogPostContent"]
+7:I[97367,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"OutletBoundary"]
+8:"$Sreact.suspense"
+3:T3798,<h2 id="two-kinds-of-components-one-tree">Two kinds of components, one tree</h2>
+<p>React Server Components (RSC) split your component tree across two environments:</p>
+<ul>
+<li><strong>Server Components</strong> run only on the server (at build time or request time). They can be <code>async</code>, read databases and files directly, and <strong>ship zero JavaScript</strong> to the browser.</li>
+<li><strong>Client Components</strong> are the components you already know. They are marked with <code>"use client"</code>, run on the server for the initial HTML <em>and</em> in the browser, and can use state, effects and event handlers.</li>
+</ul>
+<p>In the Next.js App Router, every component is a Server Component unless something makes it a client one.</p>
+<pre><code class="hljs language-tsx"><span class="hljs-comment">// app/posts/page.tsx — a Server Component</span>
+<span class="hljs-keyword">import</span> { db } <span class="hljs-keyword">from</span> <span class="hljs-string">"@/lib/db"</span>;
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">LikeButton</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">"./like-button"</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">PostsPage</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">const</span> posts = <span class="hljs-keyword">await</span> db.<span class="hljs-property">post</span>.<span class="hljs-title function_">findMany</span>({ <span class="hljs-attr">take</span>: <span class="hljs-number">20</span> }); <span class="hljs-comment">// direct data access</span>
+
+  <span class="hljs-keyword">return</span> (
+    <span class="xml"><span class="hljs-tag">&#x3C;<span class="hljs-name">ul</span>></span>
+      {posts.map((post) => (
+        <span class="hljs-tag">&#x3C;<span class="hljs-name">li</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{post.id}</span>></span>
+          <span class="hljs-tag">&#x3C;<span class="hljs-name">h2</span>></span>{post.title}<span class="hljs-tag">&#x3C;/<span class="hljs-name">h2</span>></span>
+          <span class="hljs-tag">&#x3C;<span class="hljs-name">LikeButton</span> <span class="hljs-attr">postId</span>=<span class="hljs-string">{post.id}</span> <span class="hljs-attr">initialLikes</span>=<span class="hljs-string">{post.likes}</span> /></span>
+        <span class="hljs-tag">&#x3C;/<span class="hljs-name">li</span>></span>
+      ))}
+    <span class="hljs-tag">&#x3C;/<span class="hljs-name">ul</span>></span></span>
+  );
+}
+</code></pre>
+<pre><code class="hljs language-tsx"><span class="hljs-comment">// app/posts/like-button.tsx</span>
+<span class="hljs-string">"use client"</span>;
+
+<span class="hljs-keyword">import</span> { useState } <span class="hljs-keyword">from</span> <span class="hljs-string">"react"</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">LikeButton</span>(<span class="hljs-params">{ postId, initialLikes }: { postId: <span class="hljs-built_in">string</span>; initialLikes: <span class="hljs-built_in">number</span> }</span>) {
+  <span class="hljs-keyword">const</span> [likes, setLikes] = <span class="hljs-title function_">useState</span>(initialLikes);
+  <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&#x3C;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{()</span> =></span> setLikes((n) => n + 1)}>♥ {likes}<span class="hljs-tag">&#x3C;/<span class="hljs-name">button</span>></span></span>;
+}
+</code></pre>
+<p>The database client, the query and the mapping code never reach the browser. Only <code>LikeButton</code>'s code does.</p>
+<h2 id="use-client-marks-a-boundary-not-a-component"><code>"use client"</code> marks a boundary, not a component</h2>
+<p>The directive marks a <strong>module boundary</strong>: that file and everything it <em>imports</em> become part of the client bundle. That's why you should push <code>"use client"</code> as far down the tree as possible — mark the small interactive leaf, not the whole page.</p>
+<p>A frequent mistake is putting <code>"use client"</code> at the top of a layout because one child needs <code>useState</code>. Now every import of that layout — markdown parsers, date libraries, icon sets — ships to the browser.</p>
+<h2 id="what-actually-goes-over-the-wire">What actually goes over the wire</h2>
+<p>Server Components don't render to HTML in the browser; they render to the <strong>RSC payload</strong>, a streamable serialised description of the tree. Conceptually it looks like:</p>
+<pre><code class="hljs language-text">0: ["$", "ul", null, { children: ["$L1", "$L2"] }]
+1: ["$", "li", null, { children: [["$", "h2", null, { children: "Hello RSC" }],
+     ["$", "$Lclient:LikeButton", null, { postId: "1", initialLikes: 3 }]] }]
+client:LikeButton: { id: "./like-button.js", chunks: ["chunk-abc.js"] }
+</code></pre>
+<p>Server Component output is inlined as plain elements. Client Components appear as <strong>references</strong> to a module plus the props to pass them. The browser downloads only those referenced chunks and hydrates them.</p>
+<p>Two consequences follow:</p>
+<ol>
+<li><strong>Props passed from server to client must be serialisable</strong> — plain objects, arrays, strings, numbers, <code>Date</code>, <code>Map</code>, <code>Set</code>, promises and server actions. Not class instances, and not ordinary functions.</li>
+<li><strong>Navigations fetch payloads, not HTML.</strong> On client navigation, React requests the RSC payload for the new route and merges it into the existing tree, so client state in shared layouts survives.</li>
+</ol>
+<h2 id="the-composition-rule-pass-server-components-as-children">The composition rule: pass Server Components as children</h2>
+<p>A Client Component can't <em>import</em> a Server Component (the import would pull server-only code into the client bundle). But it can <em>render</em> one passed in as a prop:</p>
+<pre><code class="hljs language-tsx"><span class="hljs-comment">// ❌ Inside a client component file</span>
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">ServerSidebar</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">"./server-sidebar"</span>; <span class="hljs-comment">// becomes client code</span>
+
+<span class="hljs-comment">// ✅ Compose from a server component instead</span>
+<span class="hljs-comment">// app/layout.tsx (server)</span>
+<span class="xml"><span class="hljs-tag">&#x3C;<span class="hljs-name">CollapsiblePanel</span>></span>          {/* client: owns open/closed state */}
+  <span class="hljs-tag">&#x3C;<span class="hljs-name">ServerSidebar</span> /></span>          {/* server: rendered on the server, passed as children */}
+<span class="hljs-tag">&#x3C;/<span class="hljs-name">CollapsiblePanel</span>></span></span>
+</code></pre>
+<p><code>children</code> here is already-rendered output in the RSC payload, so the client component just places it. This "donut" pattern — an interactive shell around server-rendered content — is the most important RSC composition technique.</p>
+<h2 id="streaming-with-suspense">Streaming with Suspense</h2>
+<p>Because the payload is a stream, the server can send the page shell immediately and fill in slow parts later:</p>
+<pre><code class="hljs language-tsx"><span class="hljs-keyword">import</span> { <span class="hljs-title class_">Suspense</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">"react"</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">Dashboard</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">return</span> (
+    <span class="xml"><span class="hljs-tag">&#x3C;></span>
+      <span class="hljs-tag">&#x3C;<span class="hljs-name">Header</span> /></span>                                  {/* sent immediately */}
+      <span class="hljs-tag">&#x3C;<span class="hljs-name">Suspense</span> <span class="hljs-attr">fallback</span>=<span class="hljs-string">{</span>&#x3C;<span class="hljs-attr">ChartSkeleton</span> /></span>}>
+        <span class="hljs-tag">&#x3C;<span class="hljs-name">RevenueChart</span> /></span>                          {/* async; streams in when ready */}
+      <span class="hljs-tag">&#x3C;/<span class="hljs-name">Suspense</span>></span>
+      <span class="hljs-tag">&#x3C;<span class="hljs-name">Suspense</span> <span class="hljs-attr">fallback</span>=<span class="hljs-string">{</span>&#x3C;<span class="hljs-attr">FeedSkeleton</span> /></span>}>
+        <span class="hljs-tag">&#x3C;<span class="hljs-name">ActivityFeed</span> /></span>
+      <span class="hljs-tag">&#x3C;/<span class="hljs-name">Suspense</span>></span>
+    <span class="hljs-tag">&#x3C;/></span></span>
+  );
+}
+</code></pre>
+<p>Each boundary resolves independently. The user sees and can interact with the header while the chart query is still running, and React hydrates parts of the page as their code arrives (<strong>selective hydration</strong>), prioritising the part the user interacts with first.</p>
+<p>Watch out for <strong>waterfalls</strong>. Awaiting in sequence serialises requests:</p>
+<pre><code class="hljs language-tsx"><span class="hljs-comment">// ❌ 300ms + 300ms</span>
+<span class="hljs-keyword">const</span> user = <span class="hljs-keyword">await</span> <span class="hljs-title function_">getUser</span>(id);
+<span class="hljs-keyword">const</span> orders = <span class="hljs-keyword">await</span> <span class="hljs-title function_">getOrders</span>(id);
+
+<span class="hljs-comment">// ✅ ~300ms — start both, then await</span>
+<span class="hljs-keyword">const</span> [user, orders] = <span class="hljs-keyword">await</span> <span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">all</span>([<span class="hljs-title function_">getUser</span>(id), <span class="hljs-title function_">getOrders</span>(id)]);
+</code></pre>
+<p>Or better, move each fetch into the component that needs it and give each its own Suspense boundary.</p>
+<h2 id="mutations-with-server-actions">Mutations with Server Actions</h2>
+<p>Server Actions are async functions marked with <code>"use server"</code> that the client can call like a function. React turns the call into a POST request:</p>
+<pre><code class="hljs language-tsx"><span class="hljs-comment">// app/posts/actions.ts</span>
+<span class="hljs-string">"use server"</span>;
+
+<span class="hljs-keyword">import</span> { revalidatePath } <span class="hljs-keyword">from</span> <span class="hljs-string">"next/cache"</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">createPost</span>(<span class="hljs-params"><span class="hljs-attr">formData</span>: <span class="hljs-title class_">FormData</span></span>) {
+  <span class="hljs-keyword">const</span> title = <span class="hljs-title class_">String</span>(formData.<span class="hljs-title function_">get</span>(<span class="hljs-string">"title"</span>) ?? <span class="hljs-string">""</span>);
+  <span class="hljs-keyword">if</span> (!title) <span class="hljs-keyword">return</span> { <span class="hljs-attr">error</span>: <span class="hljs-string">"Title is required"</span> };
+  <span class="hljs-keyword">await</span> db.<span class="hljs-property">post</span>.<span class="hljs-title function_">create</span>({ <span class="hljs-attr">data</span>: { title } });
+  <span class="hljs-title function_">revalidatePath</span>(<span class="hljs-string">"/posts"</span>); <span class="hljs-comment">// re-render affected server components</span>
+}
+</code></pre>
+<pre><code class="hljs language-tsx"><span class="hljs-comment">// Works even before JavaScript loads (progressive enhancement)</span>
+&#x3C;form action={createPost}>
+  <span class="xml"><span class="hljs-tag">&#x3C;<span class="hljs-name">input</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"title"</span> /></span></span>
+  <span class="xml"><span class="hljs-tag">&#x3C;<span class="hljs-name">button</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"submit"</span>></span>Publish<span class="hljs-tag">&#x3C;/<span class="hljs-name">button</span>></span></span>
+&#x3C;/form>
+</code></pre>
+<p><strong>Treat every Server Action as a public API endpoint.</strong> Anyone can call it with any arguments. Authenticate, authorise and validate inside the action itself — never rely on the UI hiding a button.</p>
+<h2 id="pitfalls-checklist">Pitfalls checklist</h2>
+<ul>
+<li><strong>Leaking secrets:</strong> a module imported by a client component can end up in the browser. Add <code>import "server-only"</code> to modules that touch secrets so the build fails if that happens.</li>
+<li><strong>Context:</strong> <code>createContext</code> providers must be Client Components. Wrap them in a small client <code>Providers</code> component and render it from your server layout.</li>
+<li><strong>Over-fetching in loops:</strong> use React's <code>cache()</code> to dedupe the same data request across components within a single render.</li>
+<li><strong>Large props:</strong> everything you pass to a client component is serialised into the payload. Pass the 3 fields it needs, not the full database row.</li>
+</ul>
+<h2 id="conclusion">Conclusion</h2>
+<p>Server Components render to a serialisable stream. Client Components are references in that stream that hydrate in the browser. <code>"use client"</code> marks a bundle boundary, and composition through <code>children</code> lets server content live inside interactive shells. Suspense streams the slow parts, and Server Actions handle mutations as public endpoints. Keep <code>"use client"</code> at the leaves, fetch in parallel and validate every action, and RSC will give you smaller bundles and faster pages.</p>0:{"rsc":["$","$1","c",{"children":[[["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"{\"@context\":\"https://schema.org\",\"@type\":\"BlogPosting\",\"headline\":\"A Mental Model for React Server Components and Streaming\",\"description\":\"Server Components, Client Components, the RSC payload, Suspense streaming and Server Actions — explained as one coherent model, with the composition patterns and pitfalls that matter in a real Next.js codebase.\",\"datePublished\":\"2026-03-09\",\"keywords\":\"React, Next.js, Architecture\",\"author\":{\"@type\":\"Person\",\"name\":\"Hadi Mobarra\",\"url\":\"https://hadimobarra.github.io\"},\"url\":\"https://hadimobarra.github.io/blog/react-server-components-mental-model/\"}"}}],["$","$L2",null,{"slug":"react-server-components-mental-model","title":"A Mental Model for React Server Components and Streaming","description":"Server Components, Client Components, the RSC payload, Suspense streaming and Server Actions — explained as one coherent model, with the composition patterns and pitfalls that matter in a real Next.js codebase.","date":"2026-03-09","readingTime":6,"tags":["React","Next.js","Architecture"],"htmlContent":"$3","headings":[{"id":"two-kinds-of-components-one-tree","text":"Two kinds of components, one tree","level":2},{"id":"use-client-marks-a-boundary-not-a-component","text":"\"use client\" marks a boundary, not a component","level":2},{"id":"what-actually-goes-over-the-wire","text":"What actually goes over the wire","level":2},{"id":"the-composition-rule-pass-server-components-as-children","text":"The composition rule: pass Server Components as children","level":2},{"id":"streaming-with-suspense","text":"Streaming with Suspense","level":2},{"id":"mutations-with-server-actions","text":"Mutations with Server Actions","level":2},{"id":"pitfalls-checklist","text":"Pitfalls checklist","level":2},{"id":"conclusion","text":"Conclusion","level":2}],"prev":{"slug":"async-iterators-generators-streams","frontmatter":{"title":"Async Iterators, Generators and Web Streams in Practice","description":"Process data incrementally instead of all at once. A practical tour of generators, async iteration, backpressure, and the Web Streams API — with examples for paginated APIs, streaming fetch responses and LLM-style token streams.","date":"2026-01-26","tags":["JavaScript","Async","Streams"]},"readingTime":6},"next":{"slug":"web-workers-off-main-thread","frontmatter":{"title":"Off the Main Thread: Web Workers, Transferables and RPC in Practice","description":"Move expensive work off the UI thread. Covers dedicated workers in modern bundlers, structured clone costs, zero-copy transferables, a promise-based RPC layer, SharedArrayBuffer with Atomics, and OffscreenCanvas.","date":"2026-04-20","tags":["JavaScript","Performance","Web Workers"]},"readingTime":5},"related":[{"slug":"nextjs-best-practices","frontmatter":{"title":"Next.js Best Practices for Building Scalable Applications","description":"Learn the essential best practices for building production-ready Next.js applications that scale well and remain maintainable.","date":"2024-12-15","tags":["Next.js","React","Web Development"]},"readingTime":2},{"slug":"react-architecture","frontmatter":{"title":"React Architecture: Building Maintainable Applications","description":"Explore proven architectural patterns for building large-scale React applications that are easy to maintain and extend.","date":"2024-10-10","tags":["React","Architecture","TypeScript"]},"readingTime":1},{"slug":"build-signals-from-scratch","frontmatter":{"title":"Building a Fine-Grained Reactivity System (Signals) From Scratch","description":"Signals power Solid, Preact, Angular and Vue's reactivity. Build one in under 100 lines to understand dependency tracking, computed values, effects and glitch-free updates.","date":"2026-09-30","tags":["JavaScript","Reactivity","Architecture"]},"readingTime":5}]}]],["$L4","$L5"],"$L6"]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"E6xvaCzEOilM2NUsVbGPT"}
+4:["$","script","script-0",{"src":"/_next/static/chunks/00mgaiaj6~rb~.js","async":true}]
+5:["$","script","script-1",{"src":"/_next/static/chunks/03uyn3wrd30ix.js","async":true}]
+6:["$","$L7",null,{"children":["$","$8",null,{"name":"Next.MetadataOutlet","children":"$@9"}]}]
+9:null

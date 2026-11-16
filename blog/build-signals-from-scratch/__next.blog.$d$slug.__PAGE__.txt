@@ -1,0 +1,217 @@
+1:"$Sreact.fragment"
+2:I[64233,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js","/_next/static/chunks/00mgaiaj6~rb~.js","/_next/static/chunks/03uyn3wrd30ix.js"],"BlogPostContent"]
+7:I[97367,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"OutletBoundary"]
+8:"$Sreact.suspense"
+3:T3c95,<h2 id="why-signals-are-everywhere">Why signals are everywhere</h2>
+<p>Solid, Preact Signals, Angular, Vue, Svelte 5 runes and the TC39 Signals proposal all share one idea: <strong>track exactly which computations read which values, and re-run only those when a value changes.</strong> Instead of re-rendering a component tree and diffing, a signal-based UI updates the one text node that depends on the changed value.</p>
+<p>The best way to understand it is to build one. We'll write <code>signal</code>, <code>computed</code> and <code>effect</code> in plain JavaScript.</p>
+<h2 id="step-1-a-signal-is-a-value-with-subscribers">Step 1: a signal is a value with subscribers</h2>
+<pre><code class="hljs language-js"><span class="hljs-keyword">let</span> currentObserver = <span class="hljs-literal">null</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">signal</span>(<span class="hljs-params">initial</span>) {
+  <span class="hljs-keyword">let</span> value = initial;
+  <span class="hljs-keyword">const</span> subscribers = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Set</span>();
+
+  <span class="hljs-keyword">const</span> <span class="hljs-title function_">read</span> = (<span class="hljs-params"></span>) => {
+    <span class="hljs-comment">// Auto-tracking: whoever is running right now depends on us</span>
+    <span class="hljs-keyword">if</span> (currentObserver) {
+      subscribers.<span class="hljs-title function_">add</span>(currentObserver);
+      currentObserver.<span class="hljs-property">dependencies</span>.<span class="hljs-title function_">add</span>(subscribers);
+    }
+    <span class="hljs-keyword">return</span> value;
+  };
+
+  <span class="hljs-keyword">const</span> <span class="hljs-title function_">write</span> = (<span class="hljs-params">next</span>) => {
+    <span class="hljs-keyword">if</span> (<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">is</span>(next, value)) <span class="hljs-keyword">return</span>;
+    value = next;
+    <span class="hljs-comment">// Copy first: running effects may modify the set</span>
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> sub <span class="hljs-keyword">of</span> [...subscribers]) sub.<span class="hljs-title function_">schedule</span>();
+  };
+
+  <span class="hljs-keyword">return</span> [read, write];
+}
+</code></pre>
+<p>The key trick is <code>currentObserver</code>: a global pointer to "the computation currently executing". Any signal read while it's set records a dependency. This is <strong>automatic dependency tracking</strong> — no dependency arrays.</p>
+<h2 id="step-2-effects">Step 2: effects</h2>
+<p>An effect runs a function, tracking everything it reads. When any of those change, it re-runs.</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">cleanup</span>(<span class="hljs-params">observer</span>) {
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> dep <span class="hljs-keyword">of</span> observer.<span class="hljs-property">dependencies</span>) dep.<span class="hljs-title function_">delete</span>(observer);
+  observer.<span class="hljs-property">dependencies</span>.<span class="hljs-title function_">clear</span>();
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">effect</span>(<span class="hljs-params">fn</span>) {
+  <span class="hljs-keyword">const</span> observer = {
+    <span class="hljs-attr">dependencies</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">Set</span>(),
+    <span class="hljs-title function_">schedule</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-title function_">run</span>();
+    },
+  };
+
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">run</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-title function_">cleanup</span>(observer); <span class="hljs-comment">// dependencies can change between runs</span>
+    <span class="hljs-keyword">const</span> prev = currentObserver;
+    currentObserver = observer;
+    <span class="hljs-keyword">try</span> {
+      <span class="hljs-title function_">fn</span>();
+    } <span class="hljs-keyword">finally</span> {
+      currentObserver = prev;
+    }
+  }
+
+  <span class="hljs-title function_">run</span>();
+  <span class="hljs-keyword">return</span> <span class="hljs-function">() =></span> <span class="hljs-title function_">cleanup</span>(observer); <span class="hljs-comment">// dispose</span>
+}
+</code></pre>
+<p>Why <code>cleanup</code> before every run? Consider conditional reads:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> [showName, setShowName] = <span class="hljs-title function_">signal</span>(<span class="hljs-literal">true</span>);
+<span class="hljs-keyword">const</span> [name, setName] = <span class="hljs-title function_">signal</span>(<span class="hljs-string">"Ada"</span>);
+
+<span class="hljs-title function_">effect</span>(<span class="hljs-function">() =></span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">showName</span>() ? <span class="hljs-title function_">name</span>() : <span class="hljs-string">"hidden"</span>);
+});
+
+<span class="hljs-title function_">setShowName</span>(<span class="hljs-literal">false</span>); <span class="hljs-comment">// logs "hidden"</span>
+<span class="hljs-title function_">setName</span>(<span class="hljs-string">"Grace"</span>);   <span class="hljs-comment">// should NOT re-run — name is no longer read</span>
+</code></pre>
+<p>Re-collecting dependencies on each run means the effect stops listening to <code>name</code> once the branch that read it is gone. This <strong>dynamic dependency tracking</strong> is something React's static dependency arrays can't express.</p>
+<h2 id="step-3-computed-values">Step 3: computed values</h2>
+<p>A <code>computed</code> is both an observer (it reads signals) and a source (others read it). It should be <strong>lazy</strong> and <strong>cached</strong>: only recompute when read <em>and</em> stale.</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">computed</span>(<span class="hljs-params">fn</span>) {
+  <span class="hljs-keyword">let</span> value;
+  <span class="hljs-keyword">let</span> dirty = <span class="hljs-literal">true</span>;
+  <span class="hljs-keyword">const</span> subscribers = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Set</span>();
+
+  <span class="hljs-keyword">const</span> observer = {
+    <span class="hljs-attr">dependencies</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">Set</span>(),
+    <span class="hljs-title function_">schedule</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-keyword">if</span> (dirty) <span class="hljs-keyword">return</span>;
+      dirty = <span class="hljs-literal">true</span>;
+      <span class="hljs-comment">// Propagate staleness, don't recompute yet</span>
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> sub <span class="hljs-keyword">of</span> [...subscribers]) sub.<span class="hljs-title function_">schedule</span>();
+    },
+  };
+
+  <span class="hljs-keyword">return</span> <span class="hljs-function">() =></span> {
+    <span class="hljs-keyword">if</span> (currentObserver) {
+      subscribers.<span class="hljs-title function_">add</span>(currentObserver);
+      currentObserver.<span class="hljs-property">dependencies</span>.<span class="hljs-title function_">add</span>(subscribers);
+    }
+    <span class="hljs-keyword">if</span> (dirty) {
+      <span class="hljs-title function_">cleanup</span>(observer);
+      <span class="hljs-keyword">const</span> prev = currentObserver;
+      currentObserver = observer;
+      <span class="hljs-keyword">try</span> {
+        value = <span class="hljs-title function_">fn</span>();
+      } <span class="hljs-keyword">finally</span> {
+        currentObserver = prev;
+      }
+      dirty = <span class="hljs-literal">false</span>;
+    }
+    <span class="hljs-keyword">return</span> value;
+  };
+}
+</code></pre>
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> [first, setFirst] = <span class="hljs-title function_">signal</span>(<span class="hljs-string">"Ada"</span>);
+<span class="hljs-keyword">const</span> [last, setLast] = <span class="hljs-title function_">signal</span>(<span class="hljs-string">"Lovelace"</span>);
+<span class="hljs-keyword">const</span> fullName = <span class="hljs-title function_">computed</span>(<span class="hljs-function">() =></span> <span class="hljs-string">`<span class="hljs-subst">${first()}</span> <span class="hljs-subst">${last()}</span>`</span>);
+
+<span class="hljs-title function_">effect</span>(<span class="hljs-function">() =></span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">fullName</span>())); <span class="hljs-comment">// "Ada Lovelace"</span>
+<span class="hljs-title function_">setLast</span>(<span class="hljs-string">"Byron"</span>);                        <span class="hljs-comment">// "Ada Byron"</span>
+</code></pre>
+<h2 id="step-4-batching-and-the-glitch-problem">Step 4: batching and the glitch problem</h2>
+<p>Our naive implementation has a flaw. Look at this "diamond" graph:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> [a, setA] = <span class="hljs-title function_">signal</span>(<span class="hljs-number">1</span>);
+<span class="hljs-keyword">const</span> b = <span class="hljs-title function_">computed</span>(<span class="hljs-function">() =></span> <span class="hljs-title function_">a</span>() * <span class="hljs-number">2</span>);
+<span class="hljs-keyword">const</span> c = <span class="hljs-title function_">computed</span>(<span class="hljs-function">() =></span> <span class="hljs-title function_">a</span>() + <span class="hljs-number">1</span>);
+
+<span class="hljs-title function_">effect</span>(<span class="hljs-function">() =></span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">b</span>(), <span class="hljs-title function_">c</span>()));
+<span class="hljs-title function_">setA</span>(<span class="hljs-number">2</span>);
+</code></pre>
+<p>The effect depends on <code>a</code> twice (through <code>b</code> and <code>c</code>). With eager scheduling, it can run once after <code>b</code> is marked dirty and again after <code>c</code> — the first run might even see an inconsistent mix of old and new values. That intermediate state is called a <strong>glitch</strong>.</p>
+<p>The fix used by real libraries is two-phase propagation: first <strong>mark</strong> everything downstream as stale, then <strong>run</strong> effects once, after the write completes. A simple version uses a queue and a batch depth:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">let</span> batchDepth = <span class="hljs-number">0</span>;
+<span class="hljs-keyword">const</span> pendingEffects = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Set</span>();
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">batch</span>(<span class="hljs-params">fn</span>) {
+  batchDepth++;
+  <span class="hljs-keyword">try</span> {
+    <span class="hljs-title function_">fn</span>();
+  } <span class="hljs-keyword">finally</span> {
+    batchDepth--;
+    <span class="hljs-keyword">if</span> (batchDepth === <span class="hljs-number">0</span>) <span class="hljs-title function_">flush</span>();
+  }
+}
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">flush</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> run <span class="hljs-keyword">of</span> [...pendingEffects]) {
+    pendingEffects.<span class="hljs-title function_">delete</span>(run);
+    <span class="hljs-title function_">run</span>();
+  }
+}
+</code></pre>
+<p>Then change the effect's <code>schedule</code> to enqueue instead of running immediately, and have <code>write</code> wrap its notifications in <code>batch</code>:</p>
+<pre><code class="hljs language-js"><span class="hljs-title function_">schedule</span>(<span class="hljs-params"></span>) {
+  pendingEffects.<span class="hljs-title function_">add</span>(run);
+},
+
+<span class="hljs-comment">// inside signal's write():</span>
+<span class="hljs-title function_">batch</span>(<span class="hljs-function">() =></span> {
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> sub <span class="hljs-keyword">of</span> [...subscribers]) sub.<span class="hljs-title function_">schedule</span>();
+});
+</code></pre>
+<p>Now the diamond logs <code>4 3</code> exactly once. Because <code>computed</code> values are lazy and only recompute when read, the effect always sees a consistent snapshot. Production libraries go further, tracking per-node versions or colours ("clean / check / dirty") so that a computed whose inputs changed but whose <em>output</em> didn't stops propagation early.</p>
+<h2 id="how-this-maps-to-real-frameworks">How this maps to real frameworks</h2>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Our version</th>
+<th>Solid</th>
+<th>Preact Signals</th>
+<th>Vue</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Source</td>
+<td><code>signal()</code></td>
+<td><code>createSignal</code></td>
+<td><code>signal</code></td>
+<td><code>ref</code></td>
+</tr>
+<tr>
+<td>Derived</td>
+<td><code>computed()</code></td>
+<td><code>createMemo</code></td>
+<td><code>computed</code></td>
+<td><code>computed</code></td>
+</tr>
+<tr>
+<td>Side effect</td>
+<td><code>effect()</code></td>
+<td><code>createEffect</code></td>
+<td><code>effect</code></td>
+<td><code>watchEffect</code></td>
+</tr>
+<tr>
+<td>Batching</td>
+<td><code>batch()</code></td>
+<td><code>batch</code></td>
+<td><code>batch</code></td>
+<td>scheduler</td>
+</tr>
+</tbody>
+</table>
+<p>The JSX compiler in Solid wraps each dynamic expression in an effect, which is why only the text node that reads a signal updates when it changes — components run exactly once.</p>
+<h2 id="trade-offs-worth-knowing">Trade-offs worth knowing</h2>
+<ul>
+<li><strong>Memory:</strong> every dependency edge is a <code>Set</code> entry. Large graphs need cleanup on disposal or they leak.</li>
+<li><strong>Debuggability:</strong> implicit tracking is convenient but can hide why something re-ran. Good devtools matter.</li>
+<li><strong>Equality:</strong> <code>Object.is</code> means mutating an object in place won't notify. Treat signal values as immutable, or use a custom equality function.</li>
+</ul>
+<h2 id="conclusion">Conclusion</h2>
+<p>Signals come down to a global "current observer" pointer, sets of subscribers, lazy cached derivations and a scheduler that avoids glitches. With those four ideas you can read the source of Solid or Preact Signals and recognise every part, and you'll understand why the TC39 proposal aims to standardise exactly this core.</p>0:{"rsc":["$","$1","c",{"children":[[["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"{\"@context\":\"https://schema.org\",\"@type\":\"BlogPosting\",\"headline\":\"Building a Fine-Grained Reactivity System (Signals) From Scratch\",\"description\":\"Signals power Solid, Preact, Angular and Vue's reactivity. Build one in under 100 lines to understand dependency tracking, computed values, effects and glitch-free updates.\",\"datePublished\":\"2026-09-30\",\"keywords\":\"JavaScript, Reactivity, Architecture\",\"author\":{\"@type\":\"Person\",\"name\":\"Hadi Mobarra\",\"url\":\"https://hadimobarra.github.io\"},\"url\":\"https://hadimobarra.github.io/blog/build-signals-from-scratch/\"}"}}],["$","$L2",null,{"slug":"build-signals-from-scratch","title":"Building a Fine-Grained Reactivity System (Signals) From Scratch","description":"Signals power Solid, Preact, Angular and Vue's reactivity. Build one in under 100 lines to understand dependency tracking, computed values, effects and glitch-free updates.","date":"2026-09-30","readingTime":5,"tags":["JavaScript","Reactivity","Architecture"],"htmlContent":"$3","headings":[{"id":"why-signals-are-everywhere","text":"Why signals are everywhere","level":2},{"id":"step-1-a-signal-is-a-value-with-subscribers","text":"Step 1: a signal is a value with subscribers","level":2},{"id":"step-2-effects","text":"Step 2: effects","level":2},{"id":"step-3-computed-values","text":"Step 3: computed values","level":2},{"id":"step-4-batching-and-the-glitch-problem","text":"Step 4: batching and the glitch problem","level":2},{"id":"how-this-maps-to-real-frameworks","text":"How this maps to real frameworks","level":2},{"id":"trade-offs-worth-knowing","text":"Trade-offs worth knowing","level":2},{"id":"conclusion","text":"Conclusion","level":2}],"prev":{"slug":"proxy-and-reflect-metaprogramming","frontmatter":{"title":"Metaprogramming in JavaScript with Proxy and Reflect","description":"Intercept property access, validation, and function calls with Proxy traps. Learn the invariants, the role of Reflect and receivers, and build a tiny reactive store, a validation layer and a negative-index array.","date":"2026-08-18","tags":["JavaScript","Metaprogramming","Advanced"]},"readingTime":5},"next":{"slug":"javascript-event-loop-deep-dive","frontmatter":{"title":"Inside the JavaScript Event Loop: Tasks, Microtasks and the Rendering Steps","description":"A precise mental model of how the browser schedules your code — tasks, microtasks, requestAnimationFrame and rendering — and how to use it to write UIs that never freeze.","date":"2026-10-21","tags":["JavaScript","Browser Internals","Performance"],"featured":true},"readingTime":6},"related":[{"slug":"javascript-event-loop-deep-dive","frontmatter":"$0:rsc:props:children:0:1:props:next:frontmatter","readingTime":6},{"slug":"proxy-and-reflect-metaprogramming","frontmatter":"$0:rsc:props:children:0:1:props:prev:frontmatter","readingTime":5},{"slug":"web-workers-off-main-thread","frontmatter":{"title":"Off the Main Thread: Web Workers, Transferables and RPC in Practice","description":"Move expensive work off the UI thread. Covers dedicated workers in modern bundlers, structured clone costs, zero-copy transferables, a promise-based RPC layer, SharedArrayBuffer with Atomics, and OffscreenCanvas.","date":"2026-04-20","tags":["JavaScript","Performance","Web Workers"]},"readingTime":5}]}]],["$L4","$L5"],"$L6"]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"E6xvaCzEOilM2NUsVbGPT"}
+4:["$","script","script-0",{"src":"/_next/static/chunks/00mgaiaj6~rb~.js","async":true}]
+5:["$","script","script-1",{"src":"/_next/static/chunks/03uyn3wrd30ix.js","async":true}]
+6:["$","$L7",null,{"children":["$","$8",null,{"name":"Next.MetadataOutlet","children":"$@9"}]}]
+9:null

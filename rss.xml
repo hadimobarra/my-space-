@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Hadi Mobarra — Blog</title>
+    <link>https://hadimobarra.github.io/blog/</link>
+    <description>Articles on advanced JavaScript, React, TypeScript and front-end engineering.</description>
+    <language>en</language>
+    <atom:link href="https://hadimobarra.github.io/rss.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Inside the JavaScript Event Loop: Tasks, Microtasks and the Rendering Steps</title>
+      <link>https://hadimobarra.github.io/blog/javascript-event-loop-deep-dive/</link>
+      <guid>https://hadimobarra.github.io/blog/javascript-event-loop-deep-dive/</guid>
+      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <description>A precise mental model of how the browser schedules your code — tasks, microtasks, requestAnimationFrame and rendering — and how to use it to write UIs that never freeze.</description>
+      <category>JavaScript</category>
+      <category>Browser Internals</category>
+      <category>Performance</category>
+    </item>
+    <item>
+      <title>Building a Fine-Grained Reactivity System (Signals) From Scratch</title>
+      <link>https://hadimobarra.github.io/blog/build-signals-from-scratch/</link>
+      <guid>https://hadimobarra.github.io/blog/build-signals-from-scratch/</guid>
+      <pubDate>Wed, 30 Sep 2026 00:00:00 GMT</pubDate>
+      <description>Signals power Solid, Preact, Angular and Vue's reactivity. Build one in under 100 lines to understand dependency tracking, computed values, effects and glitch-free updates.</description>
+      <category>JavaScript</category>
+      <category>Reactivity</category>
+      <category>Architecture</category>
+    </item>
+    <item>
+      <title>Metaprogramming in JavaScript with Proxy and Reflect</title>
+      <link>https://hadimobarra.github.io/blog/proxy-and-reflect-metaprogramming/</link>
+      <guid>https://hadimobarra.github.io/blog/proxy-and-reflect-metaprogramming/</guid>
+      <pubDate>Tue, 18 Aug 2026 00:00:00 GMT</pubDate>
+      <description>Intercept property access, validation, and function calls with Proxy traps. Learn the invariants, the role of Reflect and receivers, and build a tiny reactive store, a validation layer and a negative-index array.</description>
+      <category>JavaScript</category>
+      <category>Metaprogramming</category>
+      <category>Advanced</category>
+    </item>
+    <item>
+      <title>Taming INP: A Practical Guide to Interaction to Next Paint</title>
+      <link>https://hadimobarra.github.io/blog/taming-inp-interaction-to-next-paint/</link>
+      <guid>https://hadimobarra.github.io/blog/taming-inp-interaction-to-next-paint/</guid>
+      <pubDate>Tue, 14 Jul 2026 00:00:00 GMT</pubDate>
+      <description>INP replaced FID as a Core Web Vital. Learn how it's measured, how to find the slow interactions in your app, and the concrete techniques that cut it: yielding, deferring non-urgent work, React transitions and smaller DOMs.</description>
+      <category>Performance</category>
+      <category>Core Web Vitals</category>
+      <category>React</category>
+    </item>
+    <item>
+      <title>Type-Level Programming in TypeScript: Conditional, Mapped and Template Literal Types</title>
+      <link>https://hadimobarra.github.io/blog/typescript-type-level-programming/</link>
+      <guid>https://hadimobarra.github.io/blog/typescript-type-level-programming/</guid>
+      <pubDate>Tue, 02 Jun 2026 00:00:00 GMT</pubDate>
+      <description>Treat TypeScript's type system as a small functional language. Learn conditional types and infer, distributive behaviour, key remapping, recursive types and template literals, then build a type-safe router and a deep-path getter.</description>
+      <category>TypeScript</category>
+      <category>Type System</category>
+      <category>Advanced</category>
+    </item>
+    <item>
+      <title>Off the Main Thread: Web Workers, Transferables and RPC in Practice</title>
+      <link>https://hadimobarra.github.io/blog/web-workers-off-main-thread/</link>
+      <guid>https://hadimobarra.github.io/blog/web-workers-off-main-thread/</guid>
+      <pubDate>Mon, 20 Apr 2026 00:00:00 GMT</pubDate>
+      <description>Move expensive work off the UI thread. Covers dedicated workers in modern bundlers, structured clone costs, zero-copy transferables, a promise-based RPC layer, SharedArrayBuffer with Atomics, and OffscreenCanvas.</description>
+      <category>JavaScript</category>
+      <category>Performance</category>
+      <category>Web Workers</category>
+    </item>
+    <item>
+      <title>A Mental Model for React Server Components and Streaming</title>
+      <link>https://hadimobarra.github.io/blog/react-server-components-mental-model/</link>
+      <guid>https://hadimobarra.github.io/blog/react-server-components-mental-model/</guid>
+      <pubDate>Mon, 09 Mar 2026 00:00:00 GMT</pubDate>
+      <description>Server Components, Client Components, the RSC payload, Suspense streaming and Server Actions — explained as one coherent model, with the composition patterns and pitfalls that matter in a real Next.js codebase.</description>
+      <category>React</category>
+      <category>Next.js</category>
+      <category>Architecture</category>
+    </item>
+    <item>
+      <title>Async Iterators, Generators and Web Streams in Practice</title>
+      <link>https://hadimobarra.github.io/blog/async-iterators-generators-streams/</link>
+      <guid>https://hadimobarra.github.io/blog/async-iterators-generators-streams/</guid>
+      <pubDate>Mon, 26 Jan 2026 00:00:00 GMT</pubDate>
+      <description>Process data incrementally instead of all at once. A practical tour of generators, async iteration, backpressure, and the Web Streams API — with examples for paginated APIs, streaming fetch responses and LLM-style token streams.</description>
+      <category>JavaScript</category>
+      <category>Async</category>
+      <category>Streams</category>
+    </item>
+    <item>
+      <title>The Browser Rendering Pipeline: Writing 60fps Animations</title>
+      <link>https://hadimobarra.github.io/blog/browser-rendering-pipeline-60fps/</link>
+      <guid>https://hadimobarra.github.io/blog/browser-rendering-pipeline-60fps/</guid>
+      <pubDate>Mon, 17 Nov 2025 00:00:00 GMT</pubDate>
+      <description>Style, layout, paint and composite — what each stage costs, which CSS properties trigger which stages, and how to build animations that stay smooth with transforms, will-change, FLIP and the View Transitions API.</description>
+      <category>CSS</category>
+      <category>Performance</category>
+      <category>Browser Internals</category>
+    </item>
+    <item>
+      <title>Hunting Memory Leaks in JavaScript Applications</title>
+      <link>https://hadimobarra.github.io/blog/hunting-memory-leaks-javascript/</link>
+      <guid>https://hadimobarra.github.io/blog/hunting-memory-leaks-javascript/</guid>
+      <pubDate>Mon, 29 Sep 2025 00:00:00 GMT</pubDate>
+      <description>How garbage collection really decides what to keep, the five leak patterns behind most SPA memory issues, and a repeatable DevTools workflow using heap snapshots, allocation timelines and WeakRef-aware design.</description>
+      <category>JavaScript</category>
+      <category>Performance</category>
+      <category>Debugging</category>
+    </item>
+    <item>
+      <title>Next.js Best Practices for Building Scalable Applications</title>
+      <link>https://hadimobarra.github.io/blog/nextjs-best-practices/</link>
+      <guid>https://hadimobarra.github.io/blog/nextjs-best-practices/</guid>
+      <pubDate>Sun, 15 Dec 2024 00:00:00 GMT</pubDate>
+      <description>Learn the essential best practices for building production-ready Next.js applications that scale well and remain maintainable.</description>
+      <category>Next.js</category>
+      <category>React</category>
+      <category>Web Development</category>
+    </item>
+    <item>
+      <title>Front-End Performance Optimization Guide</title>
+      <link>https://hadimobarra.github.io/blog/frontend-performance/</link>
+      <guid>https://hadimobarra.github.io/blog/frontend-performance/</guid>
+      <pubDate>Wed, 20 Nov 2024 00:00:00 GMT</pubDate>
+      <description>A comprehensive guide to optimizing front-end performance, covering Core Web Vitals, lazy loading, code splitting, and more.</description>
+      <category>Performance</category>
+      <category>Web Development</category>
+      <category>Optimization</category>
+    </item>
+    <item>
+      <title>React Architecture: Building Maintainable Applications</title>
+      <link>https://hadimobarra.github.io/blog/react-architecture/</link>
+      <guid>https://hadimobarra.github.io/blog/react-architecture/</guid>
+      <pubDate>Thu, 10 Oct 2024 00:00:00 GMT</pubDate>
+      <description>Explore proven architectural patterns for building large-scale React applications that are easy to maintain and extend.</description>
+      <category>React</category>
+      <category>Architecture</category>
+      <category>TypeScript</category>
+    </item>
+  </channel>
+</rss>

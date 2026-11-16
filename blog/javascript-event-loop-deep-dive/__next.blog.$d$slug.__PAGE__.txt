@@ -1,0 +1,175 @@
+1:"$Sreact.fragment"
+2:I[64233,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js","/_next/static/chunks/00mgaiaj6~rb~.js","/_next/static/chunks/03uyn3wrd30ix.js"],"BlogPostContent"]
+7:I[97367,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"OutletBoundary"]
+8:"$Sreact.suspense"
+3:T3c5f,<h2 id="why-the-event-loop-still-trips-up-senior-engineers">Why the event loop still trips up senior engineers</h2>
+<p>Most of us learned the event loop as "JavaScript is single-threaded, async things go into a queue". That model is good enough until it isn't: a <code>Promise</code> chain that starves the renderer, a <code>setTimeout(fn, 0)</code> that fires <em>after</em> a frame you expected it to beat, or a <code>requestAnimationFrame</code> callback that runs twice as often as you thought.</p>
+<p>This article builds a precise model based on the HTML specification, then uses it to answer real production questions.</p>
+<h2 id="the-model-in-one-picture">The model in one picture</h2>
+<p>Every browser tab's main thread runs a loop that, simplified, looks like this:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) {
+  <span class="hljs-comment">// 1. Run ONE task (macrotask) from a task queue</span>
+  <span class="hljs-keyword">const</span> task = <span class="hljs-title function_">pickTaskFromSomeQueue</span>();
+  <span class="hljs-keyword">if</span> (task) <span class="hljs-title function_">run</span>(task);
+
+  <span class="hljs-comment">// 2. Drain the ENTIRE microtask queue</span>
+  <span class="hljs-keyword">while</span> (microtaskQueue.<span class="hljs-property">length</span>) {
+    <span class="hljs-title function_">run</span>(microtaskQueue.<span class="hljs-title function_">shift</span>());
+  }
+
+  <span class="hljs-comment">// 3. Maybe render (roughly every 16.7ms on a 60Hz display)</span>
+  <span class="hljs-keyword">if</span> (<span class="hljs-title function_">isRenderingOpportunity</span>()) {
+    <span class="hljs-title function_">runResizeAndScrollSteps</span>();
+    <span class="hljs-title function_">runAnimationFrameCallbacks</span>(); <span class="hljs-comment">// requestAnimationFrame</span>
+    <span class="hljs-title function_">recalcStyle</span>();
+    <span class="hljs-title function_">layout</span>();
+    <span class="hljs-title function_">runResizeObserverCallbacks</span>();
+    <span class="hljs-title function_">paint</span>();
+  }
+
+  <span class="hljs-comment">// 4. If idle, run requestIdleCallback callbacks</span>
+}
+</code></pre>
+<p>Three rules fall out of this pseudo-code, and nearly every event-loop puzzle reduces to them:</p>
+<ol>
+<li><strong>One task per turn.</strong> Tasks never run back-to-back without giving microtasks (and possibly rendering) a chance.</li>
+<li><strong>Microtasks drain completely.</strong> If a microtask schedules another microtask, that one runs too, before anything else.</li>
+<li><strong>Rendering is opportunistic.</strong> The browser decides when a frame is due; your code can only <em>ask</em> to run right before it, via <code>requestAnimationFrame</code>.</li>
+</ol>
+<h2 id="tasks-vs-microtasks">Tasks vs microtasks</h2>
+<p><strong>Tasks</strong> (often called macrotasks) come from: <code>setTimeout</code>/<code>setInterval</code>, user input events, <code>MessageChannel</code> messages, network callbacks, and parsing HTML.</p>
+<p><strong>Microtasks</strong> come from: promise reactions (<code>.then</code>, <code>await</code> continuations), <code>queueMicrotask</code>, and <code>MutationObserver</code>.</p>
+<p>Here's the classic quiz:</p>
+<pre><code class="hljs language-js"><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">"1: script"</span>);
+
+<span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =></span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">"2: timeout"</span>), <span class="hljs-number">0</span>);
+
+<span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">resolve</span>()
+  .<span class="hljs-title function_">then</span>(<span class="hljs-function">() =></span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">"3: microtask A"</span>))
+  .<span class="hljs-title function_">then</span>(<span class="hljs-function">() =></span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">"4: microtask B"</span>));
+
+<span class="hljs-title function_">queueMicrotask</span>(<span class="hljs-function">() =></span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">"5: queueMicrotask"</span>));
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">"6: script end"</span>);
+</code></pre>
+<p>Output:</p>
+<pre><code class="hljs language-text">1: script
+6: script end
+3: microtask A
+5: queueMicrotask
+4: microtask B
+2: timeout
+</code></pre>
+<p>The whole script is itself a task. When it finishes, the microtask queue holds <code>A</code> and <code>5</code>. Running <code>A</code> enqueues <code>B</code> at the <em>end</em> of the queue, so <code>5</code> goes first. Only after the queue is empty does the loop pick the next task — the timeout.</p>
+<h2 id="await-is-just-a-microtask-boundary"><code>await</code> is just a microtask boundary</h2>
+<p>Every <code>await</code> splits a function: everything after it becomes a promise reaction. This is why <code>async</code> code that "looks" synchronous can still interleave with other microtasks:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">a</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">"a1"</span>);
+  <span class="hljs-keyword">await</span> <span class="hljs-literal">null</span>;
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">"a2"</span>);
+}
+
+<span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">b</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">"b1"</span>);
+  <span class="hljs-keyword">await</span> <span class="hljs-literal">null</span>;
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">"b2"</span>);
+}
+
+<span class="hljs-title function_">a</span>();
+<span class="hljs-title function_">b</span>();
+<span class="hljs-comment">// a1, b1, a2, b2</span>
+</code></pre>
+<blockquote>
+<p><strong>Rule of thumb:</strong> an <code>await</code> never yields to rendering or to user input. It only yields to <em>other microtasks</em>. If you want the browser to paint, you need a task boundary or a frame boundary.</p>
+</blockquote>
+<h2 id="starving-the-renderer-with-microtasks">Starving the renderer with microtasks</h2>
+<p>Because microtasks drain completely, a recursive microtask chain blocks the page exactly like an infinite <code>while</code> loop:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">spin</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-title function_">queueMicrotask</span>(spin); <span class="hljs-comment">// the page is now frozen</span>
+}
+<span class="hljs-title function_">spin</span>();
+</code></pre>
+<p>A more realistic version: processing a big array with <code>await</code> in a loop and expecting the UI to stay responsive.</p>
+<pre><code class="hljs language-js"><span class="hljs-comment">// ❌ Looks async, still blocks painting until all 50k items are done</span>
+<span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">processAll</span>(<span class="hljs-params">items</span>) {
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> item <span class="hljs-keyword">of</span> items) {
+    <span class="hljs-keyword">await</span> <span class="hljs-title function_">processItem</span>(item); <span class="hljs-comment">// resolves synchronously → microtask</span>
+  }
+}
+</code></pre>
+<p>If <code>processItem</code> resolves immediately, every iteration is a microtask and the browser never gets a rendering opportunity.</p>
+<h2 id="yielding-to-the-main-thread-properly">Yielding to the main thread properly</h2>
+<p>To let the browser paint and handle input, yield with a <strong>task</strong>, not a microtask. The modern API is <code>scheduler.yield()</code>, with a <code>setTimeout</code> fallback:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">yieldToMain</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">if</span> (globalThis.<span class="hljs-property">scheduler</span>?.<span class="hljs-property">yield</span>) {
+    <span class="hljs-keyword">return</span> scheduler.<span class="hljs-title function_">yield</span>();
+  }
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve</span>) =></span> <span class="hljs-built_in">setTimeout</span>(resolve, <span class="hljs-number">0</span>));
+}
+
+<span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">processAll</span>(<span class="hljs-params">items</span>) {
+  <span class="hljs-keyword">let</span> lastYield = performance.<span class="hljs-title function_">now</span>();
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> item <span class="hljs-keyword">of</span> items) {
+    <span class="hljs-title function_">processItem</span>(item);
+    <span class="hljs-comment">// Yield roughly every 50ms (the "long task" threshold)</span>
+    <span class="hljs-keyword">if</span> (performance.<span class="hljs-title function_">now</span>() - lastYield > <span class="hljs-number">50</span>) {
+      <span class="hljs-keyword">await</span> <span class="hljs-title function_">yieldToMain</span>();
+      lastYield = performance.<span class="hljs-title function_">now</span>();
+    }
+  }
+}
+</code></pre>
+<p><code>scheduler.yield()</code> has a nice property over <code>setTimeout</code>: the continuation is placed at the <em>front</em> of the task queue, so your work resumes before other, lower-priority tasks that were queued in the meantime.</p>
+<h2 id="where-requestanimationframe-fits">Where <code>requestAnimationFrame</code> fits</h2>
+<p><code>rAF</code> callbacks run in the rendering step, right before style and layout. That makes it the right place for visual updates and the wrong place for heavy computation.</p>
+<pre><code class="hljs language-js"><span class="hljs-comment">// Measuring before the browser has applied a change</span>
+el.<span class="hljs-property">classList</span>.<span class="hljs-title function_">add</span>(<span class="hljs-string">"expanded"</span>);
+
+<span class="hljs-title function_">requestAnimationFrame</span>(<span class="hljs-function">() =></span> {
+  <span class="hljs-comment">// Still before layout for this frame. Reading layout here forces it.</span>
+  <span class="hljs-title function_">requestAnimationFrame</span>(<span class="hljs-function">() =></span> {
+    <span class="hljs-comment">// Runs in the *next* frame — the previous one has been painted.</span>
+    el.<span class="hljs-property">classList</span>.<span class="hljs-title function_">add</span>(<span class="hljs-string">"animate"</span>);
+  });
+});
+</code></pre>
+<p>The "double rAF" trick is a well-known way to guarantee a style has been committed to a frame before you change it again, which is needed to trigger CSS transitions from an initial state.</p>
+<p>Two other facts worth knowing:</p>
+<ul>
+<li><code>rAF</code> is <strong>paused in background tabs</strong>. Don't use it for logic that must keep running.</li>
+<li><code>rAF</code> fires at the display's refresh rate. On a 120Hz screen, a <code>rAF</code>-driven animation that assumes 16.7ms per frame will run twice as fast. Always use the timestamp argument to compute deltas.</li>
+</ul>
+<pre><code class="hljs language-js"><span class="hljs-keyword">let</span> last;
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">tick</span>(<span class="hljs-params">now</span>) {
+  <span class="hljs-keyword">const</span> dt = last === <span class="hljs-literal">undefined</span> ? <span class="hljs-number">0</span> : (now - last) / <span class="hljs-number">1000</span>; <span class="hljs-comment">// seconds</span>
+  last = now;
+  position += velocity * dt; <span class="hljs-comment">// frame-rate independent</span>
+  <span class="hljs-title function_">requestAnimationFrame</span>(tick);
+}
+<span class="hljs-title function_">requestAnimationFrame</span>(tick);
+</code></pre>
+<h2 id="settimeoutfn-0-is-not-zero"><code>setTimeout(fn, 0)</code> is not zero</h2>
+<p>Timers are clamped: after 5 levels of nesting, browsers enforce a minimum of about 4ms, and in background tabs timers can be throttled to once per second or less. If you need "as soon as possible, but after rendering and input", <code>MessageChannel</code> is the classic zero-delay task primitive (React's scheduler used it for years):</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> channel = <span class="hljs-keyword">new</span> <span class="hljs-title class_">MessageChannel</span>();
+<span class="hljs-keyword">const</span> queue = [];
+channel.<span class="hljs-property">port1</span>.<span class="hljs-property">onmessage</span> = <span class="hljs-function">() =></span> queue.<span class="hljs-title function_">shift</span>()?.();
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">postTask</span>(<span class="hljs-params">fn</span>) {
+  queue.<span class="hljs-title function_">push</span>(fn);
+  channel.<span class="hljs-property">port2</span>.<span class="hljs-title function_">postMessage</span>(<span class="hljs-literal">null</span>);
+}
+</code></pre>
+<h2 id="a-debugging-checklist">A debugging checklist</h2>
+<p>When something runs in the "wrong" order, ask:</p>
+<ol>
+<li><strong>Is it a task or a microtask?</strong> Promise reactions always beat timers.</li>
+<li><strong>Did the microtask queue drain?</strong> A long chain of <code>then</code>s delays everything else, including paint.</li>
+<li><strong>Do I need a frame or a task?</strong> Visual changes belong in <code>rAF</code>; yielding for responsiveness needs a task (<code>scheduler.yield</code>, <code>setTimeout</code>, <code>MessageChannel</code>).</li>
+<li><strong>Is the tab in the background?</strong> <code>rAF</code> stops and timers are throttled.</li>
+</ol>
+<h2 id="conclusion">Conclusion</h2>
+<p>Learn the loop as three rules — one task per turn, microtasks drain fully, rendering is opportunistic — and most "weird async bugs" become predictable. That predictability is what lets you break long work into chunks, keep Interaction to Next Paint low, and write animations that stay smooth on every refresh rate.</p>0:{"rsc":["$","$1","c",{"children":[[["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"{\"@context\":\"https://schema.org\",\"@type\":\"BlogPosting\",\"headline\":\"Inside the JavaScript Event Loop: Tasks, Microtasks and the Rendering Steps\",\"description\":\"A precise mental model of how the browser schedules your code — tasks, microtasks, requestAnimationFrame and rendering — and how to use it to write UIs that never freeze.\",\"datePublished\":\"2026-10-21\",\"keywords\":\"JavaScript, Browser Internals, Performance\",\"author\":{\"@type\":\"Person\",\"name\":\"Hadi Mobarra\",\"url\":\"https://hadimobarra.github.io\"},\"url\":\"https://hadimobarra.github.io/blog/javascript-event-loop-deep-dive/\"}"}}],["$","$L2",null,{"slug":"javascript-event-loop-deep-dive","title":"Inside the JavaScript Event Loop: Tasks, Microtasks and the Rendering Steps","description":"A precise mental model of how the browser schedules your code — tasks, microtasks, requestAnimationFrame and rendering — and how to use it to write UIs that never freeze.","date":"2026-10-21","readingTime":6,"tags":["JavaScript","Browser Internals","Performance"],"htmlContent":"$3","headings":[{"id":"why-the-event-loop-still-trips-up-senior-engineers","text":"Why the event loop still trips up senior engineers","level":2},{"id":"the-model-in-one-picture","text":"The model in one picture","level":2},{"id":"tasks-vs-microtasks","text":"Tasks vs microtasks","level":2},{"id":"await-is-just-a-microtask-boundary","text":"await is just a microtask boundary","level":2},{"id":"starving-the-renderer-with-microtasks","text":"Starving the renderer with microtasks","level":2},{"id":"yielding-to-the-main-thread-properly","text":"Yielding to the main thread properly","level":2},{"id":"where-requestanimationframe-fits","text":"Where requestAnimationFrame fits","level":2},{"id":"settimeoutfn-0-is-not-zero","text":"setTimeout(fn, 0) is not zero","level":2},{"id":"a-debugging-checklist","text":"A debugging checklist","level":2},{"id":"conclusion","text":"Conclusion","level":2}],"prev":{"slug":"build-signals-from-scratch","frontmatter":{"title":"Building a Fine-Grained Reactivity System (Signals) From Scratch","description":"Signals power Solid, Preact, Angular and Vue's reactivity. Build one in under 100 lines to understand dependency tracking, computed values, effects and glitch-free updates.","date":"2026-09-30","tags":["JavaScript","Reactivity","Architecture"]},"readingTime":5},"next":null,"related":[{"slug":"web-workers-off-main-thread","frontmatter":{"title":"Off the Main Thread: Web Workers, Transferables and RPC in Practice","description":"Move expensive work off the UI thread. Covers dedicated workers in modern bundlers, structured clone costs, zero-copy transferables, a promise-based RPC layer, SharedArrayBuffer with Atomics, and OffscreenCanvas.","date":"2026-04-20","tags":["JavaScript","Performance","Web Workers"]},"readingTime":5},{"slug":"browser-rendering-pipeline-60fps","frontmatter":{"title":"The Browser Rendering Pipeline: Writing 60fps Animations","description":"Style, layout, paint and composite — what each stage costs, which CSS properties trigger which stages, and how to build animations that stay smooth with transforms, will-change, FLIP and the View Transitions API.","date":"2025-11-17","tags":["CSS","Performance","Browser Internals"]},"readingTime":6},{"slug":"hunting-memory-leaks-javascript","frontmatter":{"title":"Hunting Memory Leaks in JavaScript Applications","description":"How garbage collection really decides what to keep, the five leak patterns behind most SPA memory issues, and a repeatable DevTools workflow using heap snapshots, allocation timelines and WeakRef-aware design.","date":"2025-09-29","tags":["JavaScript","Performance","Debugging"]},"readingTime":6}]}]],["$L4","$L5"],"$L6"]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"E6xvaCzEOilM2NUsVbGPT"}
+4:["$","script","script-0",{"src":"/_next/static/chunks/00mgaiaj6~rb~.js","async":true}]
+5:["$","script","script-1",{"src":"/_next/static/chunks/03uyn3wrd30ix.js","async":true}]
+6:["$","$L7",null,{"children":["$","$8",null,{"name":"Next.MetadataOutlet","children":"$@9"}]}]
+9:null

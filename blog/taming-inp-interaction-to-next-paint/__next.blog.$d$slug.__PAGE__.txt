@@ -1,0 +1,162 @@
+1:"$Sreact.fragment"
+2:I[64233,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js","/_next/static/chunks/00mgaiaj6~rb~.js","/_next/static/chunks/03uyn3wrd30ix.js"],"BlogPostContent"]
+7:I[97367,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"OutletBoundary"]
+8:"$Sreact.suspense"
+3:T329a,<h2 id="what-inp-measures">What INP measures</h2>
+<p><strong>Interaction to Next Paint</strong> observes every click, tap and key press during a page visit and reports (roughly) the <em>worst</em> one — the 98th percentile for pages with many interactions. Each interaction's latency is the time from the input until the browser <strong>paints the next frame</strong> after handling it.</p>
+<p>That latency has three parts:</p>
+<ol>
+<li><strong>Input delay</strong> — the main thread was busy with something else when the user interacted.</li>
+<li><strong>Processing time</strong> — your event handlers ran.</li>
+<li><strong>Presentation delay</strong> — style, layout, paint and compositing for the resulting frame.</li>
+</ol>
+<p>Thresholds: <strong>≤ 200ms is good</strong>, <strong>> 500ms is poor</strong>, measured at the 75th percentile of page loads.</p>
+<p>Because INP covers the whole visit and not just the first input, it punishes exactly the things heavy single-page apps do: big re-renders, synchronous state updates and long tasks during hydration.</p>
+<h2 id="step-1-measure-in-the-field">Step 1: measure in the field</h2>
+<p>Lab tools can't know which interactions real users perform. Collect field data with the <code>web-vitals</code> library and the attribution build:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">import</span> { onINP } <span class="hljs-keyword">from</span> <span class="hljs-string">"web-vitals/attribution"</span>;
+
+<span class="hljs-title function_">onINP</span>(<span class="hljs-function">(<span class="hljs-params">{ value, rating, attribution }</span>) =></span> {
+  navigator.<span class="hljs-title function_">sendBeacon</span>(<span class="hljs-string">"/analytics"</span>, <span class="hljs-title class_">JSON</span>.<span class="hljs-title function_">stringify</span>({
+    value,
+    rating,
+    <span class="hljs-attr">target</span>: attribution.<span class="hljs-property">interactionTarget</span>,       <span class="hljs-comment">// CSS selector of the element</span>
+    <span class="hljs-attr">type</span>: attribution.<span class="hljs-property">interactionType</span>,           <span class="hljs-comment">// "pointer" | "keyboard"</span>
+    <span class="hljs-attr">inputDelay</span>: attribution.<span class="hljs-property">inputDelay</span>,
+    <span class="hljs-attr">processing</span>: attribution.<span class="hljs-property">processingDuration</span>,
+    <span class="hljs-attr">presentation</span>: attribution.<span class="hljs-property">presentationDelay</span>,
+    <span class="hljs-comment">// Long Animation Frame entries explain *which scripts* were responsible</span>
+    <span class="hljs-attr">scripts</span>: attribution.<span class="hljs-property">longAnimationFrameEntries</span>
+      ?.<span class="hljs-title function_">flatMap</span>(<span class="hljs-function">(<span class="hljs-params">e</span>) =></span> e.<span class="hljs-property">scripts</span>.<span class="hljs-title function_">map</span>(<span class="hljs-function">(<span class="hljs-params">s</span>) =></span> s.<span class="hljs-property">sourceURL</span>)),
+  }));
+});
+</code></pre>
+<p>The breakdown tells you where to look:</p>
+<table>
+<thead>
+<tr>
+<th>Dominant phase</th>
+<th>Usual cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Input delay</td>
+<td>Long tasks already running (hydration, timers, third-party scripts)</td>
+<td>Break up long tasks, defer third parties</td>
+</tr>
+<tr>
+<td>Processing</td>
+<td>Expensive handlers, large synchronous re-renders</td>
+<td>Yield, defer, memoise, transitions</td>
+</tr>
+<tr>
+<td>Presentation</td>
+<td>Huge DOM, layout thrashing, expensive CSS</td>
+<td>Smaller DOM, <code>content-visibility</code>, avoid forced layouts</td>
+</tr>
+</tbody>
+</table>
+<h2 id="step-2-do-the-visible-work-first-defer-the-rest">Step 2: do the visible work first, defer the rest</h2>
+<p>The single most effective pattern: in the handler, do only what's needed for the <strong>next frame</strong>, then yield before the rest.</p>
+<pre><code class="hljs language-js"><span class="hljs-comment">// Yield with a *task*, so the browser can paint and handle input</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">yieldToMain</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">if</span> (globalThis.<span class="hljs-property">scheduler</span>?.<span class="hljs-property">yield</span>) <span class="hljs-keyword">return</span> scheduler.<span class="hljs-title function_">yield</span>();
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve</span>) =></span> <span class="hljs-built_in">setTimeout</span>(resolve, <span class="hljs-number">0</span>));
+}
+
+button.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">"click"</span>, <span class="hljs-title function_">async</span> () => {
+  <span class="hljs-comment">// 1. Immediate visual feedback</span>
+  button.<span class="hljs-property">classList</span>.<span class="hljs-title function_">add</span>(<span class="hljs-string">"is-loading"</span>);
+
+  <span class="hljs-comment">// 2. Let the browser paint that feedback</span>
+  <span class="hljs-keyword">await</span> <span class="hljs-title function_">yieldToMain</span>();
+
+  <span class="hljs-comment">// 3. Non-urgent work happens after the paint</span>
+  <span class="hljs-title function_">recalculateRecommendations</span>();
+  <span class="hljs-title function_">sendAnalytics</span>(<span class="hljs-string">"click"</span>);
+});
+</code></pre>
+<p>Analytics, logging and prefetching almost never need to block the frame. Move them behind a yield or into <code>requestIdleCallback</code>.</p>
+<h2 id="step-3-break-up-long-tasks">Step 3: break up long tasks</h2>
+<p>Any task over 50ms is a <strong>long task</strong>. If one is running when the user clicks, the click has to wait. Chunk heavy loops:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">filterLargeList</span>(<span class="hljs-params">items, predicate</span>) {
+  <span class="hljs-keyword">const</span> result = [];
+  <span class="hljs-keyword">let</span> deadline = performance.<span class="hljs-title function_">now</span>() + <span class="hljs-number">8</span>; <span class="hljs-comment">// ~half a frame</span>
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &#x3C; items.<span class="hljs-property">length</span>; i++) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-title function_">predicate</span>(items[i])) result.<span class="hljs-title function_">push</span>(items[i]);
+    <span class="hljs-keyword">if</span> (performance.<span class="hljs-title function_">now</span>() > deadline) {
+      <span class="hljs-keyword">await</span> <span class="hljs-title function_">yieldToMain</span>();
+      deadline = performance.<span class="hljs-title function_">now</span>() + <span class="hljs-number">8</span>;
+    }
+  }
+  <span class="hljs-keyword">return</span> result;
+}
+</code></pre>
+<p>If the work is pure computation (parsing, sorting, diffing), move it <strong>off the main thread</strong> entirely into a Web Worker.</p>
+<h2 id="step-4-react-specific-techniques">Step 4: React-specific techniques</h2>
+<p>React 18+ gives you concurrent rendering that can be interrupted by input:</p>
+<pre><code class="hljs language-jsx"><span class="hljs-keyword">import</span> { useState, useTransition, useDeferredValue } <span class="hljs-keyword">from</span> <span class="hljs-string">"react"</span>;
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">Search</span>(<span class="hljs-params">{ items }</span>) {
+  <span class="hljs-keyword">const</span> [query, setQuery] = <span class="hljs-title function_">useState</span>(<span class="hljs-string">""</span>);
+  <span class="hljs-keyword">const</span> [isPending, startTransition] = <span class="hljs-title function_">useTransition</span>();
+  <span class="hljs-keyword">const</span> [filter, setFilter] = <span class="hljs-title function_">useState</span>(<span class="hljs-string">""</span>);
+
+  <span class="hljs-keyword">return</span> (
+    <span class="xml"><span class="hljs-tag">&#x3C;></span>
+      <span class="hljs-tag">&#x3C;<span class="hljs-name">input</span>
+        <span class="hljs-attr">value</span>=<span class="hljs-string">{query}</span>
+        <span class="hljs-attr">onChange</span>=<span class="hljs-string">{(e)</span> =></span> {
+          setQuery(e.target.value);                       // urgent: keep typing snappy
+          startTransition(() => setFilter(e.target.value)); // can be interrupted
+        }}
+      />
+      {isPending &#x26;&#x26; <span class="hljs-tag">&#x3C;<span class="hljs-name">Spinner</span> /></span>}
+      <span class="hljs-tag">&#x3C;<span class="hljs-name">Results</span> <span class="hljs-attr">items</span>=<span class="hljs-string">{items}</span> <span class="hljs-attr">filter</span>=<span class="hljs-string">{filter}</span> /></span>
+    <span class="hljs-tag">&#x3C;/></span></span>
+  );
+}
+</code></pre>
+<p>The input update commits immediately; the expensive results render happens in a transition that React abandons and restarts if another keystroke arrives. <code>useDeferredValue</code> achieves the same thing when you don't control the state setter.</p>
+<p>Other React wins:</p>
+<ul>
+<li><strong>Memoise expensive subtrees</strong> (<code>memo</code>, or the React Compiler) so a keystroke doesn't re-render the world.</li>
+<li><strong>Virtualise long lists</strong> — rendering 5,000 rows is slow no matter how fast each row is.</li>
+<li><strong>Avoid hydration-time long tasks</strong> with selective hydration (<code>Suspense</code> boundaries) and by shipping less client JavaScript (Server Components).</li>
+</ul>
+<h2 id="step-5-reduce-presentation-delay">Step 5: reduce presentation delay</h2>
+<p>Even with a fast handler, the frame can be slow to produce:</p>
+<ul>
+<li><strong>Large DOMs</strong> make style recalculation and layout expensive. Keep it under a few thousand nodes where possible.</li>
+<li><strong><code>content-visibility: auto</code></strong> lets the browser skip rendering off-screen sections:</li>
+</ul>
+<pre><code class="hljs language-css"><span class="hljs-selector-class">.feed-item</span> {
+  <span class="hljs-attribute">content-visibility</span>: auto;
+  <span class="hljs-attribute">contain-intrinsic-size</span>: auto <span class="hljs-number">320px</span>; <span class="hljs-comment">/* placeholder size to avoid scroll jumps */</span>
+}
+</code></pre>
+<ul>
+<li><strong>Avoid layout thrashing</strong> — interleaving DOM writes and layout reads in a loop forces synchronous layout each iteration:</li>
+</ul>
+<pre><code class="hljs language-js"><span class="hljs-comment">// ❌ read → write → read → write: forced layout each time</span>
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> el <span class="hljs-keyword">of</span> cards) el.<span class="hljs-property">style</span>.<span class="hljs-property">height</span> = el.<span class="hljs-property">offsetWidth</span> * <span class="hljs-number">0.5</span> + <span class="hljs-string">"px"</span>;
+
+<span class="hljs-comment">// ✅ batch reads, then batch writes</span>
+<span class="hljs-keyword">const</span> widths = cards.<span class="hljs-title function_">map</span>(<span class="hljs-function">(<span class="hljs-params">el</span>) =></span> el.<span class="hljs-property">offsetWidth</span>);
+cards.<span class="hljs-title function_">forEach</span>(<span class="hljs-function">(<span class="hljs-params">el, i</span>) =></span> (el.<span class="hljs-property">style</span>.<span class="hljs-property">height</span> = widths[i] * <span class="hljs-number">0.5</span> + <span class="hljs-string">"px"</span>));
+</code></pre>
+<h2 id="a-debugging-workflow-that-works">A debugging workflow that works</h2>
+<ol>
+<li>Find the worst interactions from field data (target selector + phase breakdown).</li>
+<li>Reproduce in Chrome DevTools' <strong>Performance</strong> panel with CPU throttling at 4× or 6×.</li>
+<li>Look at the <strong>Interactions</strong> track; expand the long interaction and read the flame chart under it.</li>
+<li>Apply the matching fix from the table above, then verify in the field — lab improvements don't always transfer.</li>
+</ol>
+<h2 id="conclusion">Conclusion</h2>
+<p>INP rewards apps that respond first and compute later. Show feedback in the next frame, yield before non-urgent work, keep long tasks off the main thread, and let React's transitions keep input urgent. These habits fix a metric and also make the app feel faster.</p>0:{"rsc":["$","$1","c",{"children":[[["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"{\"@context\":\"https://schema.org\",\"@type\":\"BlogPosting\",\"headline\":\"Taming INP: A Practical Guide to Interaction to Next Paint\",\"description\":\"INP replaced FID as a Core Web Vital. Learn how it's measured, how to find the slow interactions in your app, and the concrete techniques that cut it: yielding, deferring non-urgent work, React transitions and smaller DOMs.\",\"datePublished\":\"2026-07-14\",\"keywords\":\"Performance, Core Web Vitals, React\",\"author\":{\"@type\":\"Person\",\"name\":\"Hadi Mobarra\",\"url\":\"https://hadimobarra.github.io\"},\"url\":\"https://hadimobarra.github.io/blog/taming-inp-interaction-to-next-paint/\"}"}}],["$","$L2",null,{"slug":"taming-inp-interaction-to-next-paint","title":"Taming INP: A Practical Guide to Interaction to Next Paint","description":"INP replaced FID as a Core Web Vital. Learn how it's measured, how to find the slow interactions in your app, and the concrete techniques that cut it: yielding, deferring non-urgent work, React transitions and smaller DOMs.","date":"2026-07-14","readingTime":5,"tags":["Performance","Core Web Vitals","React"],"htmlContent":"$3","headings":[{"id":"what-inp-measures","text":"What INP measures","level":2},{"id":"step-1-measure-in-the-field","text":"Step 1: measure in the field","level":2},{"id":"step-2-do-the-visible-work-first-defer-the-rest","text":"Step 2: do the visible work first, defer the rest","level":2},{"id":"step-3-break-up-long-tasks","text":"Step 3: break up long tasks","level":2},{"id":"step-4-react-specific-techniques","text":"Step 4: React-specific techniques","level":2},{"id":"step-5-reduce-presentation-delay","text":"Step 5: reduce presentation delay","level":2},{"id":"a-debugging-workflow-that-works","text":"A debugging workflow that works","level":2},{"id":"conclusion","text":"Conclusion","level":2}],"prev":{"slug":"typescript-type-level-programming","frontmatter":{"title":"Type-Level Programming in TypeScript: Conditional, Mapped and Template Literal Types","description":"Treat TypeScript's type system as a small functional language. Learn conditional types and infer, distributive behaviour, key remapping, recursive types and template literals, then build a type-safe router and a deep-path getter.","date":"2026-06-02","tags":["TypeScript","Type System","Advanced"]},"readingTime":5},"next":{"slug":"proxy-and-reflect-metaprogramming","frontmatter":{"title":"Metaprogramming in JavaScript with Proxy and Reflect","description":"Intercept property access, validation, and function calls with Proxy traps. Learn the invariants, the role of Reflect and receivers, and build a tiny reactive store, a validation layer and a negative-index array.","date":"2026-08-18","tags":["JavaScript","Metaprogramming","Advanced"]},"readingTime":5},"related":[{"slug":"javascript-event-loop-deep-dive","frontmatter":{"title":"Inside the JavaScript Event Loop: Tasks, Microtasks and the Rendering Steps","description":"A precise mental model of how the browser schedules your code — tasks, microtasks, requestAnimationFrame and rendering — and how to use it to write UIs that never freeze.","date":"2026-10-21","tags":["JavaScript","Browser Internals","Performance"],"featured":true},"readingTime":6},{"slug":"web-workers-off-main-thread","frontmatter":{"title":"Off the Main Thread: Web Workers, Transferables and RPC in Practice","description":"Move expensive work off the UI thread. Covers dedicated workers in modern bundlers, structured clone costs, zero-copy transferables, a promise-based RPC layer, SharedArrayBuffer with Atomics, and OffscreenCanvas.","date":"2026-04-20","tags":["JavaScript","Performance","Web Workers"]},"readingTime":5},{"slug":"react-server-components-mental-model","frontmatter":{"title":"A Mental Model for React Server Components and Streaming","description":"Server Components, Client Components, the RSC payload, Suspense streaming and Server Actions — explained as one coherent model, with the composition patterns and pitfalls that matter in a real Next.js codebase.","date":"2026-03-09","tags":["React","Next.js","Architecture"]},"readingTime":6}]}]],["$L4","$L5"],"$L6"]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"E6xvaCzEOilM2NUsVbGPT"}
+4:["$","script","script-0",{"src":"/_next/static/chunks/00mgaiaj6~rb~.js","async":true}]
+5:["$","script","script-1",{"src":"/_next/static/chunks/03uyn3wrd30ix.js","async":true}]
+6:["$","$L7",null,{"children":["$","$8",null,{"name":"Next.MetadataOutlet","children":"$@9"}]}]
+9:null

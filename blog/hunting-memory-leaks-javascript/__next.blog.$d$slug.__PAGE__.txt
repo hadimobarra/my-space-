@@ -1,0 +1,130 @@
+1:"$Sreact.fragment"
+2:I[64233,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js","/_next/static/chunks/00mgaiaj6~rb~.js","/_next/static/chunks/03uyn3wrd30ix.js"],"BlogPostContent"]
+7:I[97367,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"OutletBoundary"]
+8:"$Sreact.suspense"
+3:T34c5,<h2 id="leaks-in-a-garbage-collected-language">Leaks in a garbage-collected language</h2>
+<p>JavaScript frees memory automatically, so how can it leak? Because the garbage collector only frees what is <strong>unreachable</strong>. A leak is memory that's still reachable from a root (the global object, the current call stack, active closures, DOM, timers) even though your program will never use it again.</p>
+<p>In long-lived single-page apps — dashboards left open all day, editors, chat clients — these small mistakes add up until the tab gets slow or crashes.</p>
+<h2 id="how-reachability-works">How reachability works</h2>
+<p>Modern engines use a <strong>mark-and-sweep</strong> collector (generational and incremental in V8's case): starting from the roots, mark everything reachable by following references, then sweep everything unmarked.</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">let</span> user = { <span class="hljs-attr">name</span>: <span class="hljs-string">"Ada"</span> };
+<span class="hljs-keyword">const</span> admins = [user];
+
+user = <span class="hljs-literal">null</span>;
+<span class="hljs-comment">// The object is still reachable through `admins[0]`, so it stays in memory.</span>
+</code></pre>
+<p>To find a leak, you must find the <strong>retaining path</strong>: the chain of references from a root to the object that shouldn't be there anymore.</p>
+<h2 id="the-five-usual-suspects">The five usual suspects</h2>
+<h3 id="1-forgotten-event-listeners-and-subscriptions">1. Forgotten event listeners and subscriptions</h3>
+<pre><code class="hljs language-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">mountChart</span>(<span class="hljs-params">el</span>) {
+  <span class="hljs-keyword">const</span> chart = <span class="hljs-title function_">createHugeChart</span>(el);
+  <span class="hljs-variable language_">window</span>.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">"resize"</span>, <span class="hljs-function">() =></span> chart.<span class="hljs-title function_">resize</span>()); <span class="hljs-comment">// never removed</span>
+}
+</code></pre>
+<p><code>window</code> lives forever, so it keeps the listener alive, the listener's closure keeps <code>chart</code>, and <code>chart</code> keeps its DOM node and data. Mount and unmount this ten times and you have ten charts in memory.</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">mountChart</span>(<span class="hljs-params">el</span>) {
+  <span class="hljs-keyword">const</span> chart = <span class="hljs-title function_">createHugeChart</span>(el);
+  <span class="hljs-keyword">const</span> controller = <span class="hljs-keyword">new</span> <span class="hljs-title class_">AbortController</span>();
+  <span class="hljs-variable language_">window</span>.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">"resize"</span>, <span class="hljs-function">() =></span> chart.<span class="hljs-title function_">resize</span>(), { <span class="hljs-attr">signal</span>: controller.<span class="hljs-property">signal</span> });
+  <span class="hljs-keyword">return</span> <span class="hljs-function">() =></span> {
+    controller.<span class="hljs-title function_">abort</span>(); <span class="hljs-comment">// removes every listener registered with this signal</span>
+    chart.<span class="hljs-title function_">destroy</span>();
+  };
+}
+</code></pre>
+<p><code>AbortController</code> is the cleanest way to remove many listeners at once. In React, return the cleanup from <code>useEffect</code>.</p>
+<h3 id="2-timers-and-intervals">2. Timers and intervals</h3>
+<pre><code class="hljs language-js"><span class="hljs-title function_">useEffect</span>(<span class="hljs-function">() =></span> {
+  <span class="hljs-keyword">const</span> id = <span class="hljs-built_in">setInterval</span>(<span class="hljs-function">() =></span> <span class="hljs-title function_">poll</span>(store), <span class="hljs-number">5000</span>);
+  <span class="hljs-comment">// ❌ no cleanup: the interval and everything its callback references live forever</span>
+}, []);
+
+<span class="hljs-title function_">useEffect</span>(<span class="hljs-function">() =></span> {
+  <span class="hljs-keyword">const</span> id = <span class="hljs-built_in">setInterval</span>(<span class="hljs-function">() =></span> <span class="hljs-title function_">poll</span>(store), <span class="hljs-number">5000</span>);
+  <span class="hljs-keyword">return</span> <span class="hljs-function">() =></span> <span class="hljs-built_in">clearInterval</span>(id); <span class="hljs-comment">// ✅</span>
+}, []);
+</code></pre>
+<h3 id="3-detached-dom-nodes">3. Detached DOM nodes</h3>
+<p>A DOM node removed from the document but still referenced from JavaScript can't be collected — and it keeps its <strong>whole subtree</strong> alive.</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> cache = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Map</span>();
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">showRow</span>(<span class="hljs-params">id</span>) {
+  <span class="hljs-keyword">const</span> row = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">"tr"</span>);
+  cache.<span class="hljs-title function_">set</span>(id, row);       <span class="hljs-comment">// reference kept forever</span>
+  table.<span class="hljs-title function_">appendChild</span>(row);
+}
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">clearTable</span>(<span class="hljs-params"></span>) {
+  table.<span class="hljs-property">innerHTML</span> = <span class="hljs-string">""</span>;     <span class="hljs-comment">// rows are detached, but the Map still holds them</span>
+}
+</code></pre>
+<p>Heap snapshots let you filter for <strong>"Detached"</strong> nodes, which makes this pattern easy to spot.</p>
+<h3 id="4-unbounded-caches">4. Unbounded caches</h3>
+<p>Memoisation without eviction is a leak with a nice name:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> cache = {};
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">getUserView</span>(<span class="hljs-params">user</span>) {
+  <span class="hljs-keyword">return</span> (cache[user.<span class="hljs-property">id</span>] ??= <span class="hljs-title function_">renderExpensiveView</span>(user)); <span class="hljs-comment">// grows forever</span>
+}
+</code></pre>
+<p>Fix it with a size limit (LRU), a TTL, or by keying on objects with a <code>WeakMap</code>:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> cache = <span class="hljs-keyword">new</span> <span class="hljs-title class_">WeakMap</span>();
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">getUserView</span>(<span class="hljs-params">user</span>) {
+  <span class="hljs-keyword">let</span> view = cache.<span class="hljs-title function_">get</span>(user);
+  <span class="hljs-keyword">if</span> (!view) cache.<span class="hljs-title function_">set</span>(user, (view = <span class="hljs-title function_">renderExpensiveView</span>(user)));
+  <span class="hljs-keyword">return</span> view;
+}
+<span class="hljs-comment">// When `user` becomes unreachable elsewhere, the cache entry can be collected too.</span>
+</code></pre>
+<h3 id="5-closures-capturing-more-than-you-think">5. Closures capturing more than you think</h3>
+<p>Closures created in the same scope can share a context object in V8. A long-lived closure can therefore keep alive a large variable that only a <em>short-lived</em> sibling closure used:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">setup</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">const</span> hugeData = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Array</span>(<span class="hljs-number">1e6</span>).<span class="hljs-title function_">fill</span>(<span class="hljs-string">"x"</span>);
+  <span class="hljs-keyword">const</span> <span class="hljs-title function_">unused</span> = (<span class="hljs-params"></span>) => hugeData.<span class="hljs-property">length</span>;  <span class="hljs-comment">// references hugeData</span>
+  <span class="hljs-keyword">return</span> <span class="hljs-function">() =></span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">"tick"</span>);      <span class="hljs-comment">// may still retain hugeData via the shared context</span>
+}
+<span class="hljs-keyword">const</span> tick = <span class="hljs-title function_">setup</span>();
+</code></pre>
+<p>If a heap snapshot shows a large object retained by a <code>context</code> of a function that doesn't use it, this is why. The fix is to avoid capturing big values in scopes that also create long-lived callbacks, or to set them to <code>null</code> when done.</p>
+<h2 id="a-repeatable-devtools-workflow">A repeatable DevTools workflow</h2>
+<h3 id="step-1-confirm-there-is-a-leak">Step 1: confirm there is a leak</h3>
+<p>Open <strong>Performance monitor</strong> (Command menu → "Show Performance monitor") and watch <em>JS heap size</em> and <em>DOM Nodes</em> while repeating an action — open and close a modal 20 times, navigate between two routes, and so on. Force GC with the trash-can button in the Memory panel. If the baseline keeps climbing after GC, something is leaking.</p>
+<h3 id="step-2-three-snapshot-technique">Step 2: three-snapshot technique</h3>
+<ol>
+<li>Load the page, do the action once (to warm caches), force GC, take <strong>Snapshot 1</strong>.</li>
+<li>Repeat the action several times, force GC, take <strong>Snapshot 2</strong>.</li>
+<li>Repeat again, force GC, take <strong>Snapshot 3</strong>.</li>
+<li>In Snapshot 3, choose <strong>"Objects allocated between Snapshot 1 and Snapshot 2"</strong>.</li>
+</ol>
+<p>Objects created during the middle phase that <em>survive into snapshot 3</em> are your strongest leak candidates. Sort by <strong>Retained Size</strong>, not Shallow Size — retained size is how much memory would be freed if that object were collected.</p>
+<h3 id="step-3-read-the-retainers">Step 3: read the retainers</h3>
+<p>Select a suspicious object and read the <strong>Retainers</strong> panel from bottom to top. You'll see something like:</p>
+<pre><code class="hljs language-text">ChartInstance
+  ← chart in system / Context
+  ← context in () @ chart.js:14
+  ← [3] in Array (event listeners)
+  ← resize in Window
+</code></pre>
+<p>That's the leak: the <code>resize</code> listener on <code>window</code>, created at <code>chart.js:14</code>.</p>
+<h3 id="step-4-allocation-timeline-for-the-tricky-cases">Step 4: allocation timeline for the tricky cases</h3>
+<p>The <strong>Allocations on timeline</strong> profile records allocations as blue bars over time; bars that stay blue (rather than turning grey) were never freed. Click one to see the allocation stack trace.</p>
+<h2 id="weakref-and-finalizationregistry">WeakRef and FinalizationRegistry</h2>
+<p><code>WeakRef</code> holds a reference that doesn't prevent collection, and <code>FinalizationRegistry</code> runs a callback some time after an object is collected:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> registry = <span class="hljs-keyword">new</span> <span class="hljs-title class_">FinalizationRegistry</span>(<span class="hljs-function">(<span class="hljs-params">key</span>) =></span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${key}</span> was garbage-collected`</span>);
+});
+registry.<span class="hljs-title function_">register</span>(chartInstance, <span class="hljs-string">"chart#1"</span>);
+</code></pre>
+<p>They're useful for caches of expensive, recreatable objects and for <strong>verifying</strong> fixes during development. But GC timing is non-deterministic and finalizers may never run, so don't use them for program logic or essential cleanup.</p>
+<h2 id="preventing-leaks-by-design">Preventing leaks by design</h2>
+<ul>
+<li>Every <code>add</code> has a matching <code>remove</code>: listeners, intervals, observers (<code>ResizeObserver</code>, <code>IntersectionObserver</code>), subscriptions and WebSockets.</li>
+<li>Tie lifetimes to a single <code>AbortSignal</code> per component or feature.</li>
+<li>Bound every cache. Prefer <code>WeakMap</code> when keys are objects.</li>
+<li>Add a memory test to CI for critical flows: drive the UI with Playwright, read <code>performance.measureUserAgentSpecificMemory()</code> (it requires cross-origin isolation) or snapshot via the Chrome DevTools Protocol, and fail when growth passes a threshold.</li>
+</ul>
+<h2 id="conclusion">Conclusion</h2>
+<p>Most leaks come from one of five patterns: listeners, timers, detached DOM, unbounded caches and over-capturing closures. Confirm the leak with the performance monitor, isolate it with the three-snapshot technique, and follow the retainer chain to the exact line. With cleanup tied to clear lifetimes, long-running apps stay fast after hours of use.</p>0:{"rsc":["$","$1","c",{"children":[[["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"{\"@context\":\"https://schema.org\",\"@type\":\"BlogPosting\",\"headline\":\"Hunting Memory Leaks in JavaScript Applications\",\"description\":\"How garbage collection really decides what to keep, the five leak patterns behind most SPA memory issues, and a repeatable DevTools workflow using heap snapshots, allocation timelines and WeakRef-aware design.\",\"datePublished\":\"2025-09-29\",\"keywords\":\"JavaScript, Performance, Debugging\",\"author\":{\"@type\":\"Person\",\"name\":\"Hadi Mobarra\",\"url\":\"https://hadimobarra.github.io\"},\"url\":\"https://hadimobarra.github.io/blog/hunting-memory-leaks-javascript/\"}"}}],["$","$L2",null,{"slug":"hunting-memory-leaks-javascript","title":"Hunting Memory Leaks in JavaScript Applications","description":"How garbage collection really decides what to keep, the five leak patterns behind most SPA memory issues, and a repeatable DevTools workflow using heap snapshots, allocation timelines and WeakRef-aware design.","date":"2025-09-29","readingTime":6,"tags":["JavaScript","Performance","Debugging"],"htmlContent":"$3","headings":[{"id":"leaks-in-a-garbage-collected-language","text":"Leaks in a garbage-collected language","level":2},{"id":"how-reachability-works","text":"How reachability works","level":2},{"id":"the-five-usual-suspects","text":"The five usual suspects","level":2},{"id":"1-forgotten-event-listeners-and-subscriptions","text":"1. Forgotten event listeners and subscriptions","level":3},{"id":"2-timers-and-intervals","text":"2. Timers and intervals","level":3},{"id":"3-detached-dom-nodes","text":"3. Detached DOM nodes","level":3},{"id":"4-unbounded-caches","text":"4. Unbounded caches","level":3},{"id":"5-closures-capturing-more-than-you-think","text":"5. Closures capturing more than you think","level":3},{"id":"a-repeatable-devtools-workflow","text":"A repeatable DevTools workflow","level":2},{"id":"step-1-confirm-there-is-a-leak","text":"Step 1: confirm there is a leak","level":3},{"id":"step-2-three-snapshot-technique","text":"Step 2: three-snapshot technique","level":3},{"id":"step-3-read-the-retainers","text":"Step 3: read the retainers","level":3},{"id":"step-4-allocation-timeline-for-the-tricky-cases","text":"Step 4: allocation timeline for the tricky cases","level":3},{"id":"weakref-and-finalizationregistry","text":"WeakRef and FinalizationRegistry","level":2},{"id":"preventing-leaks-by-design","text":"Preventing leaks by design","level":2},{"id":"conclusion","text":"Conclusion","level":2}],"prev":{"slug":"nextjs-best-practices","frontmatter":{"title":"Next.js Best Practices for Building Scalable Applications","description":"Learn the essential best practices for building production-ready Next.js applications that scale well and remain maintainable.","date":"2024-12-15","tags":["Next.js","React","Web Development"]},"readingTime":2},"next":{"slug":"browser-rendering-pipeline-60fps","frontmatter":{"title":"The Browser Rendering Pipeline: Writing 60fps Animations","description":"Style, layout, paint and composite — what each stage costs, which CSS properties trigger which stages, and how to build animations that stay smooth with transforms, will-change, FLIP and the View Transitions API.","date":"2025-11-17","tags":["CSS","Performance","Browser Internals"]},"readingTime":6},"related":[{"slug":"javascript-event-loop-deep-dive","frontmatter":{"title":"Inside the JavaScript Event Loop: Tasks, Microtasks and the Rendering Steps","description":"A precise mental model of how the browser schedules your code — tasks, microtasks, requestAnimationFrame and rendering — and how to use it to write UIs that never freeze.","date":"2026-10-21","tags":["JavaScript","Browser Internals","Performance"],"featured":true},"readingTime":6},{"slug":"web-workers-off-main-thread","frontmatter":{"title":"Off the Main Thread: Web Workers, Transferables and RPC in Practice","description":"Move expensive work off the UI thread. Covers dedicated workers in modern bundlers, structured clone costs, zero-copy transferables, a promise-based RPC layer, SharedArrayBuffer with Atomics, and OffscreenCanvas.","date":"2026-04-20","tags":["JavaScript","Performance","Web Workers"]},"readingTime":5},{"slug":"build-signals-from-scratch","frontmatter":{"title":"Building a Fine-Grained Reactivity System (Signals) From Scratch","description":"Signals power Solid, Preact, Angular and Vue's reactivity. Build one in under 100 lines to understand dependency tracking, computed values, effects and glitch-free updates.","date":"2026-09-30","tags":["JavaScript","Reactivity","Architecture"]},"readingTime":5}]}]],["$L4","$L5"],"$L6"]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"E6xvaCzEOilM2NUsVbGPT"}
+4:["$","script","script-0",{"src":"/_next/static/chunks/00mgaiaj6~rb~.js","async":true}]
+5:["$","script","script-1",{"src":"/_next/static/chunks/03uyn3wrd30ix.js","async":true}]
+6:["$","$L7",null,{"children":["$","$8",null,{"name":"Next.MetadataOutlet","children":"$@9"}]}]
+9:null

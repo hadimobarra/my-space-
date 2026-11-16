@@ -1,0 +1,193 @@
+1:"$Sreact.fragment"
+2:I[63178,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"ThemeProvider"]
+3:I[66382,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"I18nProvider"]
+4:I[53701,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"MotionProvider"]
+5:I[49786,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"Header"]
+6:I[54621,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"CommandMenu"]
+f:I[68027,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"default",1]
+:HL["/_next/static/chunks/13io2s3y4zmud.css","style"]
+:HL["/_next/static/media/797e433ab948586e-s.p.08e28id.o-okb.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/caa3a2e1cccd8315-s.p.09~u27dqhyhd6.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+0:{"P":null,"c":["","blog","proxy-and-reflect-metaprogramming",""],"q":"","i":false,"f":[[["",{"children":["blog",{"children":[["slug","proxy-and-reflect-metaprogramming","d",null],{"children":["__PAGE__",{}]}]}]},"$undefined","$undefined",16],[["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/13io2s3y4zmud.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","script","script-0",{"src":"/_next/static/chunks/0i-uuc70u4wfl.js","async":true,"nonce":"$undefined"}],["$","script","script-1",{"src":"/_next/static/chunks/02e34ux_g911k.js","async":true,"nonce":"$undefined"}],["$","script","script-2",{"src":"/_next/static/chunks/0x_gzhsm7.0z..js","async":true,"nonce":"$undefined"}],["$","script","script-3",{"src":"/_next/static/chunks/03j8m-3wu2-id.js","async":true,"nonce":"$undefined"}],["$","script","script-4",{"src":"/_next/static/chunks/0d3shmwh5_nmn.js","async":true,"nonce":"$undefined"}]],["$","html",null,{"lang":"en","suppressHydrationWarning":true,"className":"geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable","children":[["$","head",null,{"children":[["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"{\"@context\":\"https://schema.org\",\"@type\":\"Person\",\"name\":\"Hadi Mobarra\",\"givenName\":\"Hadi\",\"familyName\":\"Mobarra\",\"jobTitle\":\"Front-End Engineer\",\"description\":\"Front-End Engineer specializing in React and TypeScript for data platforms. Apache Superset contributor.\",\"url\":\"https://hadimobarra.github.io\",\"email\":\"hadimobarra@gmail.com\",\"sameAs\":[\"https://github.com/hadimobarra\",\"https://www.linkedin.com/in/hadi-mobarra/\"],\"knowsAbout\":[\"React\",\"Next.js\",\"TypeScript\",\"JavaScript\",\"Front-End Development\",\"Web Development\",\"Apache Superset\",\"OpenMetadata\",\"Data Visualization\"],\"alumniOf\":{\"@type\":\"CollegeOrUniversity\",\"name\":\"Iran University of Science and Technology\"},\"image\":\"https://hadimobarra.github.io/images/profile.jpeg\"}"}}],["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"Hadi Mobarra\",\"url\":\"https://hadimobarra.github.io\",\"author\":{\"@type\":\"Person\",\"name\":\"Hadi Mobarra\"},\"description\":\"Front-End Engineer with 4+ years building data-intensive React and TypeScript apps: data catalogs, ETL interfaces and dashboards. Apache Superset contributor. Open to remote roles.\"}"}}]]}],["$","body",null,{"className":"min-h-screen flex flex-col antialiased","children":["$","$L2",null,{"attribute":"class","defaultTheme":"light","enableSystem":false,"children":[["$","$L3",null,{"children":["$","$L4",null,{"children":[["$","$L5",null,{}],["$","$L6",null,{"posts":[{"slug":"javascript-event-loop-deep-dive","title":"Inside the JavaScript Event Loop: Tasks, Microtasks and the Rendering Steps"},{"slug":"build-signals-from-scratch","title":"Building a Fine-Grained Reactivity System (Signals) From Scratch"},{"slug":"proxy-and-reflect-metaprogramming","title":"Metaprogramming in JavaScript with Proxy and Reflect"},{"slug":"taming-inp-interaction-to-next-paint","title":"Taming INP: A Practical Guide to Interaction to Next Paint"},{"slug":"typescript-type-level-programming","title":"Type-Level Programming in TypeScript: Conditional, Mapped and Template Literal Types"},{"slug":"web-workers-off-main-thread","title":"Off the Main Thread: Web Workers, Transferables and RPC in Practice"},{"slug":"react-server-components-mental-model","title":"A Mental Model for React Server Components and Streaming"},{"slug":"async-iterators-generators-streams","title":"Async Iterators, Generators and Web Streams in Practice"},{"slug":"browser-rendering-pipeline-60fps","title":"The Browser Rendering Pipeline: Writing 60fps Animations"},{"slug":"hunting-memory-leaks-javascript","title":"Hunting Memory Leaks in JavaScript Applications"},{"slug":"nextjs-best-practices","title":"Next.js Best Practices for Building Scalable Applications"},{"slug":"frontend-performance","title":"Front-End Performance Optimization Guide"},{"slug":"react-architecture","title":"React Architecture: Building Maintainable Applications"}]}],"$L7","$L8"]}]}],"$L9"]}]}]]}]]}],{"children":["$La",{"children":["$Lb",{"children":["$Lc",{},null,false,null]},null,false,"$@d"]},null,false,null]},null,false,null],"$Le",false]],"m":"$undefined","G":["$f",["$L10"]],"S":true,"h":null,"s":"$undefined","l":"$undefined","p":"$undefined","d":"$undefined","b":"E6xvaCzEOilM2NUsVbGPT"}
+11:I[39756,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"default"]
+12:I[37457,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"default"]
+13:I[65112,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"BackToTop"]
+14:I[46696,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"Toaster"]
+16:I[97367,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"OutletBoundary"]
+17:"$Sreact.suspense"
+1a:I[97367,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"ViewportBoundary"]
+1c:I[97367,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"MetadataBoundary"]
+7:["$","main",null,{"className":"flex-1","children":["$","$L11",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L12",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]}]
+8:["$","$L13",null,{}]
+9:["$","$L14",null,{"position":"top-center","richColors":true,"closeButton":true}]
+a:["$","$1","c",{"children":[null,["$","$L11",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L12",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}]
+b:["$","$1","c",{"children":[null,["$","$L11",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L12",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}]
+c:["$","$1","c",{"children":["$L15",[["$","script","script-0",{"src":"/_next/static/chunks/00mgaiaj6~rb~.js","async":true,"nonce":"$undefined"}],["$","script","script-1",{"src":"/_next/static/chunks/03uyn3wrd30ix.js","async":true,"nonce":"$undefined"}]],["$","$L16",null,{"children":["$","$17",null,{"name":"Next.MetadataOutlet","children":"$@18"}]}]]}]
+19:[]
+d:"$W19"
+e:["$","$1","h",{"children":[null,["$","$L1a",null,{"children":"$L1b"}],["$","div",null,{"hidden":true,"children":["$","$L1c",null,{"children":["$","$17",null,{"name":"Next.Metadata","children":"$L1d"}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}]
+10:["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/13io2s3y4zmud.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]
+1e:I[64233,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js","/_next/static/chunks/00mgaiaj6~rb~.js","/_next/static/chunks/03uyn3wrd30ix.js"],"BlogPostContent"]
+1f:T4227,<h2 id="what-a-proxy-actually-is">What a Proxy actually is</h2>
+<p>A <code>Proxy</code> wraps a <strong>target</strong> object and lets you intercept the internal operations the engine performs on it — <code>[[Get]]</code>, <code>[[Set]]</code>, <code>[[HasProperty]]</code>, <code>[[Delete]]</code>, <code>[[OwnPropertyKeys]]</code>, <code>[[Call]]</code> and more. Each interceptable operation is a <strong>trap</strong> on the handler object.</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> target = { <span class="hljs-attr">greeting</span>: <span class="hljs-string">"hello"</span> };
+
+<span class="hljs-keyword">const</span> proxy = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Proxy</span>(target, {
+  <span class="hljs-title function_">get</span>(<span class="hljs-params">target, key, receiver</span>) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`read <span class="hljs-subst">${<span class="hljs-built_in">String</span>(key)}</span>`</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-title class_">Reflect</span>.<span class="hljs-title function_">get</span>(target, key, receiver);
+  },
+});
+
+proxy.<span class="hljs-property">greeting</span>; <span class="hljs-comment">// logs "read greeting", returns "hello"</span>
+</code></pre>
+<p>That's the whole API surface. The interesting part is using it correctly.</p>
+<h2 id="why-you-should-always-forward-with-reflect">Why you should always forward with <code>Reflect</code></h2>
+<p><code>Reflect</code> has one method per trap with the exact same signature. It performs the <em>default</em> behaviour. Using it instead of <code>target[key]</code> matters because of the <code>receiver</code> argument:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> base = {
+  <span class="hljs-attr">_name</span>: <span class="hljs-string">"base"</span>,
+  <span class="hljs-keyword">get</span> <span class="hljs-title function_">name</span>() {
+    <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.<span class="hljs-property">_name</span>;
+  },
+};
+
+<span class="hljs-keyword">const</span> proxy = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Proxy</span>(base, {
+  <span class="hljs-title function_">get</span>(<span class="hljs-params">target, key, receiver</span>) {
+    <span class="hljs-keyword">return</span> target[key]; <span class="hljs-comment">// ❌ the getter runs with this === target</span>
+  },
+});
+
+<span class="hljs-keyword">const</span> child = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">create</span>(proxy);
+child.<span class="hljs-property">_name</span> = <span class="hljs-string">"child"</span>;
+child.<span class="hljs-property">name</span>; <span class="hljs-comment">// "base" — wrong!</span>
+</code></pre>
+<p>When <code>child.name</code> walks up the prototype chain into the proxy, <code>receiver</code> is <code>child</code>. <code>target[key]</code> drops it and calls the getter on <code>target</code>. <code>Reflect.get(target, key, receiver)</code> preserves <code>this === child</code> and returns <code>"child"</code>. The same applies to <code>set</code> and setters.</p>
+<h2 id="trap-invariants-what-you-cannot-lie-about">Trap invariants: what you cannot lie about</h2>
+<p>Proxies can't violate certain invariants of the target, or the engine throws a <code>TypeError</code>. For example:</p>
+<ul>
+<li><code>get</code> must return the actual value for a <strong>non-writable, non-configurable</strong> data property.</li>
+<li><code>has</code> can't hide a non-configurable property.</li>
+<li><code>ownKeys</code> must include all non-configurable own keys, and must not add keys if the target is non-extensible.</li>
+</ul>
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> frozen = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">freeze</span>({ <span class="hljs-attr">x</span>: <span class="hljs-number">1</span> });
+<span class="hljs-keyword">const</span> liar = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Proxy</span>(frozen, { <span class="hljs-attr">get</span>: <span class="hljs-function">() =></span> <span class="hljs-number">42</span> });
+liar.<span class="hljs-property">x</span>; <span class="hljs-comment">// TypeError: 'get' on proxy: property 'x' is a read-only and</span>
+        <span class="hljs-comment">// non-configurable data property ... but the proxy did not return its actual value</span>
+</code></pre>
+<p>These invariants exist so that security guarantees like <code>Object.freeze</code> can't be undermined by a proxy.</p>
+<h2 id="example-1-negative-array-indices">Example 1: negative array indices</h2>
+<pre><code class="hljs language-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">withNegativeIndices</span>(<span class="hljs-params">array</span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Proxy</span>(array, {
+    <span class="hljs-title function_">get</span>(<span class="hljs-params">target, key, receiver</span>) {
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> key === <span class="hljs-string">"string"</span> &#x26;&#x26; <span class="hljs-regexp">/^-\d+$/</span>.<span class="hljs-title function_">test</span>(key)) {
+        key = <span class="hljs-title class_">String</span>(target.<span class="hljs-property">length</span> + <span class="hljs-title class_">Number</span>(key));
+      }
+      <span class="hljs-keyword">return</span> <span class="hljs-title class_">Reflect</span>.<span class="hljs-title function_">get</span>(target, key, receiver);
+    },
+  });
+}
+
+<span class="hljs-keyword">const</span> list = <span class="hljs-title function_">withNegativeIndices</span>([<span class="hljs-string">"a"</span>, <span class="hljs-string">"b"</span>, <span class="hljs-string">"c"</span>]);
+list[-<span class="hljs-number">1</span>]; <span class="hljs-comment">// "c"</span>
+list.<span class="hljs-title function_">at</span>(-<span class="hljs-number">2</span>); <span class="hljs-comment">// "b" — all normal methods still work</span>
+</code></pre>
+<p>Note that property keys always arrive as <strong>strings or symbols</strong>, never numbers — <code>list[-1]</code> reaches the trap as <code>"-1"</code>.</p>
+<h2 id="example-2-a-validation-layer">Example 2: a validation layer</h2>
+<pre><code class="hljs language-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">typed</span>(<span class="hljs-params">schema</span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Proxy</span>({}, {
+    <span class="hljs-title function_">set</span>(<span class="hljs-params">target, key, value, receiver</span>) {
+      <span class="hljs-keyword">const</span> expected = schema[key];
+      <span class="hljs-keyword">if</span> (!expected) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TypeError</span>(<span class="hljs-string">`Unknown field "<span class="hljs-subst">${<span class="hljs-built_in">String</span>(key)}</span>"`</span>);
+      }
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> value !== expected) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TypeError</span>(<span class="hljs-string">`"<span class="hljs-subst">${<span class="hljs-built_in">String</span>(key)}</span>" must be <span class="hljs-subst">${expected}</span>, got <span class="hljs-subst">${<span class="hljs-keyword">typeof</span> value}</span>`</span>);
+      }
+      <span class="hljs-keyword">return</span> <span class="hljs-title class_">Reflect</span>.<span class="hljs-title function_">set</span>(target, key, value, receiver);
+    },
+  });
+}
+
+<span class="hljs-keyword">const</span> user = <span class="hljs-title function_">typed</span>({ <span class="hljs-attr">name</span>: <span class="hljs-string">"string"</span>, <span class="hljs-attr">age</span>: <span class="hljs-string">"number"</span> });
+user.<span class="hljs-property">name</span> = <span class="hljs-string">"Ada"</span>;
+user.<span class="hljs-property">age</span> = <span class="hljs-string">"36"</span>; <span class="hljs-comment">// TypeError: "age" must be number, got string</span>
+</code></pre>
+<p>The <code>set</code> trap must return <code>true</code> on success. Returning <code>false</code> throws a <code>TypeError</code> in strict mode — which is what modules and classes always are.</p>
+<h2 id="example-3-a-tiny-reactive-store-how-vue-3-works">Example 3: a tiny reactive store (how Vue 3 works)</h2>
+<p>Vue 3's reactivity is built on proxies. Here's the core idea in a few lines:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> targetMap = <span class="hljs-keyword">new</span> <span class="hljs-title class_">WeakMap</span>(); <span class="hljs-comment">// target -> key -> Set&#x3C;effect></span>
+<span class="hljs-keyword">let</span> activeEffect = <span class="hljs-literal">null</span>;
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">track</span>(<span class="hljs-params">target, key</span>) {
+  <span class="hljs-keyword">if</span> (!activeEffect) <span class="hljs-keyword">return</span>;
+  <span class="hljs-keyword">let</span> deps = targetMap.<span class="hljs-title function_">get</span>(target);
+  <span class="hljs-keyword">if</span> (!deps) targetMap.<span class="hljs-title function_">set</span>(target, (deps = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Map</span>()));
+  <span class="hljs-keyword">let</span> set = deps.<span class="hljs-title function_">get</span>(key);
+  <span class="hljs-keyword">if</span> (!set) deps.<span class="hljs-title function_">set</span>(key, (set = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Set</span>()));
+  set.<span class="hljs-title function_">add</span>(activeEffect);
+}
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">trigger</span>(<span class="hljs-params">target, key</span>) {
+  targetMap.<span class="hljs-title function_">get</span>(target)?.<span class="hljs-title function_">get</span>(key)?.<span class="hljs-title function_">forEach</span>(<span class="hljs-function">(<span class="hljs-params">fn</span>) =></span> <span class="hljs-title function_">fn</span>());
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">reactive</span>(<span class="hljs-params">obj</span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Proxy</span>(obj, {
+    <span class="hljs-title function_">get</span>(<span class="hljs-params">target, key, receiver</span>) {
+      <span class="hljs-title function_">track</span>(target, key);
+      <span class="hljs-keyword">const</span> value = <span class="hljs-title class_">Reflect</span>.<span class="hljs-title function_">get</span>(target, key, receiver);
+      <span class="hljs-comment">// Lazily make nested objects reactive</span>
+      <span class="hljs-keyword">return</span> value !== <span class="hljs-literal">null</span> &#x26;&#x26; <span class="hljs-keyword">typeof</span> value === <span class="hljs-string">"object"</span> ? <span class="hljs-title function_">reactive</span>(value) : value;
+    },
+    <span class="hljs-title function_">set</span>(<span class="hljs-params">target, key, value, receiver</span>) {
+      <span class="hljs-keyword">const</span> old = target[key];
+      <span class="hljs-keyword">const</span> ok = <span class="hljs-title class_">Reflect</span>.<span class="hljs-title function_">set</span>(target, key, value, receiver);
+      <span class="hljs-keyword">if</span> (ok &#x26;&#x26; !<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">is</span>(old, value)) <span class="hljs-title function_">trigger</span>(target, key);
+      <span class="hljs-keyword">return</span> ok;
+    },
+  });
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">watchEffect</span>(<span class="hljs-params">fn</span>) {
+  <span class="hljs-keyword">const</span> <span class="hljs-title function_">run</span> = (<span class="hljs-params"></span>) => {
+    activeEffect = run;
+    <span class="hljs-keyword">try</span> { <span class="hljs-title function_">fn</span>(); } <span class="hljs-keyword">finally</span> { activeEffect = <span class="hljs-literal">null</span>; }
+  };
+  <span class="hljs-title function_">run</span>();
+}
+</code></pre>
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> state = <span class="hljs-title function_">reactive</span>({ <span class="hljs-attr">user</span>: { <span class="hljs-attr">name</span>: <span class="hljs-string">"Ada"</span> } });
+<span class="hljs-title function_">watchEffect</span>(<span class="hljs-function">() =></span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(state.<span class="hljs-property">user</span>.<span class="hljs-property">name</span>));
+state.<span class="hljs-property">user</span>.<span class="hljs-property">name</span> = <span class="hljs-string">"Grace"</span>; <span class="hljs-comment">// logs "Grace"</span>
+</code></pre>
+<p>Using a <code>WeakMap</code> keyed by the raw target means dependency data is garbage-collected with the object. A production version also caches proxies per target (so <code>reactive(obj) === reactive(obj)</code>), and handles arrays, <code>Map</code>/<code>Set</code>, and <code>has</code>/<code>ownKeys</code> traps for <code>in</code> and iteration.</p>
+<h2 id="revocable-proxies-for-capability-security">Revocable proxies for capability security</h2>
+<p><code>Proxy.revocable</code> returns a proxy plus a <code>revoke</code> function. After revoking, <em>every</em> operation on the proxy throws. That's useful for handing a third-party plugin temporary access:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> { <span class="hljs-attr">proxy</span>: api, revoke } = <span class="hljs-title class_">Proxy</span>.<span class="hljs-title function_">revocable</span>(internalApi, {});
+plugin.<span class="hljs-title function_">init</span>(api);
+<span class="hljs-comment">// later...</span>
+<span class="hljs-title function_">revoke</span>(); <span class="hljs-comment">// the plugin can no longer touch internalApi through `api`</span>
+</code></pre>
+<h2 id="performance-and-pitfalls">Performance and pitfalls</h2>
+<ul>
+<li><strong>Proxies are slower</strong> than plain property access because traps defeat many engine optimisations (inline caches). Don't put them in hot inner loops.</li>
+<li><strong>Identity:</strong> <code>proxy !== target</code>. Code that uses objects as <code>Map</code> keys or does <code>===</code> checks can break.</li>
+<li><strong>Private fields don't work through proxies.</strong> <code>#field</code> access checks the <em>actual</em> object, and the proxy isn't the instance:</li>
+</ul>
+<pre><code class="hljs language-js"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Counter</span> {
+  #count = <span class="hljs-number">0</span>;
+  <span class="hljs-title function_">inc</span>(<span class="hljs-params"></span>) { <span class="hljs-keyword">return</span> ++<span class="hljs-variable language_">this</span>.#count; }
+}
+<span class="hljs-keyword">const</span> p = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Proxy</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Counter</span>(), {});
+p.<span class="hljs-title function_">inc</span>(); <span class="hljs-comment">// TypeError: Cannot read private member #count</span>
+</code></pre>
+<p>Fix it by binding methods to the target in the <code>get</code> trap when the value is a function.</p>
+<ul>
+<li><strong>Built-ins with internal slots</strong> (<code>Map</code>, <code>Set</code>, <code>Date</code>, typed arrays) have the same problem — their methods need <code>this</code> to be the real object.</li>
+</ul>
+<h2 id="conclusion">Conclusion</h2>
+<p>Use <code>Reflect</code> to forward every trap with its receiver, respect the invariants, and keep proxies out of hot paths. Follow those rules and proxies give you validation layers, observable state, API versioning shims and sandboxing without changing the code that uses the object.</p>15:[["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"{\"@context\":\"https://schema.org\",\"@type\":\"BlogPosting\",\"headline\":\"Metaprogramming in JavaScript with Proxy and Reflect\",\"description\":\"Intercept property access, validation, and function calls with Proxy traps. Learn the invariants, the role of Reflect and receivers, and build a tiny reactive store, a validation layer and a negative-index array.\",\"datePublished\":\"2026-08-18\",\"keywords\":\"JavaScript, Metaprogramming, Advanced\",\"author\":{\"@type\":\"Person\",\"name\":\"Hadi Mobarra\",\"url\":\"https://hadimobarra.github.io\"},\"url\":\"https://hadimobarra.github.io/blog/proxy-and-reflect-metaprogramming/\"}"}}],["$","$L1e",null,{"slug":"proxy-and-reflect-metaprogramming","title":"Metaprogramming in JavaScript with Proxy and Reflect","description":"Intercept property access, validation, and function calls with Proxy traps. Learn the invariants, the role of Reflect and receivers, and build a tiny reactive store, a validation layer and a negative-index array.","date":"2026-08-18","readingTime":5,"tags":["JavaScript","Metaprogramming","Advanced"],"htmlContent":"$1f","headings":[{"id":"what-a-proxy-actually-is","text":"What a Proxy actually is","level":2},{"id":"why-you-should-always-forward-with-reflect","text":"Why you should always forward with Reflect","level":2},{"id":"trap-invariants-what-you-cannot-lie-about","text":"Trap invariants: what you cannot lie about","level":2},{"id":"example-1-negative-array-indices","text":"Example 1: negative array indices","level":2},{"id":"example-2-a-validation-layer","text":"Example 2: a validation layer","level":2},{"id":"example-3-a-tiny-reactive-store-how-vue-3-works","text":"Example 3: a tiny reactive store (how Vue 3 works)","level":2},{"id":"revocable-proxies-for-capability-security","text":"Revocable proxies for capability security","level":2},{"id":"performance-and-pitfalls","text":"Performance and pitfalls","level":2},{"id":"conclusion","text":"Conclusion","level":2}],"prev":{"slug":"taming-inp-interaction-to-next-paint","frontmatter":{"title":"Taming INP: A Practical Guide to Interaction to Next Paint","description":"INP replaced FID as a Core Web Vital. Learn how it's measured, how to find the slow interactions in your app, and the concrete techniques that cut it: yielding, deferring non-urgent work, React transitions and smaller DOMs.","date":"2026-07-14","tags":["Performance","Core Web Vitals","React"]},"readingTime":5},"next":{"slug":"build-signals-from-scratch","frontmatter":{"title":"Building a Fine-Grained Reactivity System (Signals) From Scratch","description":"Signals power Solid, Preact, Angular and Vue's reactivity. Build one in under 100 lines to understand dependency tracking, computed values, effects and glitch-free updates.","date":"2026-09-30","tags":["JavaScript","Reactivity","Architecture"]},"readingTime":5},"related":[{"slug":"javascript-event-loop-deep-dive","frontmatter":{"title":"Inside the JavaScript Event Loop: Tasks, Microtasks and the Rendering Steps","description":"A precise mental model of how the browser schedules your code — tasks, microtasks, requestAnimationFrame and rendering — and how to use it to write UIs that never freeze.","date":"2026-10-21","tags":["JavaScript","Browser Internals","Performance"],"featured":true},"readingTime":6},{"slug":"build-signals-from-scratch","frontmatter":"$15:1:props:next:frontmatter","readingTime":5},{"slug":"typescript-type-level-programming","frontmatter":{"title":"Type-Level Programming in TypeScript: Conditional, Mapped and Template Literal Types","description":"Treat TypeScript's type system as a small functional language. Learn conditional types and infer, distributive behaviour, key remapping, recursive types and template literals, then build a type-safe router and a deep-path getter.","date":"2026-06-02","tags":["TypeScript","Type System","Advanced"]},"readingTime":5}]}]]
+1b:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+20:I[27201,["/_next/static/chunks/0i-uuc70u4wfl.js","/_next/static/chunks/02e34ux_g911k.js","/_next/static/chunks/0x_gzhsm7.0z..js","/_next/static/chunks/03j8m-3wu2-id.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"IconMark"]
+18:null
+1d:[["$","title","0",{"children":"Metaprogramming in JavaScript with Proxy and Reflect"}],["$","meta","1",{"name":"description","content":"Intercept property access, validation, and function calls with Proxy traps. Learn the invariants, the role of Reflect and receivers, and build a tiny reactive store, a validation layer and a negative-index array."}],["$","meta","2",{"name":"author","content":"Hadi Mobarra"}],["$","link","3",{"rel":"manifest","href":"/manifest.webmanifest","crossOrigin":"$undefined"}],["$","meta","4",{"name":"keywords","content":"Hadi Mobarra,Front-End Engineer,React,TypeScript,Data Platform UI,Apache Superset,Remote"}],["$","meta","5",{"name":"creator","content":"Hadi Mobarra"}],["$","meta","6",{"name":"robots","content":"index, follow"}],["$","meta","7",{"name":"googlebot","content":"index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"}],["$","link","8",{"rel":"canonical","href":"https://hadimobarra.github.io/blog/proxy-and-reflect-metaprogramming/"}],["$","meta","9",{"property":"og:title","content":"Metaprogramming in JavaScript with Proxy and Reflect | Hadi Mobarra"}],["$","meta","10",{"property":"og:description","content":"Intercept property access, validation, and function calls with Proxy traps. Learn the invariants, the role of Reflect and receivers, and build a tiny reactive store, a validation layer and a negative-index array."}],["$","meta","11",{"property":"og:url","content":"https://hadimobarra.github.io/blog/proxy-and-reflect-metaprogramming/"}],["$","meta","12",{"property":"og:type","content":"article"}],["$","meta","13",{"property":"article:published_time","content":"2026-08-18"}],["$","meta","14",{"property":"article:tag","content":"JavaScript"}],["$","meta","15",{"property":"article:tag","content":"Metaprogramming"}],["$","meta","16",{"property":"article:tag","content":"Advanced"}],["$","meta","17",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","18",{"name":"twitter:title","content":"Metaprogramming in JavaScript with Proxy and Reflect"}],["$","meta","19",{"name":"twitter:description","content":"Intercept property access, validation, and function calls with Proxy traps. Learn the invariants, the role of Reflect and receivers, and build a tiny reactive store, a validation layer and a negative-index array."}],["$","link","20",{"rel":"icon","href":"/favicon.ico?favicon.0x3dzn~oxb6tn.ico","sizes":"256x256","type":"image/x-icon"}],["$","$L20","21",{}]]
