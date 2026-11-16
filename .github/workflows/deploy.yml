@@ -1,4 +1,11 @@
-name: Deploy to GitHub Pages
+name: Deploy to hadimobarra.github.io
+
+# Builds the static Next.js export and publishes it to the gh-pages branch of
+# hadimobarra/hadimobarra.github.io, which serves https://hadimobarra.github.io.
+#
+# One-time setup: create a fine-grained token with "Contents: Read and write"
+# on hadimobarra/hadimobarra.github.io and save it in this repo as the
+# DEPLOY_TOKEN secret (Settings → Secrets and variables → Actions).
 
 on:
   push:
@@ -7,36 +14,36 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: pages
+  group: deploy
   cancel-in-progress: true
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+
       - run: npm ci
-      - run: bash scripts/build.sh
+
+      - run: npm run lint
+
+      - run: npm run build
         env:
           NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY: ${{ secrets.WEB3FORMS_ACCESS_KEY }}
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: _site
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - run: touch out/.nojekyll
+
+      - uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_token: ${{ secrets.DEPLOY_TOKEN }}
+          external_repository: hadimobarra/hadimobarra.github.io
+          publish_branch: gh-pages
+          publish_dir: ./out
+          commit_message: "Deploy ${{ github.sha }}"
