@@ -1,0 +1,50 @@
+---
+title: "OpenMetadata: a pipeline editor, translation tooling and an upstream fix"
+summary: "Custom features on an OpenMetadata fork at Adin, including an ETL pipeline editor with live YAML preview, plus an upstream fix that stops malformed data from crashing version pages."
+role: "Front-end engineer, upstream contributor"
+context: "Adin fork of v1.7.0, and upstream OpenMetadata"
+status: "Upstream fix merged, November 2026"
+order: 3
+cover: "OpenMetadata"
+tags: ["React", "TypeScript", "Ant Design", "Tailwind CSS", "RTL"]
+links:
+  - label: "Pull request #33580"
+    url: "https://github.com/open-metadata/OpenMetadata/pull/33580"
+  - label: "Issue #28154"
+    url: "https://github.com/open-metadata/OpenMetadata/issues/28154"
+---
+
+## Context
+
+OpenMetadata is an open-source platform for data discovery, quality and governance. At Adin I build on a fork of version 1.7.0. I also contribute upstream.
+
+## On the fork
+
+**ETL pipeline editor.** Built from scratch: a structured canvas for composing ingestion stages, with a live YAML preview next to it. People who prefer a visual editor and people who prefer configuration files work on the same pipeline.
+
+**Schema translation tooling.** Many OpenMetadata forms are generated from JSON Schema, so their labels don't come from ordinary translation files. I built i18n tooling that translates the schema-driven labels too.
+
+**Persian and RTL.** Full right-to-left localization, including fixes for layout and state bugs on entity and pipeline pages.
+
+## Upstream: malformed diffs no longer crash the page
+
+### Problem
+
+Entity version pages show what changed between versions. The values are stored as JSON strings, and the UI called `JSON.parse()` on them while rendering. One malformed or oddly shaped value was enough to crash the page.
+
+### Change
+
+- Shared safe parsers with shape validation for diff arrays and objects. Invalid entries fall back to empty values while valid ones still render.
+- Applied to tags, owners, domains, table constraints, schemas, pipelines, ML features and search-index fields.
+- Nested `children` are validated recursively, because a bad payload could otherwise reach a recursive renderer.
+
+### Bugs found along the way
+
+Writing tests for the parsers exposed two correctness bugs that had nothing to do with crashes:
+
+- Added and deleted search-index fields never appeared, because the lookup used the key for tasks instead of fields.
+- ML feature changes were paired by position. Filtering could shift the positions, so they are now paired by name.
+
+### Result
+
+Merged on 16 November 2026 after several review rounds, with 19 files changed and new regression tests for each utility involved.

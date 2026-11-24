@@ -1,0 +1,41 @@
+---
+title: "This website: 45% less JavaScript, two indexable languages"
+summary: "A rebuild of this site around server components and CSS scroll-driven animation. It cut homepage JavaScript by 45% and made the Persian version visible to search engines."
+role: "Design and development"
+context: "Personal project, public source"
+status: "Live, November 2026"
+order: 5
+cover: "Portfolio"
+tags: ["Next.js", "React", "TypeScript", "Accessibility", "RTL"]
+links:
+  - label: "Source code"
+    url: "https://github.com/hadimobarra/my-space-"
+---
+
+## The problem
+
+The previous version looked fine and scored badly. Every section was a client component, so visitors downloaded an animation library, an i18n library and both languages' texts before anything could move. Much of the page started at `opacity: 0` and stayed invisible until scripts ran. Persian existed only in browser memory: no URL, nothing for search engines, and the choice was lost on reload.
+
+## Decisions
+
+**Two real languages.** English lives at the root and Persian under `/fa/`, each with its own root layout, so `lang`, `dir` and `hreflang` are right in the HTML. The translation library is gone: dictionaries are read while the pages are built, and a missing key is a type error.
+
+**CSS instead of an animation library.** Reveals use scroll-driven animations (`animation-timeline: view()`). Where those aren't supported, the content is simply there. One delegated listener drives every pointer glow.
+
+**Islands only where there is state.** The header, search, contact form, blog filter and table of contents are client components. The command menu and the upload demo load on first use.
+
+**Fonts without cross-language preloads.** Preloading made each page fetch both languages' fonts, about 110 KB. Size-matched fallbacks made the preload unnecessary.
+
+**Checks in CI.** Every deploy has to pass type checks, a JavaScript budget, Playwright tests, axe in light and dark themes, link and metadata checks, and Lighthouse.
+
+## Result
+
+| Homepage | Before | After |
+|---|---|---|
+| JavaScript, gzipped | 282 KB | 155 KB |
+| Lighthouse performance, mobile | 67–72 | 94–97 |
+| Lighthouse accessibility | 96 | 100 |
+| Largest Contentful Paint, simulated | 4.2–4.3 s | 2.3–2.9 s |
+| Total Blocking Time | 400–680 ms | 80–140 ms |
+
+Three Lighthouse mobile runs each, on the same machine in November 2026. The earlier version was measured on GitHub Pages and the new one on a local server, so treat the timings as indicative. The JavaScript sizes compare directly.

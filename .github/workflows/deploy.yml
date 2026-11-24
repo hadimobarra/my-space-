@@ -1,6 +1,6 @@
 name: Deploy to hadimobarra.github.io
 
-# Builds the static Next.js export and publishes it to the gh-pages branch of
+# Verifies the site, then publishes the static export to the gh-pages branch of
 # hadimobarra/hadimobarra.github.io, which serves https://hadimobarra.github.io.
 #
 # One-time setup: create a fine-grained token with "Contents: Read and write"
@@ -10,6 +10,9 @@ name: Deploy to hadimobarra.github.io
 on:
   push:
     branches: [main]
+  schedule:
+    # Weekly rebuild, so pull requests and star counts stay current.
+    - cron: "17 4 * * 1"
   workflow_dispatch:
 
 permissions:
@@ -20,34 +23,21 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  verify:
+    uses: ./.github/workflows/ci.yml
+    secrets:
+      WEB3FORMS_ACCESS_KEY: ${{ secrets.WEB3FORMS_ACCESS_KEY }}
+
   deploy:
+    needs: verify
     runs-on: ubuntu-latest
     env:
       HAS_DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN != '' }}
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - run: npm ci
-
-      - run: npm run lint
-
-      - run: npm run build
-        env:
-          NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY: ${{ secrets.WEB3FORMS_ACCESS_KEY }}
-
-      - run: touch out/.nojekyll
-
-      - uses: actions/upload-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
           name: site
           path: out
-          include-hidden-files: true
-          retention-days: 7
 
       - name: Publish to hadimobarra.github.io
         if: env.HAS_DEPLOY_TOKEN == 'true'
