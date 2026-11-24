@@ -1,0 +1,440 @@
+[
+ {
+  "en": "data catalog",
+  "fa": "کاتالوگ داده",
+  "superset": null,
+  "openmetadata": null
+ },
+ {
+  "en": "data governance",
+  "fa": "حاکمیت داده",
+  "superset": null,
+  "openmetadata": null
+ },
+ {
+  "en": "data quality",
+  "fa": "کیفیت داده",
+  "superset": null,
+  "openmetadata": "کیفیت داده"
+ },
+ {
+  "en": "data lineage",
+  "fa": "تبارنمای داده",
+  "superset": null,
+  "openmetadata": null
+ },
+ {
+  "en": "metadata",
+  "fa": "فراداده",
+  "superset": "متادیتا",
+  "openmetadata": "فراداده"
+ },
+ {
+  "en": "dataset",
+  "fa": "مجموعه‌داده",
+  "superset": "مجموعه داده",
+  "openmetadata": "مجموعه داده"
+ },
+ {
+  "en": "data product",
+  "fa": "محصول داده",
+  "superset": null,
+  "openmetadata": "محصول داده"
+ },
+ {
+  "en": "data warehouse",
+  "fa": "انبار داده",
+  "superset": null,
+  "openmetadata": null
+ },
+ {
+  "en": "data lake",
+  "fa": "دریاچه داده",
+  "superset": null,
+  "openmetadata": null
+ },
+ {
+  "en": "data contract",
+  "fa": "قرارداد داده",
+  "superset": null,
+  "openmetadata": "قرارداد داده"
+ },
+ {
+  "en": "schema",
+  "fa": "طرح‌واره",
+  "superset": "طرح‌بندی",
+  "openmetadata": "اسکیما"
+ },
+ {
+  "en": "database",
+  "fa": "پایگاه داده",
+  "superset": "پایگاه داده",
+  "openmetadata": "پایگاه داده"
+ },
+ {
+  "en": "table",
+  "fa": "جدول",
+  "superset": "جدول‌ها",
+  "openmetadata": "جدول"
+ },
+ {
+  "en": "column",
+  "fa": "ستون",
+  "superset": "ستون",
+  "openmetadata": "ستون"
+ },
+ {
+  "en": "row",
+  "fa": "ردیف",
+  "superset": "ردیف",
+  "openmetadata": "ردیف"
+ },
+ {
+  "en": "primary key",
+  "fa": "کلید اصلی",
+  "superset": "کلید اصلی",
+  "openmetadata": "کلید اصلی"
+ },
+ {
+  "en": "foreign key",
+  "fa": "کلید خارجی",
+  "superset": "کلید خارجی",
+  "openmetadata": "کلید خارجی"
+ },
+ {
+  "en": "query",
+  "fa": "پرس‌وجو",
+  "superset": "کوئری",
+  "openmetadata": "پرس و جو"
+ },
+ {
+  "en": "filter",
+  "fa": "پالایه",
+  "superset": "فیلتر",
+  "openmetadata": "فیلتر"
+ },
+ {
+  "en": "metric",
+  "fa": "سنجه",
+  "superset": "معیار",
+  "openmetadata": "مقیاس"
+ },
+ {
+  "en": "dimension",
+  "fa": "بُعد",
+  "superset": "ابعاد",
+  "openmetadata": "بُعد"
+ },
+ {
+  "en": "aggregation",
+  "fa": "تجمیع",
+  "superset": "تجمیع",
+  "openmetadata": null
+ },
+ {
+  "en": "granularity",
+  "fa": "ریزدانگی",
+  "superset": null,
+  "openmetadata": "دقت"
+ },
+ {
+  "en": "pipeline",
+  "fa": "خط لوله",
+  "superset": null,
+  "openmetadata": "خط لوله"
+ },
+ {
+  "en": "ingestion",
+  "fa": "دریافت داده",
+  "superset": null,
+  "openmetadata": "ورود"
+ },
+ {
+  "en": "transformation",
+  "fa": "تبدیل داده",
+  "superset": null,
+  "openmetadata": null
+ },
+ {
+  "en": "batch processing",
+  "fa": "پردازش دسته‌ای",
+  "superset": null,
+  "openmetadata": null
+ },
+ {
+  "en": "stream processing",
+  "fa": "پردازش جریانی",
+  "superset": null,
+  "openmetadata": null
+ },
+ {
+  "en": "real time",
+  "fa": "بی‌درنگ",
+  "superset": null,
+  "openmetadata": null
+ },
+ {
+  "en": "latency",
+  "fa": "تأخیر",
+  "superset": null,
+  "openmetadata": "تاخیر"
+ },
+ {
+  "en": "throughput",
+  "fa": "گذردهی",
+  "superset": null,
+  "openmetadata": null
+ },
+ {
+  "en": "retry",
+  "fa": "تلاش مجدد",
+  "superset": null,
+  "openmetadata": "تلاش دوباره"
+ },
+ {
+  "en": "resumable",
+  "fa": "ازسرگیری‌پذیر",
+  "superset": null,
+  "openmetadata": null
+ },
+ {
+  "en": "dashboard",
+  "fa": "داشبورد",
+  "superset": "داشبورد",
+  "openmetadata": "داشبورد"
+ },
+ {
+  "en": "chart",
+  "fa": "نمودار",
+  "superset": "نمودار",
+  "openmetadata": "نمودار"
+ },
+ {
+  "en": "bar chart",
+  "fa": "نمودار میله‌ای",
+  "superset": "نمودار میله‌ای",
+  "openmetadata": null
+ },
+ {
+  "en": "line chart",
+  "fa": "نمودار خطی",
+  "superset": "نمودار خطی",
+  "openmetadata": null
+ },
+ {
+  "en": "pie chart",
+  "fa": "نمودار دایره‌ای",
+  "superset": "چارت دایره‌ای",
+  "openmetadata": null
+ },
+ {
+  "en": "heatmap",
+  "fa": "نقشه حرارتی",
+  "superset": "نقشه حرارتی",
+  "openmetadata": null
+ },
+ {
+  "en": "scatter plot",
+  "fa": "نمودار پراکندگی",
+  "superset": "نمودار پراکندگی",
+  "openmetadata": null
+ },
+ {
+  "en": "time series",
+  "fa": "سری زمانی",
+  "superset": "سری زمانی",
+  "openmetadata": null
+ },
+ {
+  "en": "axis",
+  "fa": "محور",
+  "superset": "محور",
+  "openmetadata": null
+ },
+ {
+  "en": "legend",
+  "fa": "راهنمای نمودار",
+  "superset": "افسانه",
+  "openmetadata": "راهنما"
+ },
+ {
+  "en": "tooltip",
+  "fa": "راهنمای شناور",
+  "superset": "پیام چابک",
+  "openmetadata": null
+ },
+ {
+  "en": "drill down",
+  "fa": "ورود به جزئیات",
+  "superset": null,
+  "openmetadata": null
+ },
+ {
+  "en": "pivot table",
+  "fa": "جدول محوری",
+  "superset": "جدول محوری",
+  "openmetadata": null
+ },
+ {
+  "en": "tag",
+  "fa": "برچسب",
+  "superset": "برچسب",
+  "openmetadata": "برچسب"
+ },
+ {
+  "en": "classification",
+  "fa": "رده‌بندی",
+  "superset": null,
+  "openmetadata": "طبقه‌بندی"
+ },
+ {
+  "en": "glossary",
+  "fa": "واژه‌نامه",
+  "superset": null,
+  "openmetadata": "فرهنگ‌نامه"
+ },
+ {
+  "en": "owner",
+  "fa": "مالک",
+  "superset": null,
+  "openmetadata": "مالک"
+ },
+ {
+  "en": "steward",
+  "fa": "متولی",
+  "superset": null,
+  "openmetadata": "متولی"
+ },
+ {
+  "en": "reviewer",
+  "fa": "بازبین",
+  "superset": null,
+  "openmetadata": "بررسی‌کننده"
+ },
+ {
+  "en": "role",
+  "fa": "نقش",
+  "superset": "نقش",
+  "openmetadata": "نقش"
+ },
+ {
+  "en": "permission",
+  "fa": "دسترسی",
+  "superset": null,
+  "openmetadata": "مجوزها"
+ },
+ {
+  "en": "policy",
+  "fa": "سیاست",
+  "superset": null,
+  "openmetadata": "سیاست"
+ },
+ {
+  "en": "access control",
+  "fa": "کنترل دسترسی",
+  "superset": null,
+  "openmetadata": "کنترل دسترسی"
+ },
+ {
+  "en": "audit log",
+  "fa": "گزارش ممیزی",
+  "superset": null,
+  "openmetadata": "گزارش حسابرسی"
+ },
+ {
+  "en": "approval",
+  "fa": "تأیید",
+  "superset": null,
+  "openmetadata": "تأیید"
+ },
+ {
+  "en": "workflow",
+  "fa": "گردش‌کار",
+  "superset": null,
+  "openmetadata": "جریان کاری"
+ },
+ {
+  "en": "alert",
+  "fa": "هشدار",
+  "superset": "هشدار",
+  "openmetadata": "هشدار"
+ },
+ {
+  "en": "incident",
+  "fa": "رخداد",
+  "superset": null,
+  "openmetadata": "حادثه"
+ },
+ {
+  "en": "threshold",
+  "fa": "آستانه",
+  "superset": "آستانه",
+  "openmetadata": null
+ },
+ {
+  "en": "outlier",
+  "fa": "داده پرت",
+  "superset": null,
+  "openmetadata": null
+ },
+ {
+  "en": "sample data",
+  "fa": "نمونه داده",
+  "superset": null,
+  "openmetadata": "داده‌های نمونه"
+ },
+ {
+  "en": "null value",
+  "fa": "مقدار تهی",
+  "superset": "مقادیر خالی",
+  "openmetadata": null
+ },
+ {
+  "en": "version history",
+  "fa": "تاریخچه نسخه",
+  "superset": null,
+  "openmetadata": "تاریخچه نسخه‌ها"
+ },
+ {
+  "en": "localization",
+  "fa": "بومی‌سازی",
+  "superset": null,
+  "openmetadata": null
+ },
+ {
+  "en": "right-to-left",
+  "fa": "راست‌به‌چپ",
+  "superset": null,
+  "openmetadata": null
+ },
+ {
+  "en": "bidirectional text",
+  "fa": "متن دوجهته",
+  "superset": null,
+  "openmetadata": null
+ },
+ {
+  "en": "placeholder",
+  "fa": "جای‌نگهدار",
+  "superset": null,
+  "openmetadata": "متن جایگزین"
+ },
+ {
+  "en": "accessibility",
+  "fa": "دسترس‌پذیری",
+  "superset": null,
+  "openmetadata": null
+ },
+ {
+  "en": "pull request",
+  "fa": "درخواست ادغام",
+  "superset": null,
+  "openmetadata": null
+ },
+ {
+  "en": "regression",
+  "fa": "پس‌رفت",
+  "superset": null,
+  "openmetadata": null
+ }
+]

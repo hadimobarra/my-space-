@@ -3,14 +3,15 @@ import { SectionWrapper } from "@/components/shared/section-wrapper";
 import { SpotlightCard } from "@/components/shared/spotlight-card";
 import type { Dictionary } from "@/lib/dictionary";
 import { formatNumber } from "@/lib/format";
-import { github } from "@/lib/github";
+import { trustCounts } from "@/content/catalog";
+import { github, mergedPullRequests } from "@/lib/github";
 import type { Locale } from "@/lib/locale";
 
 export function About({ locale, t }: { locale: Locale; t: Dictionary }) {
   const n = (value: number) => formatNumber(value, locale);
   const stats = [
-    { icon: Code, value: `${n(10)}+`, label: t.about.stats.projects, tint: "from-primary/15 to-primary/5 text-primary" },
-    { icon: Briefcase, value: `${n(30)}+`, label: t.about.stats.technologies, tint: "from-violet/15 to-violet/5 text-violet" },
+    { icon: Code, value: n(trustCounts.public), label: t.about.stats.projects, tint: "from-primary/15 to-primary/5 text-primary" },
+    { icon: Briefcase, value: n(mergedPullRequests.length), label: t.about.stats.technologies, tint: "from-violet/15 to-violet/5 text-violet" },
     { icon: Award, value: `${n(4)}+`, label: t.about.stats.experience, tint: "from-secondary/15 to-secondary/5 text-secondary" },
     { icon: GitMerge, value: n(Object.keys(github.repos).length), label: t.about.stats.contributions, tint: "from-accent/15 to-accent/5 text-accent" },
   ];

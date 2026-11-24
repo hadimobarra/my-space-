@@ -8,9 +8,9 @@ import { Menu, Search, X } from "lucide-react";
 import { localeConfig, localePath, switchLocalePath, type Locale } from "@/lib/locale";
 import { ThemeToggle } from "./theme-toggle";
 
-const SECTIONS = ["about", "projects", "experience", "skills", "blog"] as const;
+const SECTIONS = ["about", "projects", "experience", "catalog", "blog", "notes"] as const;
 /** Nav items that open a page instead of scrolling the home page. */
-const PAGES = { blog: "/blog/", resume: "/resume/" } as const;
+const PAGES = { catalog: "/catalog/", blog: "/blog/", notes: "/notes/", resume: "/resume/" } as const;
 
 type NavId = (typeof SECTIONS)[number] | "resume";
 
@@ -44,6 +44,8 @@ export function Header({ locale, labels, translatedPosts }: { locale: Locale; la
     : path.startsWith("/blog") ? "blog"
     : path.startsWith("/projects") ? "projects"
     : path.startsWith("/resume") ? "resume"
+    : path.startsWith("/catalog") ? "catalog"
+    : path.startsWith("/notes") ? "notes"
     : "";
 
   const { locale: otherLocale, href: otherHref } = switchLocalePath(pathname, translatedPosts);
@@ -112,7 +114,7 @@ export function Header({ locale, labels, translatedPosts }: { locale: Locale; la
                 href={link.href}
                 aria-current={current === link.id ? (isHome ? "location" : "page") : undefined}
                 className={clsx(
-                  "px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-colors",
+                  "px-3 py-1.5 rounded-full text-[13px] font-medium transition-colors",
                   current === link.id ? "text-primary bg-primary/[0.07] ring-1 ring-primary/20" : "text-muted hover:text-foreground"
                 )}
               >

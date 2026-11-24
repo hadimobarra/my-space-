@@ -163,7 +163,10 @@ export async function BlogPostPage({ locale, slug }: { locale: Locale; slug: str
                 <p className="text-xs uppercase tracking-wider text-muted mb-1">{t.blog.writtenBy}</p>
                 <p className="text-lg font-semibold mb-2">{t.hero.name}</p>
                 <p className="text-sm text-muted leading-relaxed mb-4">{t.blog.authorBio}</p>
-                <Link href={localePath(locale, "/#contact")} className="text-sm font-medium text-primary underline underline-offset-4">{t.blog.getInTouch}</Link>
+                <p className="flex gap-5 text-sm font-medium text-primary">
+                  <Link href={localePath(locale, "/hire/")} className="underline underline-offset-4">{t.blog.getInTouch}</Link>
+                  <Link href={localePath(locale, "/ai/")} className="underline underline-offset-4">{t.nav.ai}</Link>
+                </p>
               </div>
             </div>
 
