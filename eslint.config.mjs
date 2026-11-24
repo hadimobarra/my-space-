@@ -12,6 +12,12 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Leftovers from the old multi-app layout (untracked):
+    "apps/**",
+    "_site/**",
+    // Test output:
+    "playwright-report/**",
+    "test-results/**",
   ]),
 ]);
 

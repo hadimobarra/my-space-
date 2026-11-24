@@ -1,219 +1,84 @@
-"use client";
-
-import { useRef, useState } from "react";
-import { Send, Mail, MapPin, Check, AlertCircle, Copy } from "lucide-react";
-import { toast } from "sonner";
-import { SpotlightCard } from "@/components/shared/spotlight-card";
-import { useTranslation } from "react-i18next";
+import Link from "next/link";
+import { CalendarClock, Check, Clock, Copy, FileText, Mail, MapPin } from "lucide-react";
+import { CopyButton } from "@/components/shared/copy-button";
 import { SectionWrapper } from "@/components/shared/section-wrapper";
-import { AnimatedElement } from "@/components/shared/animated-element";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { siteConfig } from "@/lib/seo";
+import type { Dictionary } from "@/lib/dictionary";
+import { localePath, type Locale } from "@/lib/locale";
+import { siteConfig } from "@/lib/site";
+import { ContactForm } from "./contact-form";
+import { Overlap } from "./overlap";
 
-type ContactStatus = "idle" | "sending" | "sent" | "error";
-
-export function Contact() {
-  const { t } = useTranslation();
-  const formRef = useRef<HTMLFormElement | null>(null);
-  const [status, setStatus] = useState<ContactStatus>("idle");
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (status === "sending") return;
-
-    const formData = new FormData(e.currentTarget);
-    const name = String(formData.get("name") || "").trim();
-    const email = String(formData.get("email") || "").trim();
-    const subject = `${t("contact.form.subjectPrefix")} ${String(formData.get("subject") || "").trim()}`;
-    const message = String(formData.get("message") || "").trim();
-
-    // Fallback: open the visitor's mail client with everything pre-filled.
-    const mailtoHref = `mailto:${siteConfig.links.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
-      `${message}\n\n— ${name} <${email}>`
-    )}`;
-    const fail = (reason?: string) => {
-      setStatus("error");
-      toast.error(t("contact.form.errorTitle"), {
-        description: reason || t("contact.form.errorText"),
-        action: { label: t("contact.form.emailInstead"), onClick: () => (window.location.href = mailtoHref) },
-        duration: 10000,
-      });
-      window.setTimeout(() => setStatus("idle"), 5000);
-    };
-
-    const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
-    if (!accessKey) {
-      fail();
-      return;
-    }
-
-    const payload = {
-      access_key: accessKey,
-      subject,
-      from_name: name,
-      email,
-      message,
-      site: siteConfig.url,
-    };
-
-    setStatus("sending");
-    try {
-      const response = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const data = await response.json().catch(() => null);
-      if (!response.ok || !data?.success) {
-        throw new Error(data?.message || "failed");
-      }
-      setStatus("sent");
-      toast.success(t("contact.form.sentText"));
-      formRef.current?.reset();
-      window.setTimeout(() => setStatus("idle"), 4000);
-    } catch (err) {
-      fail(err instanceof Error && err.message !== "failed" ? err.message : undefined);
-    }
-  };
-
-  const contactInfo = [
-    { icon: Mail, label: t("contact.email"), value: siteConfig.links.email, href: `mailto:${siteConfig.links.email}`, copy: true },
-    { icon: MapPin, label: t("contact.location"), value: t("contact.locationValue") },
-  ];
-
-  const copy = async (value: string) => {
-    try {
-      await navigator.clipboard.writeText(value);
-      toast.success(t("contact.copied"));
-    } catch {
-      /* clipboard unavailable — ignore */
-    }
-  };
-
-  const isSending = status === "sending";
-  const buttonLabel =
-    status === "sent"
-      ? t("contact.form.sent")
-      : status === "error"
-      ? t("contact.form.error")
-      : isSending
-      ? t("contact.form.sending")
-      : t("contact.form.send");
+export function Contact({ locale, t }: { locale: Locale; t: Dictionary }) {
+  const { contact, hire } = t;
+  const { email, booking } = siteConfig.links;
+  const bookingHref = booking || `mailto:${email}?subject=${encodeURIComponent(hire.bookSubject)}&body=${encodeURIComponent(hire.bookBody)}`;
+  const iconBox = "w-11 h-11 rounded-xl bg-gradient-to-br from-primary/15 to-violet/10 flex items-center justify-center shrink-0";
 
   return (
-    <SectionWrapper
-      id="contact"
-      title={t("contact.title")}
-      subtitle={t("contact.subtitle")}
-      className="bg-surface/60"
-    >
+    <SectionWrapper id="contact" eyebrow={t.eyebrows.contact} title={contact.title} subtitle={contact.subtitle}>
       <div className="grid lg:grid-cols-5 gap-12 lg:gap-16">
-        <AnimatedElement direction="left" className="lg:col-span-2 space-y-6">
-          <p className="text-muted leading-relaxed">{t("contact.description")}</p>
-          <div className="space-y-3">
-            {contactInfo.map((info) => (
-              <SpotlightCard key={info.label} className="flex items-center gap-4 p-4 group">
-                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/15 to-violet/10 flex items-center justify-center shrink-0 transition-transform group-hover:scale-110">
-                  <info.icon size={18} className="text-primary" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs text-muted">{info.label}</p>
-                  {info.href ? (
-                    <a href={info.href} className="text-sm font-medium hover:text-primary transition-colors break-all" dir="ltr">
-                      {info.value}
-                    </a>
-                  ) : (
-                    <p className="text-sm font-medium">{info.value}</p>
-                  )}
-                </div>
-                {info.copy && (
-                  <button
-                    type="button"
-                    onClick={() => copy(info.value)}
-                    className="w-8 h-8 rounded-lg flex items-center justify-center text-muted hover:text-primary hover:bg-primary/10 opacity-60 group-hover:opacity-100 transition-all"
-                    aria-label={`Copy ${info.label}`}
-                  >
-                    <Copy size={14} />
-                  </button>
-                )}
-              </SpotlightCard>
-            ))}
-          </div>
-        </AnimatedElement>
+        <div className="lg:col-span-2">
+          <h3 className="text-lg font-semibold mb-1">{hire.title}</h3>
+          <p className="text-sm text-muted mb-6">{hire.availability}</p>
 
-        <AnimatedElement direction="right" delay={0.2} className="lg:col-span-3">
-          <form ref={formRef} onSubmit={handleSubmit} className="glass-card border-beam rounded-3xl p-6 sm:p-8 shadow-xl shadow-primary/5">
-            <div className="grid sm:grid-cols-2 gap-4 mb-4">
-              <Input
-                name="name"
-                aria-label={t("contact.form.name")}
-                placeholder={t("contact.form.name")}
-                autoComplete="name"
-                disabled={isSending}
-                required
-              />
-              <Input
-                name="email"
-                type="email"
-                aria-label={t("contact.form.email")}
-                placeholder={t("contact.form.email")}
-                autoComplete="email"
-                disabled={isSending}
-                required
-              />
-            </div>
-            <Input
-              name="subject"
-              aria-label={t("contact.form.subject")}
-              placeholder={t("contact.form.subject")}
-              className="mb-4"
-              disabled={isSending}
-              required
-            />
-            <Textarea
-              name="message"
-              aria-label={t("contact.form.message")}
-              placeholder={t("contact.form.message")}
-              rows={5}
-              className="mb-5"
-              disabled={isSending}
-              required
-            />
-            <input
-              type="text"
-              name="botcheck"
-              className="hidden"
-              tabIndex={-1}
-              autoComplete="off"
-            />
-            <Button
-              type="submit"
-              size="lg"
-              variant="gradient"
-              className="w-full"
-              disabled={isSending}
-            >
-              {status === "sent" ? (
-                <>
-                  <Check size={18} />
-                  {buttonLabel}
-                </>
-              ) : status === "error" ? (
-                <>
-                  <AlertCircle size={18} />
-                  {buttonLabel}
-                </>
-              ) : (
-                <>
-                  <Send size={18} />
-                  {buttonLabel}
-                </>
-              )}
-            </Button>
-          </form>
-        </AnimatedElement>
+          <div className="flex flex-wrap gap-3 mb-8">
+            <a href={bookingHref} data-track="book-call" className="btn-gradient inline-flex items-center gap-2 h-11 px-5 rounded-full text-sm font-semibold">
+              <CalendarClock size={16} />
+              {booking ? hire.book : hire.bookEmail}
+            </a>
+            <Link href={localePath(locale, "/resume/")} data-track="resume-view" className="inline-flex items-center gap-2 h-11 px-5 rounded-full border border-border bg-card text-sm font-semibold hover:border-primary/40 transition-colors">
+              <FileText size={16} />
+              {hire.resume}
+            </Link>
+          </div>
+
+          <ul className="space-y-5 mb-8 text-sm">
+            <li className="flex items-center gap-4">
+              <span aria-hidden className={iconBox}><Mail size={18} className="text-primary" /></span>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs text-muted">{contact.email}</p>
+                <div className="flex items-center gap-2">
+                  <a href={`mailto:${email}`} dir="ltr" data-track="email" className="font-medium hover:text-primary transition-colors break-all">{email}</a>
+                  <CopyButton value={email} label={contact.copyLabel} copiedLabel={contact.copied} className="w-8 h-8 rounded-lg flex items-center justify-center text-muted hover:text-primary hover:bg-primary/10 transition-colors shrink-0">
+                    <Copy size={14} />
+                  </CopyButton>
+                </div>
+              </div>
+            </li>
+            <li className="flex items-center gap-4">
+              <span aria-hidden className={iconBox}><MapPin size={18} className="text-primary" /></span>
+              <div>
+                <p className="text-xs text-muted">{contact.location}</p>
+                <p className="font-medium">{contact.locationValue}</p>
+              </div>
+            </li>
+            <li className="flex items-center gap-4">
+              <span aria-hidden className={iconBox}><Clock size={18} className="text-primary" /></span>
+              <div>
+                <p className="text-xs text-muted">{hire.hours}</p>
+                <div>
+                  <span className="font-medium">{hire.hoursValue}</span>
+                  <span className="block text-muted min-h-10"><Overlap locale={locale} labels={{ yourTime: hire.yourTime, overlap: hire.overlap, sameZone: hire.sameZone, noOverlap: hire.noOverlap }} /></span>
+                </div>
+              </div>
+            </li>
+          </ul>
+
+          <h3 className="text-sm font-semibold mb-3">{hire.helpTitle}</h3>
+          <ul className="space-y-2">
+            {hire.help.map((item) => (
+              <li key={item} className="flex items-start gap-2.5 text-sm text-muted">
+                <Check size={16} aria-hidden className="text-accent mt-0.5 shrink-0" />
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="lg:col-span-3">
+          <p className="text-muted leading-relaxed mb-6">{contact.description}</p>
+          <ContactForm labels={contact.form} />
+        </div>
       </div>
     </SectionWrapper>
   );
