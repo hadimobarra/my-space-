@@ -1,72 +1,56 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { useTranslation } from "react-i18next";
-import { cn } from "@/lib/utils";
+import { clsx } from "clsx";
 import type { Heading } from "@/lib/mdx";
 
 /** Sticky TOC that highlights the heading currently being read. */
-export function TableOfContents({ headings }: { headings: Heading[] }) {
-  const { t } = useTranslation();
+export function TableOfContents({ headings, label }: { headings: Heading[]; label: string }) {
   const [active, setActive] = useState(headings[0]?.id ?? "");
 
   useEffect(() => {
-    const elements = headings
-      .map((h) => document.getElementById(h.id))
-      .filter((el): el is HTMLElement => Boolean(el));
+    const elements = headings.map((h) => document.getElementById(h.id)).filter((el): el is HTMLElement => Boolean(el));
     if (!elements.length) return;
-
-    const onScroll = () => {
+    let frame = 0;
+    const update = () => {
       // The active heading is the last one whose top has passed 30% of the viewport
       const threshold = window.innerHeight * 0.3;
-      let current = elements[0].id;
-      for (const el of elements) {
-        if (el.getBoundingClientRect().top <= threshold) current = el.id;
-        else break;
-      }
-      setActive(current);
+      const passed = elements.filter((el) => el.getBoundingClientRect().top <= threshold);
+      setActive((passed.at(-1) ?? elements[0]).id);
     };
-    onScroll();
+    const onScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(update);
+    };
+    update();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+    };
   }, [headings]);
 
   if (!headings.length) return null;
 
   return (
-    <nav aria-label={t("blog.onThisPage")}>
-      <p className="text-xs font-semibold uppercase tracking-wider text-muted mb-4">{t("blog.onThisPage")}</p>
-      <ul className="relative border-s border-border space-y-1">
-        {headings.map((h) => {
-          const isActive = active === h.id;
-          return (
-            <li key={h.id} className="relative">
-              {isActive && (
-                <motion.span
-                  layoutId="toc-indicator"
-                  className="absolute -start-px top-0 bottom-0 w-[2px] bg-gradient-to-b from-primary to-violet rounded-full"
-                  transition={{ type: "spring", stiffness: 400, damping: 35 }}
-                />
+    <nav aria-label={label}>
+      <p className="text-xs font-semibold uppercase tracking-wider text-muted mb-4">{label}</p>
+      <ul className="border-s border-border space-y-1">
+        {headings.map((h) => (
+          <li key={h.id}>
+            <a
+              href={`#${h.id}`}
+              aria-current={active === h.id ? "location" : undefined}
+              className={clsx(
+                "block py-1 -ms-px border-s-2 text-[13px] leading-snug transition-colors",
+                h.level === 3 ? "ps-7" : "ps-4",
+                active === h.id ? "border-primary text-primary font-medium" : "border-transparent text-muted hover:text-foreground"
               )}
-              <a
-                href={`#${h.id}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById(h.id)?.scrollIntoView({ behavior: "smooth" });
-                  history.replaceState(null, "", `#${h.id}`);
-                }}
-                className={cn(
-                  "block py-1 text-[13px] leading-snug transition-colors",
-                  h.level === 3 ? "ps-7" : "ps-4",
-                  isActive ? "text-primary font-medium" : "text-muted hover:text-foreground"
-                )}
-              >
-                {h.text}
-              </a>
-            </li>
-          );
-        })}
+            >
+              {h.text}
+            </a>
+          </li>
+        ))}
       </ul>
     </nav>
   );

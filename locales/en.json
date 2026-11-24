@@ -7,7 +7,12 @@
     "experience": "Experience",
     "blog": "Blog",
     "contact": "Contact",
-    "letsTalk": "Let's Talk"
+    "letsTalk": "Let's Talk",
+    "resume": "Résumé",
+    "openMenu": "Toggle menu",
+    "toggleTheme": "Toggle theme",
+    "skipToContent": "Skip to content",
+    "primary": "Primary"
   },
   "hero": {
     "greeting": "Hello, I'm",
@@ -21,9 +26,8 @@
     "description": "Front-End Engineer with 4+ years of production experience building data-intensive web apps in React and TypeScript. Upstream contributor to Apache Superset, with custom feature work on OpenMetadata. M.Sc. in Computer Engineering.",
     "contactMe": "Contact Me",
     "viewProjects": "View Projects",
-    "scroll": "Scroll",
     "available": "Open to remote roles · full-time or contract",
-    "resume": "Resume",
+    "resume": "Résumé",
     "chipYears": "Years shipping production UI",
     "chipOss": "Open-source contributor"
   },
@@ -58,205 +62,94 @@
       }
     ]
   },
-  "skillCategories": [
-    {
-      "title": "Languages",
-      "skills": [
-        {
-          "name": "TypeScript",
-          "level": 90
-        },
-        {
-          "name": "JavaScript (ES2024)",
-          "level": 90
-        },
-        {
-          "name": "HTML5",
-          "level": 95
-        },
-        {
-          "name": "CSS3",
-          "level": 90
-        }
-      ]
-    },
-    {
-      "title": "Frameworks & Libraries",
-      "skills": [
-        {
-          "name": "React 18",
-          "level": 92
-        },
-        {
-          "name": "Redux",
-          "level": 80
-        },
-        {
-          "name": "Zustand",
-          "level": 85
-        },
-        {
-          "name": "React Query",
-          "level": 80
-        },
-        {
-          "name": "Next.js",
-          "level": 75
-        }
-      ]
-    },
-    {
-      "title": "UI / Styling",
-      "skills": [
-        {
-          "name": "Ant Design",
-          "level": 88
-        },
-        {
-          "name": "Tailwind CSS",
-          "level": 92
-        },
-        {
-          "name": "Material UI",
-          "level": 80
-        },
-        {
-          "name": "Sass",
-          "level": 85
-        },
-        {
-          "name": "RTL / i18n",
-          "level": 90
-        }
-      ]
-    },
-    {
-      "title": "Tooling",
-      "skills": [
-        {
-          "name": "Webpack",
-          "level": 80
-        },
-        {
-          "name": "Vite",
-          "level": 78
-        },
-        {
-          "name": "Git",
-          "level": 88
-        },
-        {
-          "name": "Docker",
-          "level": 75
-        },
-        {
-          "name": "Nginx",
-          "level": 70
-        },
-        {
-          "name": "ESLint / Prettier",
-          "level": 85
-        }
-      ]
-    },
-    {
-      "title": "Data & Protocols",
-      "skills": [
-        {
-          "name": "Uppy.js",
-          "level": 82
-        },
-        {
-          "name": "TUS Protocol",
-          "level": 80
-        },
-        {
-          "name": "REST APIs",
-          "level": 88
-        },
-        {
-          "name": "ETL Concepts",
-          "level": 75
-        }
-      ]
-    },
-    {
-      "title": "Platforms",
-      "skills": [
-        {
-          "name": "Linux",
-          "level": 80
-        },
-        {
-          "name": "GitHub Actions CI",
-          "level": 78
-        },
-        {
-          "name": "OpenMetadata",
-          "level": 85
-        }
-      ]
-    }
-  ],
   "skills": {
-    "title": "Skills",
-    "subtitle": "Technologies and tools I work with"
+    "title": "Skills & Stack",
+    "subtitle": "Technologies and tools I work with",
+    "groups": [
+      {
+        "title": "Languages",
+        "items": [
+          "TypeScript",
+          "JavaScript (ES2024)",
+          "HTML5",
+          "CSS3"
+        ]
+      },
+      {
+        "title": "Frameworks & state",
+        "items": [
+          "React",
+          "Next.js",
+          "Redux",
+          "Redux Saga",
+          "Zustand",
+          "React Query"
+        ]
+      },
+      {
+        "title": "UI & styling",
+        "items": [
+          "Ant Design",
+          "Tailwind CSS",
+          "Material UI",
+          "Sass",
+          "i18next",
+          "RTL layouts",
+          "Accessibility"
+        ]
+      },
+      {
+        "title": "Data & protocols",
+        "items": [
+          "Apache Superset",
+          "OpenMetadata",
+          "ETL pipelines",
+          "REST APIs",
+          "JSON Schema forms",
+          "Uppy.js",
+          "TUS"
+        ]
+      },
+      {
+        "title": "Tooling & DevOps",
+        "items": [
+          "Vite",
+          "Webpack",
+          "Jest",
+          "Git",
+          "GitHub Actions CI",
+          "Docker",
+          "Nginx",
+          "Linux"
+        ]
+      },
+      {
+        "title": "Ways of working",
+        "items": [
+          "Agile / Scrum",
+          "Async collaboration",
+          "Code review",
+          "Technical writing"
+        ]
+      }
+    ]
   },
   "projects": {
     "title": "Featured Projects",
-    "subtitle": "Some of my recent work",
-    "items": [
-      {
-        "title": "OpenMetadata",
-        "description": "Built custom features on a fork of this open-source data catalog and governance platform: an ETL pipeline editor with live YAML preview, i18n schema-translation tooling and full Persian (RTL) localization, plus upstream fixes.",
-        "tags": [
-          "React",
-          "TypeScript",
-          "Ant Design",
-          "Tailwind CSS"
-        ],
-        "liveUrl": null,
-        "githubUrl": "https://github.com/open-metadata/OpenMetadata/commits?author=hadimobarra"
-      },
-      {
-        "title": "Apache Superset",
-        "description": "Upstream contributor to the leading open-source BI platform. Fixed a long-standing Safari bug where chart and dashboard image exports came out blank (PR #44529), plus UI consistency fixes in Explore.",
-        "tags": [
-          "React",
-          "TypeScript",
-          "html2canvas",
-          "Jest"
-        ],
-        "liveUrl": "https://github.com/apache/superset/pull/44529",
-        "githubUrl": "https://github.com/apache/superset/pulls?q=is%3Apr+author%3Ahadimobarra"
-      },
-      {
-        "title": "Enterprise Data Catalog UI",
-        "description": "Built a searchable Data Catalog interface (Databricks-inspired) for discovering, tagging and governing enterprise datasets. Proprietary product at Adin, so no public demo.",
-        "tags": [
-          "React",
-          "TypeScript",
-          "Ant Design",
-          "Zustand"
-        ],
-        "liveUrl": null,
-        "githubUrl": null
-      },
-      {
-        "title": "Large-File Upload Module",
-        "description": "Architected a resumable multi-GB upload module with Uppy.js and the TUS protocol: pause/resume, automatic retry, and Excel, JSON, TSV and CSV support. Proprietary product at Adin, so no public demo.",
-        "tags": [
-          "React",
-          "TypeScript",
-          "Uppy.js",
-          "TUS Protocol"
-        ],
-        "liveUrl": null,
-        "githubUrl": null
-      }
-    ],
-    "live": "View PR",
-    "source": "My contributions"
+    "subtitle": "The problem, the constraints and what I decided",
+    "readCase": "Read case study",
+    "viewAll": "All case studies",
+    "pageTitle": "Case Studies",
+    "pageSubtitle": "The problem, the constraints, the decisions and what happened next.",
+    "back": "All case studies",
+    "role": "Role",
+    "context": "Context",
+    "stack": "Stack",
+    "links": "Links",
+    "status": "Status",
+    "liveDemo": "Live demo",
+    "nextCase": "Next case study",
+    "confidential": "This product is proprietary, so there is no public code or screenshots. The page covers what I can share."
   },
   "experience": {
     "title": "Work Experience",
@@ -274,6 +167,15 @@
           "Tailwind CSS",
           "Zustand",
           "i18n/RTL"
+        ],
+        "highlights": [
+          "Owned end-to-end delivery of the Add Pipeline page, an interactive UI for orchestrating ETL ingestion stages, from requirements and component architecture through API integration, validation and production release.",
+          "Architected a resumable large-file upload module (CSV, TSV, JSON, Excel) on Uppy.js and the TUS protocol, enabling reliable multi-GB transfers with pause/resume and automatic retry.",
+          "Built the Data Catalog, Mapping Table and Mapping Column UIs (Databricks-inspired) that let users visually define entity relationships and discover, tag and govern enterprise datasets.",
+          "Replaced a static permission model with a Role Management module supporting dynamic, fine-grained access-control rules, enabling self-service governance for admins.",
+          "Built a glossary review and approval workflow that enforces governance policies with a full audit trail.",
+          "Led full Persian (RTL) localization across the product with i18next and extended the metadata schema for bilingual (Persian/English) data.",
+          "Improved load time and runtime stability through code-splitting, lazy loading and memoization across heavy data views."
         ]
       },
       {
@@ -289,120 +191,10 @@
           "Sass",
           "Webpack",
           "Docker"
-        ]
-      }
-    ]
-  },
-  "services": {
-    "title": "Services",
-    "subtitle": "What I can do for you",
-    "items": [
-      {
-        "title": "Front-End Development",
-        "description": "Building responsive, performant, and accessible web applications using modern frameworks and best practices.",
-        "icon": "Code"
-      },
-      {
-        "title": "Data Platform & Dashboard UIs",
-        "description": "Data catalogs, ETL pipeline builders, admin consoles and analytics dashboards, including Apache Superset customization and plugins.",
-        "icon": "Database"
-      },
-      {
-        "title": "React Development",
-        "description": "Creating dynamic, component-based user interfaces with React, leveraging hooks, context, and state management.",
-        "icon": "Code"
-      },
-      {
-        "title": "Responsive Web Design",
-        "description": "Crafting mobile-first, cross-browser compatible websites that provide seamless experiences across all devices.",
-        "icon": "Smartphone"
-      },
-      {
-        "title": "UI Implementation",
-        "description": "Translating design mockups into pixel-perfect, interactive interfaces with smooth animations and transitions.",
-        "icon": "Palette"
-      },
-      {
-        "title": "Performance Optimization",
-        "description": "Auditing and optimizing web applications for Core Web Vitals, improving load times, and enhancing user experience.",
-        "icon": "Server"
-      }
-    ]
-  },
-  "techStack": {
-    "title": "Tech Stack",
-    "subtitle": "Technologies I use and love",
-    "groups": [
-      {
-        "title": "Frameworks & Libs",
-        "items": [
-          {
-            "name": "React",
-            "icon": "SiReact"
-          },
-          {
-            "name": "Next.js",
-            "icon": "SiNextdotjs"
-          },
-          {
-            "name": "Redux",
-            "icon": "SiRedux"
-          },
-          {
-            "name": "Zustand",
-            "icon": "SiReact"
-          }
-        ]
-      },
-      {
-        "title": "Languages",
-        "items": [
-          {
-            "name": "TypeScript",
-            "icon": "SiTypescript"
-          },
-          {
-            "name": "JavaScript",
-            "icon": "SiJavascript"
-          }
-        ]
-      },
-      {
-        "title": "UI & Styling",
-        "items": [
-          {
-            "name": "Tailwind CSS",
-            "icon": "SiTailwindcss"
-          },
-          {
-            "name": "Ant Design",
-            "icon": "SiAntdesign"
-          },
-          {
-            "name": "Material UI",
-            "icon": "SiMaterialdesign"
-          }
-        ]
-      },
-      {
-        "title": "DevOps & Tools",
-        "items": [
-          {
-            "name": "Docker",
-            "icon": "SiDocker"
-          },
-          {
-            "name": "Git",
-            "icon": "SiGit"
-          },
-          {
-            "name": "Webpack",
-            "icon": "SiWebpack"
-          },
-          {
-            "name": "Vite",
-            "icon": "SiVite"
-          }
+        ],
+        "highlights": [
+          "Built features for production telecom dashboards in a large enterprise codebase using React, Redux Saga and Material UI.",
+          "Implemented responsive components following design-system guidelines; worked on Webpack builds and Docker/Nginx deployments."
         ]
       }
     ]
@@ -411,12 +203,9 @@
     "title": "Blog",
     "subtitle": "Deep dives into JavaScript internals, React and web performance",
     "description": "Deep dives into JavaScript internals, React architecture, TypeScript and web performance — written from production experience.",
-    "readMore": "Read More",
     "viewAll": "View All Posts",
     "minRead": "min read",
-    "noPosts": "No posts yet. Coming soon!",
     "backToBlog": "Back to Blog",
-    "comingSoon": "Coming soon!",
     "featured": "Featured",
     "articles": "articles",
     "pageTitle": "Engineering Notes",
@@ -434,49 +223,34 @@
     "getInTouch": "Get in touch",
     "previousPost": "Previous",
     "nextPost": "Next",
-    "relatedPosts": "Keep reading"
+    "relatedPosts": "Keep reading",
+    "langNote": "",
+    "clearSearch": "Clear search",
+    "resultsCount": "{count} articles",
+    "shareX": "Share on X",
+    "shareLinkedIn": "Share on LinkedIn",
+    "codeCopied": "Code copied"
   },
   "openSource": {
     "title": "Open Source",
-    "subtitle": "Contributing to the developer community",
+    "subtitle": "Upstream work, straight from GitHub",
     "repos": [
       {
-        "name": "OpenMetadata",
-        "description": "Open-source metadata platform for data discovery, quality, observability and governance. I built custom features on a fork and contribute fixes upstream.",
-        "stars": 5200,
-        "forks": 1000,
-        "url": "https://github.com/open-metadata/OpenMetadata/commits?author=hadimobarra",
-        "language": "TypeScript",
-        "languageColor": "#3178c6"
+        "name": "apache/superset",
+        "description": "Open-source BI and data exploration platform. I fixed blank chart and dashboard image exports on Safari (#44529), and have further Explore fixes in review."
       },
       {
-        "name": "Apache Superset",
-        "description": "Open-source BI and data exploration platform with a React/TypeScript front end. Upstream contributor: Safari export fix (#44529) and Explore typography fixes.",
-        "stars": 74832,
-        "forks": 18342,
-        "url": "https://github.com/apache/superset/pulls?q=is%3Apr+author%3Ahadimobarra",
-        "language": "TypeScript",
-        "languageColor": "#3178c6"
+        "name": "open-metadata/OpenMetadata",
+        "description": "Open-source metadata platform. I made entity version pages survive malformed diff data (#33580), and built custom features on a fork at Adin."
       }
-    ]
-  },
-  "currentlyLearning": {
-    "title": "Currently Learning",
-    "subtitle": "Technologies and topics I'm exploring",
-    "items": [
-      {
-        "name": "Rust Programming",
-        "description": "Exploring systems programming with Rust for performance-critical web components."
-      },
-      {
-        "name": "Three.js & WebGL",
-        "description": "Diving into 3D graphics and immersive web experiences."
-      },
-      {
-        "name": "System Design",
-        "description": "Studying distributed systems architecture and scaling patterns."
-      }
-    ]
+    ],
+    "merged": "Merged",
+    "open": "In review",
+    "pullRequests": "Pull requests",
+    "stars": "stars",
+    "forks": "forks",
+    "updated": "Updated automatically from the GitHub API. Last refresh:",
+    "viewAll": "View all on GitHub"
   },
   "testimonials": {
     "title": "What People Say",
@@ -499,10 +273,8 @@
     "subtitle": "Hiring for a remote role or have a project? Let's talk",
     "description": "I'm always open to new projects and opportunities. Whether you have a question, a project proposal, or just want to say hello, I'd love to hear from you.",
     "email": "Email",
-    "phone": "Phone",
     "location": "Location",
     "locationValue": "Tehran, Iran · Remote (UTC+3:30)",
-    "phoneValue": "+98 914 748 2284",
     "form": {
       "name": "Your Name",
       "email": "Your Email",
@@ -510,26 +282,29 @@
       "message": "Your Message",
       "send": "Send Message",
       "sending": "Sending...",
-      "sent": "Sent Successfully!",
-      "error": "Failed to Send",
       "subjectPrefix": "[Portfolio Contact]",
       "errorTitle": "Message couldn't be sent",
       "errorText": "Something went wrong. You can email me directly instead.",
       "emailInstead": "Email instead",
-      "sentText": "Thanks! I'll get back to you soon."
+      "sentText": "Thanks! I'll get back to you soon.",
+      "sentTitle": "Message sent"
     },
-    "copied": "Copied to clipboard"
+    "copied": "Copied to clipboard",
+    "copyLabel": "Copy email address"
   },
   "footer": {
     "backToTop": "Scroll to top",
     "explore": "Explore",
     "writing": "Writing",
     "allArticles": "All articles",
-    "resume": "Resume",
+    "resume": "Résumé",
     "ctaTitle": "Have a project in mind?",
     "ctaHighlight": "Let's build it.",
     "ctaText": "I'm open to remote front-end roles (full-time or contract), data-platform projects and interesting open-source work.",
-    "builtWith": "Built with Next.js and lots of"
+    "builtWith": "Built with Next.js and lots of",
+    "love": "love",
+    "caseStudies": "Case studies",
+    "source": "Source code"
   },
   "commandMenu": {
     "placeholder": "Search pages, articles, actions…",
@@ -538,13 +313,15 @@
     "groups": {
       "navigation": "Navigation",
       "articles": "Articles",
-      "actions": "Actions"
+      "actions": "Actions",
+      "projects": "Case studies"
     },
     "allPosts": "All articles",
-    "toggleLanguage": "Switch language (EN / FA)",
+    "toggleLanguage": "Switch to Persian (فارسی)",
     "empty": "No results found.",
     "navigate": "navigate",
-    "select": "select"
+    "select": "select",
+    "close": "Close"
   },
   "eyebrows": {
     "about": "Who I am",
@@ -552,12 +329,82 @@
     "skills": "Toolbox",
     "projects": "Selected work",
     "experience": "Career",
-    "services": "What I do",
-    "tech-stack": "Stack",
     "blog": "Writing",
     "open-source": "Open source",
-    "currently-learning": "Growth",
     "testimonials": "Kind words",
-    "contact": "Contact"
+    "contact": "Contact",
+    "case-study": "Case study"
+  },
+  "seo": {
+    "title": "Hadi Mobarra | Front-End Engineer · React & TypeScript for Data Platforms",
+    "description": "Front-End Engineer with 4+ years building data-intensive React and TypeScript apps: data catalogs, ETL interfaces and dashboards. Apache Superset contributor. Open to remote roles.",
+    "blogDescription": "Deep dives into JavaScript internals, React architecture, TypeScript and web performance, written from production experience.",
+    "projectsDescription": "Case studies: an Apache Superset Safari fix, resumable multi-GB uploads, OpenMetadata features and an enterprise data catalog.",
+    "resumeDescription": "Résumé of Hadi Mobarra, Front-End Engineer: React and TypeScript for data platforms. Printable, with PDF download."
+  },
+  "hire": {
+    "title": "Working together",
+    "availability": "Remote, full-time or contract",
+    "helpTitle": "Where I can help most",
+    "help": [
+      "Data catalogs, ETL builders, admin consoles and dashboards",
+      "Apache Superset customization and plugins",
+      "React and TypeScript features, owned end to end",
+      "Performance, accessibility and RTL/i18n"
+    ],
+    "hours": "Working hours",
+    "hoursValue": "09:00–18:00 Tehran (UTC+3:30)",
+    "yourTime": "In your time zone",
+    "overlap": "{hours} h overlap with a 09:00–18:00 day",
+    "sameZone": "Same time zone as you",
+    "noOverlap": "No overlap with a 09:00–18:00 day; async works well",
+    "book": "Book a 20-minute call",
+    "bookEmail": "Request a 20-minute call",
+    "resume": "View résumé",
+    "bookSubject": "20-minute intro call",
+    "bookBody": "Hi Hadi,\n\nI'd like to set up a 20-minute call about:\n\nTimes that work for me (with time zone):\n"
+  },
+  "resume": {
+    "title": "Résumé",
+    "headline": "Front-End Engineer · React & TypeScript for Data Platforms",
+    "download": "Download PDF",
+    "print": "Print",
+    "summaryTitle": "Summary",
+    "summary": "Front-End Engineer with 4+ years of experience building complex, data-intensive web applications in React and TypeScript, specializing in data-governance, data-catalog and ETL interfaces. Upstream contributor to Apache Superset and builder of custom features on OpenMetadata. Strong in owning features end to end, multi-GB file handling, access control, performance and i18n/RTL. Works comfortably in async, distributed, cross-functional teams; open to remote full-time or contract roles.",
+    "skills": "Technical skills",
+    "experience": "Experience",
+    "openSource": "Open source",
+    "education": "Education",
+    "honors": "Honors",
+    "honorsValue": "Member, National Elite Foundation",
+    "stack": "Stack",
+    "mergedPrs": "Merged upstream pull requests",
+    "caseStudies": "Case studies"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "text": "The page you are looking for doesn't exist or has moved.",
+    "home": "Back to home",
+    "blog": "Read the blog"
+  },
+  "uploadDemo": {
+    "title": "Try it",
+    "note": "Real tus-js-client and Uppy, talking to an in-memory TUS server that runs in this tab. Nothing leaves your browser.",
+    "start": "Upload a {size} sample file",
+    "pause": "Pause",
+    "resume": "Resume",
+    "drop": "Drop the connection",
+    "cancel": "Cancel",
+    "loading": "Loading demo…",
+    "load": "Start the demo",
+    "progress": "Upload progress",
+    "log": "Protocol log",
+    "emptyLog": "Requests will appear here.",
+    "idle": "Ready",
+    "uploading": "Uploading",
+    "paused": "Paused",
+    "retrying": "Connection lost, retrying",
+    "done": "Complete: every byte acknowledged",
+    "hint": "Drop the connection mid-upload and watch HEAD ask the server for its offset, then PATCH continue from that byte."
   }
 }

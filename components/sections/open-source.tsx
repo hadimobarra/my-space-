@@ -1,61 +1,60 @@
-"use client";
-
-import { ArrowUpRight, Star, GitFork, BookMarked } from "lucide-react";
-import { useTranslation } from "react-i18next";
+import { ArrowUpRight, BookMarked, GitFork, GitMerge, GitPullRequest, Star } from "lucide-react";
 import { SectionWrapper } from "@/components/shared/section-wrapper";
-import { StaggerContainer, StaggerItem } from "@/components/shared/animated-element";
-import { SpotlightCard } from "@/components/shared/spotlight-card";
+import type { Dictionary } from "@/lib/dictionary";
+import { formatDate, formatNumber } from "@/lib/format";
+import { github } from "@/lib/github";
+import type { Locale } from "@/lib/locale";
 
-interface OpenSourceItem {
-  name: string;
-  description: string;
-  stars: number;
-  forks: number;
-  url: string;
-  language: string;
-  languageColor: string;
-}
-
-export function OpenSource() {
-  const { t } = useTranslation();
-  const items = t("openSource.repos", { returnObjects: true }) as OpenSourceItem[];
+export function OpenSource({ locale, t }: { locale: Locale; t: Dictionary }) {
+  const os = t.openSource;
+  const descriptions = new Map(os.repos.map((r) => [r.name, r.description]));
+  const repos = Object.entries(github.repos).sort(([, a], [, b]) => b.stars - a.stars);
 
   return (
-    <SectionWrapper id="open-source" title={t("openSource.title")} subtitle={t("openSource.subtitle")} className="bg-surface/60">
-      <StaggerContainer className="grid md:grid-cols-2 gap-5" staggerDelay={0.08}>
-        {items.map((repo) => (
-          <StaggerItem key={repo.name} className="h-full">
-            <SpotlightCard
-              as="a"
-              href={repo.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block p-6 h-full group"
-            >
-              <div className="flex items-start justify-between gap-3 mb-3">
-                <h3 className="flex items-center gap-2 text-base font-semibold font-mono group-hover:text-primary transition-colors">
-                  <BookMarked size={16} className="text-muted shrink-0" />
-                  {repo.name}
-                </h3>
-                <span className="w-8 h-8 rounded-full border border-border flex items-center justify-center shrink-0 transition-all group-hover:bg-primary group-hover:border-primary group-hover:text-white group-hover:rotate-45">
-                  <ArrowUpRight size={15} />
-                </span>
-              </div>
-              <p className="text-sm text-muted leading-relaxed mb-5 line-clamp-2">{repo.description}</p>
-              <div className="flex items-center gap-5 text-xs text-muted">
-                {repo.language && (
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full ring-2 ring-background" style={{ backgroundColor: repo.languageColor || "var(--muted)" }} />
-                    {repo.language}
-                  </span>
-                )}
-                <span className="flex items-center gap-1"><Star size={13} /> {repo.stars}</span>
-                <span className="flex items-center gap-1"><GitFork size={13} /> {repo.forks}</span>
-              </div>
-            </SpotlightCard>
-          </StaggerItem>
+    <SectionWrapper id="open-source" eyebrow={t.eyebrows["open-source"]} title={os.title} subtitle={os.subtitle}>
+      <div className="grid md:grid-cols-2 gap-6">
+        {repos.map(([name, repo]) => (
+          <article key={name} className="reveal glass-card rounded-2xl p-6 md:p-7 flex flex-col">
+            <h3 className="flex items-center gap-2 text-base font-semibold font-mono mb-3 min-w-0">
+              <BookMarked size={16} className="text-muted shrink-0" />
+              <a href={`https://github.com/${name}`} dir="ltr" className="hover:text-primary transition-colors break-all">{name}</a>
+            </h3>
+            {descriptions.has(name) && <p className="text-sm text-muted leading-relaxed mb-4">{descriptions.get(name)}</p>}
+            <p className="flex items-center gap-5 text-xs text-muted mb-5">
+              <span className="flex items-center gap-1"><Star size={13} aria-hidden /> {formatNumber(repo.stars, locale)} {os.stars}</span>
+              <span className="flex items-center gap-1"><GitFork size={13} aria-hidden /> {formatNumber(repo.forks, locale)} {os.forks}</span>
+            </p>
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted mb-2">{os.pullRequests}</h4>
+            <ul className="divide-y divide-border border-t border-border">
+              {github.pullRequests.filter((pr) => pr.repo === name).map((pr) => {
+                const merged = pr.state === "merged";
+                const Icon = merged ? GitMerge : GitPullRequest;
+                return (
+                  <li key={pr.number}>
+                    <a href={pr.url} data-track={`pr-${pr.number}`} className="group flex items-start gap-3 py-3">
+                      <Icon size={16} aria-hidden className={merged ? "text-violet mt-0.5 shrink-0" : "text-accent mt-0.5 shrink-0"} />
+                      <span className="min-w-0 flex-1">
+                        <span dir="ltr" lang="en" className="block text-start text-sm font-medium group-hover:text-primary transition-colors break-words">{pr.title}</span>
+                        <span className="block text-xs text-muted mt-0.5">
+                          <bdi>#{pr.number}</bdi> · {merged ? os.merged : os.open} · {formatDate(pr.date, locale)}
+                        </span>
+                      </span>
+                      <ArrowUpRight size={15} aria-hidden className="text-muted mt-0.5 shrink-0 rtl:-scale-x-100" />
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </article>
         ))}
-      </StaggerContainer>
+      </div>
+      <p className="mt-8 text-center text-xs text-muted">
+        {os.updated} <time dateTime={github.fetchedAt}>{formatDate(github.fetchedAt, locale)}</time>
+        {" · "}
+        <a href={`https://github.com/search?q=author%3A${github.user}+type%3Apr&type=pullrequests`} className="font-medium text-primary underline underline-offset-2">
+          {os.viewAll}
+        </a>
+      </p>
     </SectionWrapper>
   );
 }

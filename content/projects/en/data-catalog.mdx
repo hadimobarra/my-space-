@@ -1,0 +1,35 @@
+---
+title: "An enterprise data catalog interface"
+summary: "Search, tagging, relationship mapping, access control and approvals for enterprise datasets, in Persian and English."
+role: "Front-end engineer"
+context: "Adin, data governance and ETL platform"
+status: "In production"
+order: 4
+cover: "DataCatalog"
+tags: ["React", "TypeScript", "Ant Design", "Zustand", "RTL"]
+confidential: true
+---
+
+## The problem
+
+In a large organization, people lose time working out which dataset exists, what its columns mean, who owns it and whether they are allowed to use it. The catalog is where those questions get answered.
+
+## What I built
+
+**Discovery.** A searchable catalog for finding, tagging and governing datasets.
+
+**Mapping Table and Mapping Column.** Interfaces, inspired by Databricks, that let people define relationships between entities visually.
+
+**Role management.** A module with dynamic, fine-grained access-control rules. It replaced a static permission model, so admins can manage access themselves.
+
+**Glossary approval.** A review and approval workflow that enforces governance policies and keeps a full audit trail.
+
+**Two languages.** Full Persian (RTL) localization with i18next, and a metadata schema extended to hold both Persian and English values.
+
+## Decisions that mattered
+
+**Permissions belong in data, not in components.** Once rules are dynamic, hard-coded role checks become bugs waiting to happen. The interface asks what the current user can do and renders from that answer.
+
+**RTL is a layout concern, not a translation step.** Logical properties (`margin-inline-start` rather than `margin-left`) let one set of styles serve both directions. Technical content such as column names, SQL and file paths stays left-to-right inside a right-to-left page.
+
+**Heavy views load on demand.** Code-splitting, lazy loading and memoization improved load time and runtime stability in the data-heavy screens.

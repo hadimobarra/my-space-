@@ -1,0 +1,48 @@
+{
+  "fetchedAt": "2026-11-24",
+  "user": "hadimobarra",
+  "repos": {
+    "apache/superset": {
+      "stars": 75650,
+      "forks": 18632
+    },
+    "open-metadata/OpenMetadata": {
+      "stars": 15859,
+      "forks": 2541
+    }
+  },
+  "pullRequests": [
+    {
+      "repo": "open-metadata/OpenMetadata",
+      "number": 33580,
+      "title": "Part of #28154: Handle malformed JSON in version diff payloads",
+      "state": "merged",
+      "url": "https://github.com/open-metadata/OpenMetadata/pull/33580",
+      "date": "2026-11-16"
+    },
+    {
+      "repo": "apache/superset",
+      "number": 44529,
+      "title": "fix(frontend): use html2canvas for chart image export on Safari",
+      "state": "merged",
+      "url": "https://github.com/apache/superset/pull/44529",
+      "date": "2026-10-01"
+    },
+    {
+      "repo": "apache/superset",
+      "number": 46105,
+      "title": "fix(explore): unify typography of panel titles and control values",
+      "state": "open",
+      "url": "https://github.com/apache/superset/pull/46105",
+      "date": "2026-11-09"
+    },
+    {
+      "repo": "apache/superset",
+      "number": 45168,
+      "title": "fix(explore): match dashboard names case-insensitively in the Save modal",
+      "state": "open",
+      "url": "https://github.com/apache/superset/pull/45168",
+      "date": "2026-10-10"
+    }
+  ]
+}

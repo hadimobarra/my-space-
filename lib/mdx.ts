@@ -9,6 +9,7 @@ import rehypeStringify from "rehype-stringify";
 import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import readingTime from "reading-time";
+import { rehypeCodeBlocks } from "./rehype-code-blocks";
 
 const postsDirectory = path.join(process.cwd(), "content/blog");
 
@@ -26,8 +27,6 @@ export interface BlogPostData {
   content: string;
   readingTime: number;
 }
-
-export type Post = BlogPostData;
 
 /** Post data without the body — safe and cheap to pass to client components. */
 export type PostMeta = Omit<BlogPostData, "content">;
@@ -80,13 +79,14 @@ export function getAllPosts(): BlogPostData[] {
   return posts;
 }
 
-export async function renderMdxToHtml(mdxContent: string): Promise<string> {
+export async function renderMdxToHtml(mdxContent: string, copyLabel = "Copy code"): Promise<string> {
   const result = await unified()
     .use(remarkParse)
     .use(remarkGfm)
     .use(remarkRehype)
     .use(rehypeSlug)
     .use(rehypeHighlight, { detect: true })
+    .use(rehypeCodeBlocks, { copyLabel })
     .use(rehypeStringify)
     .process(mdxContent);
 
