@@ -1,6 +1,7 @@
 import { About } from "@/components/sections/about";
 import { BlogPreview } from "@/components/sections/blog-preview";
 import { Contact } from "@/components/sections/contact";
+import { Directions } from "@/components/sections/directions";
 import { Experience } from "@/components/sections/experience";
 import { Hero } from "@/components/sections/hero";
 import { OpenSource } from "@/components/sections/open-source";
@@ -24,6 +25,7 @@ export function HomePage({ locale }: { locale: Locale }) {
       <About locale={locale} t={t} />
       <Projects locale={locale} t={t} />
       <Experience t={t} />
+      <Directions locale={locale} />
       <OpenSource locale={locale} t={t} />
       <Skills t={t} />
       <BlogPreview locale={locale} t={t} />

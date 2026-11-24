@@ -191,3 +191,40 @@ test("feeds carry full article text", async ({ request }) => {
     expect(xml).not.toContain("<embed-slot");
   }
 });
+
+test("catalog filters claims by trust and links to proof", async ({ page }) => {
+  await page.goto("/catalog/", { waitUntil: "networkidle" });
+  const items = page.locator("main li[id]");
+  const total = await items.count();
+  await page.getByRole("button", { name: "My word" }).click();
+  expect(await items.count()).toBeLessThan(total);
+  await page.getByRole("button", { name: "All", exact: true }).click();
+  await page.getByRole("textbox").fill("webgl");
+  await expect(items).toHaveCount(1);
+  await expect(items.getByRole("link", { name: /Pull request #44529/ })).toBeVisible();
+});
+
+test("job fit separates proof, word and gaps without sending anything", async ({ page, baseURL }) => {
+  const outside: string[] = [];
+  page.on("request", (r) => (r.method() === "POST" || new URL(r.url()).origin !== new URL(baseURL!).origin) && outside.push(r.url()));
+  await page.goto("/fit/", { waitUntil: "networkidle" });
+  await page.getByLabel("Job description").fill("We need React, TypeScript and Redux Saga, 6+ years, plus Angular and Kubernetes. Java is not needed but JavaScript is.");
+  await page.getByRole("button", { name: "Check" }).click();
+  await expect(page.getByRole("heading", { name: /With proof \(3\)/ })).toBeVisible();
+  await expect(page.getByText("Redux Saga", { exact: true })).toBeVisible();
+  const missing = page.locator("section", { hasText: "Not in my catalog" }).last();
+  await expect(missing).toContainText("Angular");
+  await expect(missing).toContainText("Kubernetes");
+  await expect(page.getByText("less than the posting asks for")).toBeVisible();
+  expect(outside).toEqual([]);
+});
+
+test("the direction slider reveals the Persian panel from the keyboard", async ({ page }) => {
+  await page.goto("/", { waitUntil: "networkidle" });
+  const slider = page.getByRole("slider", { name: /Compare the English and Persian/ });
+  await slider.focus();
+  const before = await slider.inputValue();
+  await page.keyboard.press("ArrowLeft");
+  expect(await slider.inputValue()).not.toBe(before);
+  await expect(page.locator('#directions [lang="fa"][dir="rtl"]')).toContainText("سفارش‌ها");
+});

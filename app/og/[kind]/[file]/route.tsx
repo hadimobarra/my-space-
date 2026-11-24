@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { getAllPostMeta } from "@/lib/mdx";
 import { getProjects } from "@/lib/projects";
-import { coverPalette } from "@/lib/cover";
+import { tilePanel } from "@/lib/tile";
 import { siteConfig } from "@/lib/site";
 
 // A route handler rather than opengraph-image.tsx: static hosts need the .png extension
@@ -32,7 +32,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ kin
   const slug = file.replace(/\.png$/, "");
   const card = getCard(kind, slug);
   if (!card) return new Response("Not found", { status: 404 });
-  const [a, b, c] = coverPalette(slug);
+  const panel = `data:image/svg+xml;base64,${Buffer.from(tilePanel(slug, 1200, 630)).toString("base64")}`;
 
   return new ImageResponse(
     (
@@ -46,9 +46,12 @@ export async function GET(_request: Request, { params }: { params: Promise<{ kin
           padding: 72,
           color: "#fff",
           backgroundColor: "#070b14",
-          backgroundImage: `radial-gradient(circle at 88% 8%, ${a}b3, transparent 46%), radial-gradient(circle at 8% 100%, ${b}99, transparent 44%)`,
+          position: "relative",
         }}
       >
+        {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text -- rendered to a PNG */}
+        <img src={panel} width={1200} height={630} style={{ position: "absolute", top: 0, left: 0 }} />
+        <div style={{ position: "absolute", top: 0, left: 0, width: 1200, height: 630, display: "flex", backgroundImage: "linear-gradient(100deg, rgba(7,11,20,0.97) 45%, rgba(7,11,20,0.55) 100%)" }} />
         <div style={{ display: "flex", fontSize: 28, color: "#cbd2dc" }}>{card.eyebrow}</div>
         <div style={{ display: "flex", fontSize: card.title.length > 60 ? 58 : 70, fontWeight: 700, lineHeight: 1.12, letterSpacing: -2, maxWidth: 1000 }}>
           {card.title}
@@ -64,7 +67,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ kin
                 height: 64,
                 borderRadius: 18,
                 fontSize: 26,
-                backgroundImage: `linear-gradient(135deg, ${a}, ${c})`,
+                backgroundImage: "linear-gradient(135deg, #2563eb, #7c3aed)",
               }}
             >
               HM

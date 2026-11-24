@@ -16,6 +16,9 @@ components/
   blog/ projects/    Article and case study components, upload demo
   shared/            Small building blocks
 content/blog/        Articles (.mdx, English); translations in content/blog/fa
+content/notes/        Short notes (.md, one folder per language)
+content/catalog.ts    Career claims, their proof and trust label
+content/glossary.json Persian data terms
 content/diagrams.ts  Diagrams used in articles
 content/projects/    Case studies (.mdx, one file per language)
 content/github.json  Open-source activity (generated)
@@ -41,7 +44,10 @@ featured: true          # optional
 ```
 
 - Code blocks accept a file name and marked lines: ` ```ts title="lib/a.ts" {2,4-6} `
-- Demos and diagrams: a ` ```embed ` block containing a name from `components/blog/article-body.tsx` or `content/diagrams.ts`
+- Demos and diagrams: a ` ```embed ` block containing a name from `components/blog/article-body.tsx` or `content/notes/        Short notes (.md, one folder per language)
+content/catalog.ts    Career claims, their proof and trust label
+content/glossary.json Persian data terms
+content/diagrams.ts`
 - Learning paths are listed in `lib/series.ts`
 - A Persian version uses the same file name in `content/blog/fa`
 
