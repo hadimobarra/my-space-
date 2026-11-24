@@ -1,0 +1,143 @@
+---
+title: "Never Trust JSON.parse in a Render"
+description: "One malformed string in a database was enough to crash an OpenMetadata page. How I fixed it upstream with small shape validators, and the two unrelated bugs that writing the tests uncovered."
+date: "2026-11-24"
+tags: ["Open Source", "React", "TypeScript"]
+---
+
+## One bad string, one dead page
+
+OpenMetadata keeps a history of every entity. A version page shows what changed between two versions: tags added, owners removed, a column renamed. Each change stores its old and new values as JSON *strings*, and the interface parsed them while rendering:
+
+```ts
+const oldTags: TagLabel[] = JSON.parse(getChangedEntityOldValue(diff) ?? '[]');
+```
+
+That line contains two promises nobody can keep. It promises that the string is valid JSON, and it promises that the JSON is an array of tags. If either fails, the exception happens during render, and React unmounts the tree. The user sees an error page because of one row written long ago.
+
+My fix was merged as [pull request #33580](https://github.com/open-metadata/OpenMetadata/pull/33580).
+
+## The type annotation is the trap
+
+`JSON.parse` returns `any`. Assigning `any` to `TagLabel[]` compiles without a complaint, so the annotation looks like a check and isn't one. It's a comment the compiler believes.
+
+```ts
+const tags: TagLabel[] = JSON.parse('{"oops": true}'); // compiles
+tags.map((t) => t.tagFQN); // TypeError at runtime
+```
+
+The honest return type is `unknown`. It makes the compiler ask the question you were skipping:
+
+```ts {2}
+const parsed: unknown = JSON.parse(value);
+parsed.map(); // error: 'parsed' is of type 'unknown'
+```
+
+## Validate at the boundary
+
+```embed
+trust-boundary
+```
+
+The data crosses a boundary when it's parsed. That's the place to check it, once. After that the rest of the code can rely on the type.
+
+```ts title="EntityDiffPureUtils.ts" {6-8}
+export const parseVersionDiffArray = <T>(
+  value?: string,
+  isValid: (item: unknown) => boolean = isRecord
+): T[] => {
+  try {
+    const parsed: unknown = JSON.parse(value ?? '[]');
+
+    return Array.isArray(parsed) ? (parsed.filter(isValid) as T[]) : [];
+  } catch {
+    return [];
+  }
+};
+```
+
+Two decisions here are worth explaining.
+
+**It filters instead of rejecting.** If one of five tags is malformed, the user should still see the other four. A history page is for reading, so partial data beats none.
+
+**It falls back to empty.** On a page that *writes* data I would choose differently: silently treating broken input as empty could overwrite it. Be forgiving when displaying and strict when saving.
+
+## Validators that compose
+
+The shapes are small, so plain functions were enough:
+
+```ts title="EntityDiffPureUtils.ts"
+export const isTagLabelDiff = (value: unknown) =>
+  hasVersionDiffStringProperty(value, 'tagFQN');
+
+export const isNamedEntityWithTagsDiff = (value: unknown) =>
+  hasVersionDiffStringProperty(value, 'name') &&
+  hasVersionDiffArrayProperty(value, 'tags', isTagLabelDiff);
+```
+
+Schema fields nest: a field has `children`, which have `children`. The table that renders them is recursive, so a bad value three levels down crashes it as surely as one at the top. The validator has to recurse as well:
+
+```ts title="EntityDiffPureUtils.ts" {3-7}
+export const isNestedNamedEntityWithTagsDiff = (value: unknown): boolean =>
+  isNamedEntityWithTagsDiff(value) &&
+  hasVersionDiffArrayProperty(
+    value,
+    'children',
+    isNestedNamedEntityWithTagsDiff
+  );
+```
+
+Rule of thumb: the validator should be exactly as deep as the code that consumes the value.
+
+### Why not a schema library?
+
+In a new project I would reach for [Zod](https://zod.dev/) or [Valibot](https://valibot.dev/): you get the type and the check from one definition. In someone else's large codebase, a bug fix that adds a dependency is a harder conversation than one that adds sixty lines. Match the tool to the change.
+
+## The bugs the tests found
+
+The fix was meant to stop crashes. Testing it turned up two problems where nothing crashed at all.
+
+**A lookup with the wrong key.** Added and deleted search-index fields never appeared on the version page. The code asked for the diff of `tasks` where it needed `fields`:
+
+```diff
+ const fieldsDiff = getDiffByFieldName(
+-  EntityField.TASKS,
++  EntityField.FIELDS,
+   changeDescription,
+   true
+ );
+```
+
+The lookup returned nothing, and nothing was rendered. No error, no log.
+
+**Pairing by position.** ML feature changes matched old and new values by index. That works until one list is filtered, and now lists *are* filtered. Index 2 on one side is no longer index 2 on the other:
+
+```diff
+-newDiffs.forEach((newDiff, index) => {
++newDiffs.forEach((newDiff) => {
+   if (isEqual(i.name, newDiff.name)) {
++    const oldDiff = oldDiffs.find((o) => o.name === newDiff.name);
+     i.description = getTextDiff(
+-      oldDiffs[index]?.description ?? '',
++      oldDiff?.description ?? '',
+       newDiff.description ?? ''
+     );
+```
+
+My own change would have made that second bug worse. If you start dropping items from a list, check everyone who uses its indexes.
+
+## Do error boundaries solve this?
+
+They help with a different part. An [error boundary](https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary) turns a blank page into a message, and you should have one. But it can only replace a whole subtree. It can't show the four good tags and skip the bad one. Validation decides what's shown; the boundary is for what you didn't foresee.
+
+## Checklist
+
+1. Search the codebase for `JSON.parse(` inside components and the functions they call.
+2. Replace `any` with `unknown` at each one.
+3. Decide per place: drop the item, use a default, or stop.
+4. Write the test with the malformed value first, and watch it crash.
+5. Include `null`, an object where an array is expected, and a nested bad child.
+
+## Conclusion
+
+Anything that comes from storage, a network or `localStorage` was written by some other version of your software. Parse it as if a stranger wrote it. For types that help after the boundary, see [TypeScript as a programming language](/blog/typescript-type-level-programming/).

@@ -1,0 +1,82 @@
+---
+title: "Getting a First PR Merged into a 75,000-Star Project"
+description: "Nine days, four review rounds, three of them asking for changes, and one honest admission. How a fix to Apache Superset got merged, and what the review taught me."
+date: "2026-11-24"
+tags: ["Open Source", "Debugging"]
+---
+
+## The short version
+
+On 22 September 2026 I opened a [pull request](https://github.com/apache/superset/pull/44529) against Apache Superset, which has more than 75,000 stars. On 1 October it was merged. In between, a reviewer requested changes three times and two automated reviewers commented as well.
+
+This is about the process. The technical story is in [Why Safari exported blank charts](/blog/safari-blank-chart-exports/).
+
+```embed
+pr-timeline
+```
+
+## What made it a good first issue
+
+- **A clear symptom.** "Image export is blank on Safari" is either fixed or not.
+- **People affected.** The [issue](https://github.com/apache/superset/issues/28713) had been open since May 2024.
+- **A cause that can be explained.** The capture library documents Safari as unsupported, and says why. A PR that explains why something broke is much easier to review than one that only makes it stop.
+
+A small fix to an important problem is a better first contribution than a big one to a problem nobody reported.
+
+## What to put in the description
+
+Reviewers of large projects read many PRs. The description answered four questions:
+
+1. What's broken, and for whom?
+2. Why? With a link to the library's own documentation.
+3. What does this change, and what does it deliberately leave alone?
+4. How can you check it?
+
+The third one matters most. Saying "other browsers keep their existing path" tells a reviewer where the risk is *not*. The first review picked up on exactly that.
+
+## Three times "changes requested"
+
+The first review arrived the same day. It called the root-cause analysis correct, and then asked whether map charts would still be blank, because I had skipped a step the old path took. They would have been.
+
+It was a scenario I hadn't covered, from someone who knows what else the code has to do. The pattern repeated:
+
+| Round | What the review found |
+|---|---|
+| 1 | WebGL charts might still export blank. Load the library lazily. Keep the table print layout |
+| 2 | Map layers live in a *second* canvas, which still isn't preserved |
+| 3 | The capture size and CORS points are resolved. The second canvas is the last blocker |
+| 4 | Approved, with a request to check on real Safari |
+
+Hardly any of it was about style. Behind each blocking point was a user who would still have had the bug.
+
+**Answering is part of the work.** For each blocking comment I either changed the code and named the commit, or explained why not. One automated reviewer wanted images from other origins included. I replied that allowing them would make the whole export fail, so leaving them out was the better trade. Disagreeing with a reason is fine. Ignoring isn't.
+
+## Saying "I can't test this"
+
+Round four asked me to check the result on real Safari. I don't have access to a Mac. I wrote that plainly and asked whether someone else could.
+
+A reviewer did, carefully, and found a problem: the new mode exposed a version mismatch between two of Superset's dependencies. Without an honest "I can't verify this", that test might not have happened before release. The mismatch was in the lockfile rather than in my code, and the main branch has since aligned the versions.
+
+An approval is easy to accept in silence. Saying what you couldn't check is more useful to everyone who will run the code.
+
+## What I would do differently
+
+- **Check access to the environment first.** For a Safari bug, the first question is "who has Safari?" Ask in the issue before starting.
+- **Read the code path around the change.** The table layout and the canvas copying that round one asked about were already in the path I had bypassed.
+- **Write the failing test first.** It forces you to say exactly what's broken. For my later [OpenMetadata fix](/blog/never-trust-json-parse-in-render/), the tests found two more bugs.
+- **Keep commits by concern.** Separate commits let reviewers look only at what changed since last time.
+
+## If you're about to open your first
+
+1. Run the project and reproduce the bug before anything else.
+2. Find the contribution guide and the PR template. Follow them literally.
+3. Make the smallest change that fixes the root cause.
+4. Expect several rounds. Requested changes mean someone is taking it seriously.
+5. Reply to every comment, in the code or in words.
+6. Say what you couldn't verify.
+
+[GitHub's open source guide](https://opensource.guide/how-to-contribute/) covers the basics well, and Superset's [contributor documentation](https://superset.apache.org/developer-docs/) is a good example of what large projects expect.
+
+## Conclusion
+
+The merged change adds about 150 lines of production code, and more than twice that in tests. The value was in having people who know the system better than I do point at what I couldn't see. You can't get that from a tutorial, and you don't need permission to start.

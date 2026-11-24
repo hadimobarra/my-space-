@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Lock } from "lucide-react";
+import { ArticleBody } from "@/components/blog/article-body";
 import { CodeCopy } from "@/components/blog/code-copy";
 import { PostCover } from "@/components/blog/post-cover";
 import { UploadDemo } from "@/components/projects/upload-demo";
@@ -108,7 +109,10 @@ export async function ProjectPage({ locale, slug }: { locale: Locale; slug: stri
           </aside>
 
           <article className="min-w-0 max-w-3xl lg:order-1">
-            <div className="prose-article" dangerouslySetInnerHTML={{ __html: html }} />
+            <div data-pagefind-body>
+              <p hidden data-pagefind-meta="title">{title}</p>
+              <ArticleBody html={html} locale={locale} />
+            </div>
             <CodeCopy copiedLabel={t.blog.codeCopied} />
             {demo === "upload" && <UploadDemo locale={locale} labels={t.uploadDemo} />}
 

@@ -2,6 +2,7 @@
 title: "The Browser Rendering Pipeline: Writing 60fps Animations"
 description: "Style, layout, paint and composite — what each stage costs, which CSS properties trigger which stages, and how to build animations that stay smooth with transforms, will-change, FLIP and the View Transitions API."
 date: "2025-11-17"
+updated: "2026-11-24"
 tags: ["CSS", "Performance", "Browser Internals"]
 ---
 
@@ -22,6 +23,10 @@ JavaScript → Style → Layout → Paint → Composite
 At 60Hz you have **16.7ms per frame** for all of this, and in practice closer to 10ms of budget for your own work. At 120Hz it's 8.3ms.
 
 The key optimisation insight: **later stages are cheaper, and you can skip earlier ones.**
+
+```embed
+pixel-pipeline
+```
 
 ## Which properties trigger which stages
 
@@ -185,3 +190,11 @@ Smooth isn't the same as necessary. Users with vestibular disorders can be made 
 ## Conclusion
 
 Animate `transform` and `opacity`, batch layout reads before writes, use FLIP or View Transitions when layout really must change, and keep layers and expensive paints under control. Once you know which pipeline stages each change triggers, hitting 60fps (or 120fps) becomes a design decision rather than luck.
+
+## Further reading
+
+- [Rendering performance on web.dev](https://web.dev/articles/rendering-performance)
+- [CSS containment on MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Containment)
+- [View Transition API on MDN](https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API)
+- [Inside the JavaScript event loop](/blog/javascript-event-loop-deep-dive/)
+- [I cut this site's JavaScript by 45%, and blocking time didn't move](/blog/less-javascript-same-blocking-time/)

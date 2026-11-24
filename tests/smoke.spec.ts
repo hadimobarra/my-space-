@@ -43,6 +43,15 @@ test("the language switch keeps the page and survives a reload", async ({ page }
   await expect(page).toHaveURL("/resume/");
 });
 
+test("articles switch language when translated, and go to the index otherwise", async ({ page }) => {
+  await page.goto("/blog/rtl-is-not-a-translation-step/");
+  await page.getByRole("link", { name: /Switch to Persian/ }).click();
+  await expect(page).toHaveURL("/fa/blog/rtl-is-not-a-translation-step/");
+  await page.goto("/blog/build-signals-from-scratch/");
+  await page.getByRole("link", { name: /Switch to Persian/ }).click();
+  await expect(page).toHaveURL("/fa/blog/");
+});
+
 test("unknown URLs get the 404 page", async ({ page }) => {
   const response = await page.goto("/nope/");
   expect(response?.status()).toBe(404);

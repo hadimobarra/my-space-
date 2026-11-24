@@ -518,6 +518,15 @@ html[lang="fa"] body *:not(:lang(en)):not([dir="ltr"]):not([dir="ltr"] *) {
 }
 
 .prose-article .code-block { position: relative; }
+.prose-article .code-title { text-transform: none; letter-spacing: 0; color: #c9d1d9; }
+.prose-article .line { display: block; }
+.prose-article .line-marked {
+  margin-inline: -1.25rem;
+  padding-inline: calc(1.25rem - 3px) 1.25rem;
+  border-inline-start: 3px solid #79c0ff;
+  background: rgb(121 192 255 / 0.12);
+}
+.prose-article .hljs-addition, .prose-article .hljs-deletion { display: inline-block; width: 100%; }
 .prose-article .code-copy {
   position: absolute;
   top: 0.5rem;

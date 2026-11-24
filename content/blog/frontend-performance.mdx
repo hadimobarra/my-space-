@@ -1,68 +1,122 @@
 ---
-title: "Front-End Performance Optimization Guide"
-description: "A comprehensive guide to optimizing front-end performance, covering Core Web Vitals, lazy loading, code splitting, and more."
+title: "A Front-End Performance Workflow That Survives Real Users"
+description: "Measure in the field, find the one metric that hurts, break it into parts, fix the largest part, and put a budget on it. A workflow for LCP, INP and CLS, with numbers from a real site."
 date: "2024-11-20"
-tags: ["Performance", "Web Development", "Optimization"]
+updated: "2026-11-24"
+tags: ["Performance", "Core Web Vitals"]
 ---
 
-## Introduction
+## Why checklists don't help
 
-Performance is critical for user experience and SEO. Google's Core Web Vitals have made performance optimization more important than ever.
+"Compress images, split code, use a CDN" is true for every site and useful for none in particular. A list can't tell you which of its twenty items is slowing down *your* page. A workflow can.
 
-## Core Web Vitals
+Here is one, in five steps. The examples come from [this site](/projects/this-website/).
 
-### Largest Contentful Paint (LCP)
+## Step 1: know the three targets
 
-LCP measures loading performance. Aim for LCP under 2.5 seconds.
+| Metric | Question it answers | Good | Poor |
+|---|---|---|---|
+| **LCP** | When does the main content appear? | ≤ 2.5 s | > 4 s |
+| **INP** | How fast does the page react? | ≤ 200 ms | > 500 ms |
+| **CLS** | Does the layout jump? | ≤ 0.1 | > 0.25 |
 
-- Optimize images with proper formats (WebP, AVIF)
-- Use CDN for static assets
-- Implement lazy loading
+They're judged at the [75th percentile](https://web.dev/articles/vitals) of real visits. INP replaced First Input Delay in March 2024, so advice about FID is out of date. FID only looked at the delay before the first input; INP covers whole interactions during the whole visit.
 
-### First Input Delay (FID)
+## Step 2: measure users, then reproduce in the lab
 
-FID measures interactivity. Aim for FID under 100ms.
+Field data tells you *what* is slow, and for whom. Lab data tells you *why*. You need both, in that order.
 
-- Code splitting
-- Reduce JavaScript execution time
-- Use web workers for heavy computations
+```js title="vitals.js"
+import { onCLS, onINP, onLCP } from "web-vitals/attribution";
 
-### Cumulative Layout Shift (CLS)
+function report({ name, value, rating, attribution }) {
+  const body = JSON.stringify({ name, value, rating, attribution, page: location.pathname });
+  navigator.sendBeacon("/vitals", body);
+}
 
-CLS measures visual stability. Aim for CLS under 0.1.
-
-- Set explicit dimensions for images
-- Reserve space for dynamic content
-- Avoid inserting content above existing content
-
-## Image Optimization
-
-Images are often the largest assets on a page. Use the following strategies:
-
-```typescript
-import Image from 'next/image';
-
-<Image
-  src="/hero.jpg"
-  alt="Hero Image"
-  width={1200}
-  height={630}
-  priority
-/>
+onLCP(report);
+onINP(report);
+onCLS(report);
 ```
 
-## Code Splitting
+The [web-vitals](https://github.com/GoogleChrome/web-vitals) attribution build tells you which element or interaction was responsible. If you have enough traffic, the [Chrome UX Report](https://developer.chrome.com/docs/crux) has field data without any code.
 
-Split your code into smaller chunks that load on demand:
+In the lab, repeat every measurement. Eight Lighthouse runs of this site's homepage gave between 280 and 700 ms of blocking time. If you run it once before and once after a change, you're comparing noise.
 
-```typescript
-import dynamic from 'next/dynamic';
+## Step 3: break the metric into parts
 
-const HeavyComponent = dynamic(() => import('./HeavyComponent'), {
-  loading: () => <p>Loading...</p>,
-});
+### LCP has four parts
+
+```embed
+lcp-parts
 ```
+
+- **Time to first byte.** Server, redirects, distance.
+- **Load delay.** Time before the browser even *starts* fetching the main resource. Usually the largest part, and the most ignored.
+- **Load time.** The download. This is the only part image compression improves.
+- **Render delay.** Everything is here, and something stops it being painted: CSS, fonts, or JavaScript.
+
+If the main image is found late, tell the browser early, and never lazy-load it:
+
+```html
+<link rel="preload" as="image" href="/hero.avif" fetchpriority="high" />
+<img src="/hero.avif" fetchpriority="high" width="480" height="480" alt="…" />
+```
+
+If the largest element is *text*, as on this site, images don't matter at all. Here the cause was render delay: text started at `opacity: 0` and waited for a script to animate it in. Making content visible by default, as part of a wider rebuild, moved LCP from 4.2 s to around 2 s. No image was the cause.
+
+### INP has three parts
+
+Input delay, processing and presentation, each with a different fix. I cover them in [Taming INP](/blog/taming-inp-interaction-to-next-paint/), with a demo you can feel.
+
+### CLS is a list of culprits
+
+Each shift has a source. The usual ones:
+
+- Images and embeds without `width` and `height`.
+- Content inserted above what the user is reading: banners, late ads.
+- Web fonts that swap in with different metrics.
+
+The last is the hardest to see, because it depends on the fonts installed on the visitor's device. My own machine showed a CLS of zero, while a CI runner measured 0.14 for the same build. The [full story](/blog/less-javascript-same-blocking-time/) is worth a read before you trust a local number.
+
+## Step 4: fix the largest part, and re-measure
+
+One change at a time, or you won't know which one worked. Write the expected effect down first:
+
+> Inlining the critical CSS should cut render delay by about 300 ms on mobile.
+
+If the result disagrees with the prediction, your model of the page is wrong. That is worth more than the 300 ms.
+
+Some things that often turn out to be the largest part:
+
+| Symptom | Likely cause | Fix |
+|---|---|---|
+| High render delay | Content hidden until hydration | Render visible, animate on top |
+| High load delay | Resource found late | Preload, or move it into the HTML |
+| Long first task | A very long page | Shorten it, or use `content-visibility` |
+| Long handler | Synchronous work on click | Yield, defer, or move to a [worker](/blog/web-workers-off-main-thread/) |
+| Layout shift on load | Font swap | Preload, or `font-display: optional` |
+
+## Step 5: put a budget on it
+
+A fix without a check lasts until the next feature. Budgets belong in CI, where they fail a build instead of a user:
+
+```json title="lighthouserc.json"
+{
+  "ci": {
+    "assert": {
+      "assertions": {
+        "categories:accessibility": ["error", { "minScore": 1 }],
+        "cumulative-layout-shift": ["error", { "maxNumericValue": 0.1 }],
+        "total-blocking-time": ["warn", { "maxNumericValue": 200 }]
+      }
+    }
+  }
+}
+```
+
+Make stable numbers errors and noisy numbers warnings. Bytes are the most stable of all, so this site also fails a build when a page ships more than 170 KB of JavaScript.
 
 ## Conclusion
 
-Performance optimization is an ongoing process. Monitor your metrics regularly and make incremental improvements.
+Measure real users. Choose one metric. Split it into parts. Fix the largest. Guard it. Then start again, because the largest part is now a different one.

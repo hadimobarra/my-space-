@@ -6,13 +6,13 @@ type Props = { params: Promise<{ slug: string }> };
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return getAllPostSlugs().map((slug) => ({ slug }));
+  return getAllPostSlugs("en").map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: Props) {
-  return blogPostMetadata((await params).slug);
+  return blogPostMetadata("en", (await params).slug);
 }
 
 export default async function Page({ params }: Props) {
-  return <BlogPostPage slug={(await params).slug} />;
+  return <BlogPostPage locale="en" slug={(await params).slug} />;
 }

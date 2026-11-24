@@ -1,0 +1,167 @@
+---
+title: "Translating Forms Generated from JSON Schema"
+description: "When forms are generated from a schema, their labels aren't in your translation files. A practical approach: extract text by path, translate it in a catalog, and localize the schema before it reaches the form."
+date: "2026-11-24"
+tags: ["Data Platforms", "RTL & i18n", "React"]
+---
+
+## Text that isn't in your code
+
+Data platforms connect to dozens of systems, and each has its own settings. Nobody writes those forms by hand. They're generated from [JSON Schema](https://json-schema.org/): a field's `title` becomes its label and `description` becomes its help text.
+
+```json title="postgres.json"
+{
+  "type": "object",
+  "properties": {
+    "hostPort": {
+      "title": "Host and Port",
+      "description": "Host and port of the PostgreSQL service.",
+      "type": "string"
+    },
+    "sslMode": {
+      "title": "SSL Mode",
+      "type": "string",
+      "enum": ["disable", "require", "verify-full"]
+    }
+  },
+  "required": ["hostPort"]
+}
+```
+
+Then you localize the product. Your translation files cover every string in your components, and the connection form is still in English. The text comes from a schema, often written by a backend team, sometimes in another repository.
+
+I worked on this while localizing an OpenMetadata-based platform into Persian. The code below is a simplified illustration of the approach, not the product's source.
+
+## Three ways that don't last
+
+**Edit the schemas.** They're generated or owned by someone else, and the next upgrade overwrites you.
+
+**Translate in the form's templates.** Looking up `t(label)` with the English text as the key works until two fields share a title. "Name" might need different words for a person and a database.
+
+**Keep a copy of each schema per language.** The copies drift. A new required field appears in English and not in Persian, and the form starts sending invalid data.
+
+## Translate the schema, not the form
+
+The idea that holds up: treat a schema as data, pull its text out into a catalog, and put translated text back just before rendering. The form generator never knows.
+
+```embed
+schema-forms
+```
+
+### Step 1: extract by path
+
+A JSON Pointer identifies a piece of text uniquely, so "Name" in two places has two keys:
+
+```ts title="extract.ts" {7}
+const TEXT_KEYS = ["title", "description"] as const;
+
+export function extract(node: unknown, path = "", out: Record<string, string> = {}) {
+  if (Array.isArray(node)) node.forEach((item, i) => extract(item, `${path}/${i}`, out));
+  else if (node && typeof node === "object") {
+    for (const [key, value] of Object.entries(node)) {
+      if (isTextKey(key) && typeof value === "string" && !isPropertyMap(path)) out[`${path}/${key}`] = value;
+      else extract(value, `${path}/${key}`, out);
+    }
+  }
+  return out;
+}
+
+const isTextKey = (key: string) => (TEXT_KEYS as readonly string[]).includes(key);
+
+/** Inside "properties", keys are field names. A field may itself be called "title". */
+const isPropertyMap = (path: string) => /\/(properties|\$defs|definitions)$/.test(path);
+```
+
+That last function matters. Under `properties`, the word `title` is the *name of a field*, not text. Forget it and a schema with a field called `description` is silently damaged.
+
+### Step 2: a catalog people can review
+
+```json title="fa/postgres.json"
+{
+  "/properties/hostPort/title": "میزبان و درگاه",
+  "/properties/sslMode/title": "حالت SSL"
+}
+```
+
+Store the English source next to each translation, or a hash of it. When the source text changes, the entry is marked for review instead of being quietly wrong.
+
+### Step 3: localize a copy
+
+```ts title="localize.ts"
+export function localize<T>(schema: T, catalog: Record<string, string>): T {
+  const copy = structuredClone(schema);
+  for (const [pointer, text] of Object.entries(catalog)) {
+    const keys = pointer.slice(1).split("/");
+    const last = keys.pop()!;
+    const parent = keys.reduce<any>((node, key) => node?.[key], copy);
+    if (parent && typeof parent[last] === "string") parent[last] = text;
+  }
+  return copy;
+}
+```
+
+(A full JSON Pointer also escapes `/` as `~1` in names. Add that if your field names contain slashes.)
+
+If a pointer no longer exists, it's skipped, and the field stays in English. A half-translated form is usable. A crashed one isn't.
+
+```tsx title="ConnectionForm.tsx"
+const localized = useMemo(() => localize(schema, catalogs[locale]), [schema, locale]);
+return <Form schema={localized} formData={data} />;
+```
+
+## Never translate values
+
+`enum` values are data. Translate `verify-full` and the backend rejects the form. Give options a *label* instead. In JSON Schema that's `oneOf` with `const` and `title`:
+
+```json
+{
+  "sslMode": {
+    "oneOf": [
+      { "const": "disable", "title": "غیرفعال" },
+      { "const": "require", "title": "الزامی" }
+    ]
+  }
+}
+```
+
+The same goes for property names, `$id`, `format` and patterns. A short allow-list of text keys is safer than a long list of exceptions.
+
+## Validation messages
+
+Validators such as [Ajv](https://ajv.js.org/) produce English errors from the schema's keywords. Translate by keyword and fill in parameters, so one message covers all fields:
+
+```ts
+const messages = {
+  required: (p) => `وارد کردن ${p.label} الزامی است`,
+  minLength: (p) => `${p.label} باید حداقل ${p.limit} نویسه باشد`,
+};
+```
+
+Use the localized title as `label`, not the property name. `hostPort` in the middle of a Persian sentence is both unclear and, because of text direction, oddly placed.
+
+## Direction inside the form
+
+Labels are Persian. Values mostly aren't: hosts, connection strings, SQL, JSON. Let the schema decide the direction of each input:
+
+```ts
+const inputDir = (field) =>
+  ["uri", "email", "hostname"].includes(field.format) || field.writeOnly ? "ltr" : "auto";
+```
+
+More on why that matters in [RTL is not a translation step](/blog/rtl-is-not-a-translation-step/).
+
+## Keep it honest in CI
+
+Three checks are cheap and catch nearly everything:
+
+1. **Coverage:** every extracted pointer has a translation, or is listed as pending.
+2. **Dead entries:** every catalog pointer still exists in the schema.
+3. **Structure:** after removing text keys, the localized schema equals the original. This one proves that translation never changes what the form accepts.
+
+```ts
+expect(stripText(localize(schema, fa))).toEqual(stripText(schema));
+```
+
+## Conclusion
+
+Generated interfaces need generated translation. Once text is addressed by path, a new connector is translated by adding a file, and an upgrade shows you exactly which sentences changed.
