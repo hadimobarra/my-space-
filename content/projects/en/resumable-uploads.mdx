@@ -1,0 +1,59 @@
+---
+title: "Resumable multi-GB uploads with Uppy and TUS"
+summary: "An upload module for large CSV, TSV, JSON and Excel files that can pause, resume and retry on its own. Includes a live demo of the protocol that you can break on purpose."
+role: "Front-end architecture and implementation"
+context: "Adin, data governance and ETL platform"
+status: "In production"
+order: 2
+cover: "TUS"
+tags: ["React", "TypeScript", "Uppy.js", "TUS Protocol"]
+confidential: true
+demo: "upload"
+links:
+  - label: "TUS protocol"
+    url: "https://tus.io/protocols/resumable-upload"
+---
+
+## The problem
+
+Data teams bring large files into an ETL platform: CSV, TSV, JSON and Excel, up to several gigabytes. A single HTTP request is a poor fit. If the connection drops near the end, the whole transfer starts over, and the user loses trust in the tool.
+
+## Constraints
+
+- A dropped connection must not lose progress.
+- People need to pause and resume on purpose, not only after errors.
+- The browser must never read a multi-GB file into memory.
+- The interface has to say what is going on: uploading, paused, retrying or done.
+
+## Decisions
+
+**Use an open protocol.** TUS is a small, documented standard for resumable uploads over HTTP, with client and server implementations in many languages. That is safer than inventing a private chunking format and maintaining both ends of it.
+
+**Use Uppy for state.** Uppy handles the file queue, restrictions, progress and pause state, and its TUS plugin drives the transfer. React renders that state instead of owning it.
+
+**Let the server be the source of truth.** The client doesn't guess how much arrived. After any interruption it asks.
+
+## How resuming works
+
+Three requests carry the protocol:
+
+1. `POST` creates the upload and returns its URL.
+2. `PATCH` sends bytes, starting at an `Upload-Offset`.
+3. `HEAD` asks the server which offset it has stored.
+
+After a failure, the client sends `HEAD`, receives the stored offset, slices the file from that byte and continues with `PATCH`. `Blob.slice()` is lazy, so the file is read piece by piece.
+
+```http
+HEAD /files/24e533e HTTP/1.1
+Tus-Resumable: 1.0.0
+
+HTTP/1.1 200 OK
+Upload-Offset: 14680064
+Upload-Length: 50331648
+```
+
+Retries wait longer after each failure, so a struggling network isn't hit with a burst of requests.
+
+## Result
+
+The module is used for multi-GB transfers with pause, resume and automatic retry. The production code belongs to Adin, so the demo below is a separate example I can share. It uses the same libraries.

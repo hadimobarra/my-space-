@@ -1,0 +1,51 @@
+---
+title: "Fixing blank image exports on Safari in Apache Superset"
+summary: "Chart and dashboard image exports came out blank on Safari, an issue open since May 2024. I traced it to a WebKit restriction and shipped a Safari-only capture path without touching other browsers."
+role: "Upstream contributor"
+context: "Apache Superset, open source"
+status: "Merged, October 2026"
+order: 1
+cover: "Safari"
+tags: ["React", "TypeScript", "html2canvas", "WebGL", "Jest"]
+links:
+  - label: "Pull request #44529"
+    url: "https://github.com/apache/superset/pull/44529"
+  - label: "Issue #28713"
+    url: "https://github.com/apache/superset/issues/28713"
+---
+
+## The problem
+
+On Safari, "Download as image" in Apache Superset produced a blank or partial file. It affected charts and whole dashboards, in every WebKit-based browser. The issue had been open since May 2024.
+
+## Root cause
+
+Superset captures a chart with `dom-to-image-more`. That library clones the DOM node, wraps the clone in an SVG `<foreignObject>`, and paints the SVG to a canvas. WebKit applies a stricter security model to `<foreignObject>` and refuses to paint it, so the canvas stays empty. The library documents Safari as unsupported for this reason, which meant no option or workaround inside it would help.
+
+## Constraints
+
+- **Chrome and Firefox had to stay identical.** Their pipeline carries special handling for ag-grid print layout and high-resolution ECharts output.
+- **No extra weight for everyone else.** A second rasterizer is only useful on one engine.
+- **Superset renders many kinds of charts.** DOM tables, 2D canvases and WebGL maps each fail in a different way when captured.
+
+## Decisions
+
+**Swap the rasterizer, only on Safari.** `html2canvas` reads the DOM and paints it to a canvas itself, so it never needs `<foreignObject>`. It was already in the dependency tree through `dom-to-pdf`, so the change promoted it to a direct dependency. Replacing the capture path for all browsers would have put working exports at risk.
+
+**Load it lazily.** The library is imported inside the Safari branch, so it stays out of the core bundle.
+
+**Keep the table lifecycle.** My first version returned early and skipped the ag-grid print layout, which would have cut off virtualized rows. The final version keeps that lifecycle and replaces only the last step.
+
+**Measure after expanding.** Clipped content is expanded in the clone, so dimensions taken from the live element were too small. The capture now updates its size in `onclone`, from the expanded clone.
+
+**Preserve WebGL buffers.** A WebGL canvas reads back blank unless its drawing buffer is preserved. Mapbox and MapLibre now set that on Safari. deck.gl drew its layers into a separate canvas of its own, so on Safari its overlays use interleaved mode and share the base map's context.
+
+**Accept one limit.** Images from servers without CORS headers are left out. Allowing a tainted canvas would make the whole export fail instead.
+
+## Review and result
+
+Two reviewers from the project went through several rounds, and their questions about WebGL and table truncation made it clearly better. It merged on 1 October 2026: 8 files, 553 lines added and 48 removed, with most of the additions being tests.
+
+## What I would do differently
+
+I don't have a Mac, and jsdom can't render WebGL. The tests prove the configuration is passed through; they can't prove the pixels are right. Before merge, a reviewer with real Safari found that interleaved mode exposed a version mismatch between two deck.gl packages in the lockfile. Superset's main branch has since moved both to the same version, but that shows the gap: for rendering work I would now arrange a real-device check before opening the PR, rather than leaving it to reviewers.

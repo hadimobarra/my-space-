@@ -7,7 +7,12 @@
     "experience": "تجربیات",
     "blog": "وبلاگ",
     "contact": "ارتباط",
-    "letsTalk": "ارتباط با من"
+    "letsTalk": "ارتباط با من",
+    "resume": "رزومه",
+    "openMenu": "باز و بسته کردن منو",
+    "toggleTheme": "تغییر تم",
+    "skipToContent": "رفتن به محتوا",
+    "primary": "ناوبری اصلی"
   },
   "hero": {
     "greeting": "سلام، من",
@@ -21,7 +26,6 @@
     "description": "مهندس فرانت‌اند با ۴+ سال تجربه حرفه‌ای در ساخت برنامه‌های وب داده‌محور با React و TypeScript. مشارکت‌کننده در Apache Superset و توسعه‌دهنده قابلیت‌های سفارشی روی OpenMetadata. کارشناسی ارشد مهندسی کامپیوتر.",
     "contactMe": "ارتباط با من",
     "viewProjects": "مشاهده پروژه‌ها",
-    "scroll": "اسکرول",
     "available": "آماده همکاری دورکاری · تمام‌وقت یا پروژه‌ای",
     "resume": "رزومه",
     "chipYears": "سال تجربه در محصولات واقعی",
@@ -58,205 +62,94 @@
       }
     ]
   },
-  "skillCategories": [
-    {
-      "title": "زبان‌ها",
-      "skills": [
-        {
-          "name": "TypeScript",
-          "level": 90
-        },
-        {
-          "name": "JavaScript (ES2024)",
-          "level": 90
-        },
-        {
-          "name": "HTML5",
-          "level": 95
-        },
-        {
-          "name": "CSS3",
-          "level": 90
-        }
-      ]
-    },
-    {
-      "title": "فریم‌ورک‌ها و کتابخانه‌ها",
-      "skills": [
-        {
-          "name": "React 18",
-          "level": 92
-        },
-        {
-          "name": "Redux",
-          "level": 80
-        },
-        {
-          "name": "Zustand",
-          "level": 85
-        },
-        {
-          "name": "React Query",
-          "level": 80
-        },
-        {
-          "name": "Next.js",
-          "level": 75
-        }
-      ]
-    },
-    {
-      "title": "UI / استایل",
-      "skills": [
-        {
-          "name": "Ant Design",
-          "level": 88
-        },
-        {
-          "name": "Tailwind CSS",
-          "level": 92
-        },
-        {
-          "name": "Material UI",
-          "level": 80
-        },
-        {
-          "name": "Sass",
-          "level": 85
-        },
-        {
-          "name": "RTL / i18n",
-          "level": 90
-        }
-      ]
-    },
-    {
-      "title": "ابزارها",
-      "skills": [
-        {
-          "name": "Webpack",
-          "level": 80
-        },
-        {
-          "name": "Vite",
-          "level": 78
-        },
-        {
-          "name": "Git",
-          "level": 88
-        },
-        {
-          "name": "Docker",
-          "level": 75
-        },
-        {
-          "name": "Nginx",
-          "level": 70
-        },
-        {
-          "name": "ESLint / Prettier",
-          "level": 85
-        }
-      ]
-    },
-    {
-      "title": "داده و پروتکل‌ها",
-      "skills": [
-        {
-          "name": "Uppy.js",
-          "level": 82
-        },
-        {
-          "name": "پروتکل TUS",
-          "level": 80
-        },
-        {
-          "name": "REST APIs",
-          "level": 88
-        },
-        {
-          "name": "مفاهیم ETL",
-          "level": 75
-        }
-      ]
-    },
-    {
-      "title": "پلتفرم‌ها",
-      "skills": [
-        {
-          "name": "Linux",
-          "level": 80
-        },
-        {
-          "name": "GitHub Actions CI",
-          "level": 78
-        },
-        {
-          "name": "OpenMetadata",
-          "level": 85
-        }
-      ]
-    }
-  ],
   "skills": {
-    "title": "مهارت‌ها",
-    "subtitle": "فناوری‌ها و ابزارهایی که با آنها کار می‌کنم"
+    "title": "مهارت‌ها و ابزارها",
+    "subtitle": "فناوری‌ها و ابزارهایی که با آنها کار می‌کنم",
+    "groups": [
+      {
+        "title": "زبان‌ها",
+        "items": [
+          "TypeScript",
+          "JavaScript (ES2024)",
+          "HTML5",
+          "CSS3"
+        ]
+      },
+      {
+        "title": "فریم‌ورک و state",
+        "items": [
+          "React",
+          "Next.js",
+          "Redux",
+          "Redux Saga",
+          "Zustand",
+          "React Query"
+        ]
+      },
+      {
+        "title": "UI و استایل",
+        "items": [
+          "Ant Design",
+          "Tailwind CSS",
+          "Material UI",
+          "Sass",
+          "i18next",
+          "چیدمان RTL",
+          "دسترس‌پذیری"
+        ]
+      },
+      {
+        "title": "داده و پروتکل‌ها",
+        "items": [
+          "Apache Superset",
+          "OpenMetadata",
+          "پایپ‌لاین ETL",
+          "REST APIs",
+          "فرم‌های JSON Schema",
+          "Uppy.js",
+          "TUS"
+        ]
+      },
+      {
+        "title": "ابزار و دوآپس",
+        "items": [
+          "Vite",
+          "Webpack",
+          "Jest",
+          "Git",
+          "GitHub Actions CI",
+          "Docker",
+          "Nginx",
+          "Linux"
+        ]
+      },
+      {
+        "title": "شیوه کار",
+        "items": [
+          "چابک / اسکرام",
+          "همکاری ناهمگام",
+          "بازبینی کد",
+          "نگارش فنی"
+        ]
+      }
+    ]
   },
   "projects": {
     "title": "پروژه‌های شاخص",
-    "subtitle": "برخی از کارهای اخیر من",
-    "items": [
-      {
-        "title": "OpenMetadata",
-        "description": "ساخت قابلیت‌های سفارشی روی نسخه‌ای از این پلتفرم متن‌باز کاتالوگ و حاکمیت داده: ویرایشگر پایپ‌لاین ETL با پیش‌نمایش زنده YAML، ابزار ترجمه اسکیما و بومی‌سازی کامل فارسی (RTL)، به‌همراه اصلاحات upstream.",
-        "tags": [
-          "React",
-          "TypeScript",
-          "Ant Design",
-          "Tailwind CSS"
-        ],
-        "liveUrl": null,
-        "githubUrl": "https://github.com/open-metadata/OpenMetadata/commits?author=hadimobarra"
-      },
-      {
-        "title": "Apache Superset",
-        "description": "مشارکت‌کننده upstream در پلتفرم متن‌باز پیشرو هوش تجاری. رفع باگ قدیمی Safari که خروجی تصویر نمودارها و داشبوردها را خالی می‌کرد (PR #44529) و اصلاحات یکپارچگی UI در Explore.",
-        "tags": [
-          "React",
-          "TypeScript",
-          "html2canvas",
-          "Jest"
-        ],
-        "liveUrl": "https://github.com/apache/superset/pull/44529",
-        "githubUrl": "https://github.com/apache/superset/pulls?q=is%3Apr+author%3Ahadimobarra"
-      },
-      {
-        "title": "رابط کاربری کاتالوگ داده سازمانی",
-        "description": "ایجاد یک رابط کاربری جستجوپذیر و قدرتمند برای کاتالوگ داده جهت کشف، برچسب‌گذاری و حاکمیت بر داده‌های سازمانی، بهبود قابلیت کشف داده در سراسر تیم‌ها. محصول اختصاصی شرکت آدین؛ نسخه نمایشی عمومی ندارد.",
-        "tags": [
-          "React",
-          "TypeScript",
-          "Ant Design",
-          "Zustand"
-        ],
-        "liveUrl": null,
-        "githubUrl": null
-      },
-      {
-        "title": "ماژول آپلود فایل‌های حجیم",
-        "description": "طراحی و معماری ماژول آپلود فایل‌های حجیم با قابلیت انتقال چند گیگابایتی با استفاده از Uppy.js و پروتکل TUS همراه با قابلیت توقف/ادامه و تلاش مجدد خودکار. محصول اختصاصی شرکت آدین؛ نسخه نمایشی عمومی ندارد.",
-        "tags": [
-          "React",
-          "TypeScript",
-          "Uppy.js",
-          "TUS Protocol"
-        ],
-        "liveUrl": null,
-        "githubUrl": null
-      }
-    ],
-    "live": "مشاهده PR",
-    "source": "مشارکت‌های من"
+    "subtitle": "مسئله، محدودیت‌ها و تصمیم‌ها",
+    "readCase": "خواندن مطالعه موردی",
+    "viewAll": "همه مطالعات موردی",
+    "pageTitle": "مطالعات موردی",
+    "pageSubtitle": "مسئله، محدودیت‌ها، تصمیم‌ها و نتیجه.",
+    "back": "همه مطالعات موردی",
+    "role": "نقش",
+    "context": "زمینه",
+    "stack": "فناوری‌ها",
+    "links": "پیوندها",
+    "status": "وضعیت",
+    "liveDemo": "دموی زنده",
+    "nextCase": "مطالعه موردی بعدی",
+    "confidential": "این محصول اختصاصی است و کد یا تصویر عمومی ندارد. این صفحه فقط شامل موارد قابل انتشار است."
   },
   "experience": {
     "title": "تجربیات کاری",
@@ -274,6 +167,15 @@
           "Tailwind CSS",
           "Zustand",
           "i18n/RTL"
+        ],
+        "highlights": [
+          "تحویل کامل صفحه Add Pipeline، رابطی تعاملی برای هماهنگی مراحل ورود داده ETL؛ از نیازمندی‌ها و معماری کامپوننت تا اتصال به API، اعتبارسنجی و انتشار.",
+          "معماری ماژول آپلود ازسرگیری‌پذیر فایل‌های حجیم (CSV، TSV، JSON، Excel) با Uppy.js و پروتکل TUS برای انتقال مطمئن چند گیگابایتی با توقف/ادامه و تلاش مجدد خودکار.",
+          "ساخت رابط‌های Data Catalog، Mapping Table و Mapping Column (با الهام از Databricks) برای تعریف بصری روابط موجودیت‌ها و کشف، برچسب‌گذاری و حاکمیت داده‌های سازمانی.",
+          "جایگزینی مدل دسترسی ایستا با ماژول مدیریت نقش دارای قواعد دسترسی پویا و ریزدانه برای مدیریت سلف‌سرویس.",
+          "ساخت گردش‌کار بازبینی و تأیید واژه‌نامه که سیاست‌های حاکمیت داده را با سابقه ممیزی کامل اعمال می‌کند.",
+          "رهبری بومی‌سازی کامل فارسی (RTL) در کل محصول با i18next و توسعه اسکیما برای داده دوزبانه فارسی/انگلیسی.",
+          "بهبود زمان بارگذاری و پایداری با code-splitting، lazy loading و memoization در نماهای سنگین داده."
         ]
       },
       {
@@ -289,120 +191,10 @@
           "Sass",
           "Webpack",
           "Docker"
-        ]
-      }
-    ]
-  },
-  "services": {
-    "title": "خدمات",
-    "subtitle": "آنچه می‌توانم برای شما انجام دهم",
-    "items": [
-      {
-        "title": "توسعه فرانت‌اند",
-        "description": "ساخت برنامه‌های وب واکنش‌گرا، با عملکرد بالا و قابل دسترس با استفاده از فریم‌ورک‌های مدرن و بهترین شیوه‌ها.",
-        "icon": "Code"
-      },
-      {
-        "title": "رابط‌های پلتفرم داده و داشبورد",
-        "description": "کاتالوگ داده، سازنده پایپ‌لاین ETL، پنل‌های مدیریتی و داشبوردهای تحلیلی، از جمله شخصی‌سازی و پلاگین‌نویسی Apache Superset.",
-        "icon": "Database"
-      },
-      {
-        "title": "توسعه React",
-        "description": "ایجاد رابط‌های کاربری پویا و کامپوننت‌محور با React با استفاده از hooks، context و مدیریت state.",
-        "icon": "Code"
-      },
-      {
-        "title": "طراحی وب واکنش‌گرا",
-        "description": "طراحی وبسایت‌های mobile-first و سازگار با مرورگرهای مختلف که تجربه یکپارچه‌ای در تمام دستگاه‌ها ارائه می‌دهند.",
-        "icon": "Smartphone"
-      },
-      {
-        "title": "پیاده‌سازی UI",
-        "description": "تبدیل طرح‌های طراحی به رابط‌های پیکسل‌کامل و تعاملی با انیمیشن‌های روان و ترنزیشن‌های جذاب.",
-        "icon": "Palette"
-      },
-      {
-        "title": "بهینه‌سازی عملکرد",
-        "description": "بررسی و بهینه‌سازی برنامه‌های وب برای Core Web Vitals، بهبود زمان بارگذاری و افزایش تجربه کاربری.",
-        "icon": "Server"
-      }
-    ]
-  },
-  "techStack": {
-    "title": "تکنولوژی‌ها",
-    "subtitle": "فناوری‌هایی که استفاده می‌کنم و دوست دارم",
-    "groups": [
-      {
-        "title": "فریم‌ورک‌ها و کتابخانه‌ها",
-        "items": [
-          {
-            "name": "React",
-            "icon": "SiReact"
-          },
-          {
-            "name": "Next.js",
-            "icon": "SiNextdotjs"
-          },
-          {
-            "name": "Redux",
-            "icon": "SiRedux"
-          },
-          {
-            "name": "Zustand",
-            "icon": "SiReact"
-          }
-        ]
-      },
-      {
-        "title": "زبان‌ها",
-        "items": [
-          {
-            "name": "TypeScript",
-            "icon": "SiTypescript"
-          },
-          {
-            "name": "JavaScript",
-            "icon": "SiJavascript"
-          }
-        ]
-      },
-      {
-        "title": "UI و استایل",
-        "items": [
-          {
-            "name": "Tailwind CSS",
-            "icon": "SiTailwindcss"
-          },
-          {
-            "name": "Ant Design",
-            "icon": "SiAntdesign"
-          },
-          {
-            "name": "Material UI",
-            "icon": "SiMaterialdesign"
-          }
-        ]
-      },
-      {
-        "title": "دوآپس و ابزارها",
-        "items": [
-          {
-            "name": "Docker",
-            "icon": "SiDocker"
-          },
-          {
-            "name": "Git",
-            "icon": "SiGit"
-          },
-          {
-            "name": "Webpack",
-            "icon": "SiWebpack"
-          },
-          {
-            "name": "Vite",
-            "icon": "SiVite"
-          }
+        ],
+        "highlights": [
+          "ساخت قابلیت برای داشبوردهای مخابراتی در یک کدبیس بزرگ سازمانی با React، Redux Saga و Material UI.",
+          "پیاده‌سازی کامپوننت‌های واکنش‌گرا بر اساس سیستم طراحی؛ کار روی بیلد Webpack و استقرار Docker/Nginx."
         ]
       }
     ]
@@ -411,12 +203,9 @@
     "title": "وبلاگ",
     "subtitle": "بررسی عمیق جاوااسکریپت، ری‌اکت و پرفورمنس وب",
     "description": "بررسی عمیق سازوکار درونی جاوااسکریپت، معماری ری‌اکت، تایپ‌اسکریپت و پرفورمنس وب — بر پایه تجربه در محصولات واقعی.",
-    "readMore": "ادامه مطلب",
     "viewAll": "مشاهده همه نوشته‌ها",
     "minRead": "دقیقه مطالعه",
-    "noPosts": "هنوز نوشته‌ای منتشر نشده. به زودی!",
     "backToBlog": "بازگشت به وبلاگ",
-    "comingSoon": "به زودی!",
     "featured": "ویژه",
     "articles": "مقاله",
     "pageTitle": "یادداشت‌های مهندسی",
@@ -434,49 +223,34 @@
     "getInTouch": "در تماس باشید",
     "previousPost": "قبلی",
     "nextPost": "بعدی",
-    "relatedPosts": "ادامه مطالعه"
+    "relatedPosts": "ادامه مطالعه",
+    "langNote": "مقاله‌ها به زبان انگلیسی هستند.",
+    "clearSearch": "پاک کردن جستجو",
+    "resultsCount": "{count} مقاله",
+    "shareX": "اشتراک در X",
+    "shareLinkedIn": "اشتراک در LinkedIn",
+    "codeCopied": "کد کپی شد"
   },
   "openSource": {
     "title": "متن‌باز",
-    "subtitle": "مشارکت در جامعه توسعه‌دهندگان",
+    "subtitle": "مشارکت‌های upstream، مستقیم از GitHub",
     "repos": [
       {
-        "name": "OpenMetadata",
-        "description": "یک پلتفرم متن‌باز برای کاتالوگ داده، کیفیت داده، مشاهده‌پذیری، حاکمیت و همکاری تیمی. مشارکت‌کننده فعال با PRهای ادغام‌شده.",
-        "stars": 5200,
-        "forks": 1000,
-        "url": "https://github.com/open-metadata/OpenMetadata/commits?author=hadimobarra",
-        "language": "TypeScript",
-        "languageColor": "#3178c6"
+        "name": "apache/superset",
+        "description": "پلتفرم متن‌باز هوش تجاری و کاوش داده. باگ خالی بودن خروجی تصویر نمودار و داشبورد در Safari را رفع کردم (#44529) و اصلاحات دیگری برای Explore در حال بازبینی دارم."
       },
       {
-        "name": "Apache Superset",
-        "description": "یک پلتفرم متن‌باز برای هوش تجاری و کاوش داده با فرانت‌اند غنی React/TypeScript. مشارکت‌کننده با PRهای ادغام‌شده.",
-        "stars": 74832,
-        "forks": 18342,
-        "url": "https://github.com/apache/superset/pulls?q=is%3Apr+author%3Ahadimobarra",
-        "language": "TypeScript",
-        "languageColor": "#3178c6"
+        "name": "open-metadata/OpenMetadata",
+        "description": "پلتفرم متن‌باز فراداده. صفحات نسخه موجودیت‌ها را در برابر داده diff معیوب مقاوم کردم (#33580) و در آدین روی یک fork قابلیت‌های سفارشی ساختم."
       }
-    ]
-  },
-  "currentlyLearning": {
-    "title": "در حال یادگیری",
-    "subtitle": "فناوری‌ها و موضوعاتی که در حال کاوش هستم",
-    "items": [
-      {
-        "name": "برنامه‌نویسی Rust",
-        "description": "کاوش برنامه‌نویسی سیستمی با Rust برای کامپوننت‌های وب بحرانی از نظر عملکرد."
-      },
-      {
-        "name": "Three.js و WebGL",
-        "description": "غواصی در گرافیک سه‌بعدی و تجربیات وب همه‌جانبه."
-      },
-      {
-        "name": "طراحی سیستم",
-        "description": "مطالعه معماری سیستم‌های توزیع شده و الگوهای مقیاس‌پذیری."
-      }
-    ]
+    ],
+    "merged": "ادغام‌شده",
+    "open": "در حال بازبینی",
+    "pullRequests": "درخواست‌های ادغام",
+    "stars": "ستاره",
+    "forks": "فورک",
+    "updated": "به‌روزرسانی خودکار از GitHub API. آخرین به‌روزرسانی:",
+    "viewAll": "مشاهده همه در GitHub"
   },
   "testimonials": {
     "title": "نظرات همکاران",
@@ -499,10 +273,8 @@
     "subtitle": "پروژه‌ای در نظر دارید؟ بیایید با هم کار کنیم",
     "description": "من همیشه آماده پروژه‌ها و فرصت‌های جدید هستم. چه سوالی داشته باشید، چه پیشنهاد پروژه‌ای، یا فقط می‌خواهید سلام کنید، خوشحال می‌شوم از شما بشنوم.",
     "email": "ایمیل",
-    "phone": "تلفن",
     "location": "موقعیت",
     "locationValue": "تهران، ایران · دورکاری (UTC+3:30)",
-    "phoneValue": "+۹۸ ۹۱۴ ۷۴۸ ۲۲۸۴",
     "form": {
       "name": "نام شما",
       "email": "ایمیل شما",
@@ -510,15 +282,15 @@
       "message": "پیام شما",
       "send": "ارسال پیام",
       "sending": "در حال ارسال...",
-      "sent": "با موفقیت ارسال شد!",
-      "error": "ارسال ناموفق بود",
       "subjectPrefix": "[تماس از سایت]",
       "errorTitle": "ارسال پیام انجام نشد",
       "errorText": "مشکلی پیش آمد. می‌توانید مستقیماً به من ایمیل بزنید.",
       "emailInstead": "ارسال ایمیل",
-      "sentText": "ممنون! به‌زودی پاسخ می‌دهم."
+      "sentText": "ممنون! به‌زودی پاسخ می‌دهم.",
+      "sentTitle": "پیام ارسال شد"
     },
-    "copied": "در کلیپ‌بورد کپی شد"
+    "copied": "در کلیپ‌بورد کپی شد",
+    "copyLabel": "کپی نشانی ایمیل"
   },
   "footer": {
     "backToTop": "بازگشت به بالا",
@@ -529,7 +301,10 @@
     "ctaTitle": "پروژه‌ای در ذهن دارید؟",
     "ctaHighlight": "بیایید بسازیمش.",
     "ctaText": "برای موقعیت‌های دورکاری فرانت‌اند (تمام‌وقت یا پروژه‌ای)، پروژه‌های پلتفرم داده و کارهای متن‌باز جذاب آماده‌ام.",
-    "builtWith": "ساخته شده با Next.js و کلی"
+    "builtWith": "ساخته شده با Next.js و کلی",
+    "love": "عشق",
+    "caseStudies": "مطالعات موردی",
+    "source": "کد منبع"
   },
   "commandMenu": {
     "placeholder": "جستجوی صفحات، مقالات و دستورات…",
@@ -538,13 +313,15 @@
     "groups": {
       "navigation": "ناوبری",
       "articles": "مقالات",
-      "actions": "دستورات"
+      "actions": "دستورات",
+      "projects": "مطالعات موردی"
     },
     "allPosts": "همه مقالات",
-    "toggleLanguage": "تغییر زبان (EN / FA)",
+    "toggleLanguage": "تغییر به انگلیسی (English)",
     "empty": "نتیجه‌ای یافت نشد.",
     "navigate": "حرکت",
-    "select": "انتخاب"
+    "select": "انتخاب",
+    "close": "بستن"
   },
   "eyebrows": {
     "about": "من کی هستم",
@@ -552,12 +329,82 @@
     "skills": "جعبه‌ابزار",
     "projects": "نمونه‌کارها",
     "experience": "مسیر شغلی",
-    "services": "خدمات",
-    "tech-stack": "تکنولوژی‌ها",
     "blog": "نوشته‌ها",
     "open-source": "متن‌باز",
-    "currently-learning": "یادگیری",
     "testimonials": "توصیه‌نامه‌ها",
-    "contact": "تماس"
+    "contact": "تماس",
+    "case-study": "مطالعه موردی"
+  },
+  "seo": {
+    "title": "هادی مبرا | مهندس فرانت‌اند · React و TypeScript برای پلتفرم‌های داده",
+    "description": "مهندس فرانت‌اند با بیش از ۴ سال تجربه در ساخت برنامه‌های داده‌محور با React و TypeScript: کاتالوگ داده، رابط‌های ETL و داشبورد. مشارکت‌کننده Apache Superset. آماده همکاری دورکاری.",
+    "blogDescription": "بررسی عمیق سازوکار درونی جاوااسکریپت، معماری ری‌اکت، تایپ‌اسکریپت و پرفورمنس وب، بر پایه تجربه در محصولات واقعی.",
+    "projectsDescription": "مطالعات موردی: رفع باگ Safari در Apache Superset، آپلود ازسرگیری‌پذیر چند گیگابایتی، قابلیت‌های OpenMetadata و کاتالوگ داده سازمانی.",
+    "resumeDescription": "رزومه هادی مبرا، مهندس فرانت‌اند: React و TypeScript برای پلتفرم‌های داده. قابل چاپ و همراه با نسخه PDF."
+  },
+  "hire": {
+    "title": "همکاری با من",
+    "availability": "دورکاری، تمام‌وقت یا پروژه‌ای",
+    "helpTitle": "بیشترین کمکی که می‌توانم بکنم",
+    "help": [
+      "کاتالوگ داده، سازنده ETL، پنل مدیریتی و داشبورد",
+      "شخصی‌سازی و پلاگین‌نویسی Apache Superset",
+      "قابلیت‌های React و TypeScript با مالکیت کامل",
+      "پرفورمنس، دسترس‌پذیری و RTL/i18n"
+    ],
+    "hours": "ساعت کاری",
+    "hoursValue": "۰۹:۰۰ تا ۱۸:۰۰ تهران (UTC+3:30)",
+    "yourTime": "به وقت شما",
+    "overlap": "{hours} ساعت هم‌پوشانی با روز کاری ۹ تا ۱۸",
+    "sameZone": "هم‌منطقه زمانی با شما",
+    "noOverlap": "بدون هم‌پوشانی با روز کاری ۹ تا ۱۸؛ همکاری ناهمگام مناسب است",
+    "book": "رزرو تماس ۲۰ دقیقه‌ای",
+    "bookEmail": "درخواست تماس ۲۰ دقیقه‌ای",
+    "resume": "مشاهده رزومه",
+    "bookSubject": "تماس آشنایی ۲۰ دقیقه‌ای",
+    "bookBody": "سلام هادی،\n\nمی‌خواهم درباره این موضوع یک تماس ۲۰ دقیقه‌ای داشته باشیم:\n\nزمان‌های مناسب من (با منطقه زمانی):\n"
+  },
+  "resume": {
+    "title": "رزومه",
+    "headline": "مهندس فرانت‌اند · React و TypeScript برای پلتفرم‌های داده",
+    "download": "دانلود PDF (انگلیسی)",
+    "print": "چاپ",
+    "summaryTitle": "خلاصه",
+    "summary": "مهندس فرانت‌اند با بیش از ۴ سال تجربه در ساخت برنامه‌های وب پیچیده و داده‌محور با React و TypeScript، متخصص رابط‌های حاکمیت داده، کاتالوگ داده و ETL. مشارکت‌کننده upstream در Apache Superset و سازنده قابلیت‌های سفارشی روی OpenMetadata. توانمند در مالکیت کامل قابلیت‌ها، کار با فایل‌های چند گیگابایتی، کنترل دسترسی، پرفورمنس و i18n/RTL. آماده همکاری دورکاری تمام‌وقت یا پروژه‌ای.",
+    "skills": "مهارت‌های فنی",
+    "experience": "تجربیات کاری",
+    "openSource": "متن‌باز",
+    "education": "تحصیلات",
+    "honors": "افتخارات",
+    "honorsValue": "عضو بنیاد ملی نخبگان",
+    "stack": "فناوری‌ها",
+    "mergedPrs": "درخواست‌های ادغام‌شده upstream",
+    "caseStudies": "مطالعات موردی"
+  },
+  "notFound": {
+    "title": "صفحه پیدا نشد",
+    "text": "صفحه‌ای که دنبالش هستید وجود ندارد یا جابه‌جا شده است.",
+    "home": "بازگشت به خانه",
+    "blog": "خواندن وبلاگ"
+  },
+  "uploadDemo": {
+    "title": "امتحان کنید",
+    "note": "نسخه واقعی Uppy و tus-js-client که با یک سرور TUS درون‌حافظه‌ای در همین تب کار می‌کند. هیچ داده‌ای از مرورگر شما خارج نمی‌شود.",
+    "start": "آپلود فایل نمونه {size}",
+    "pause": "توقف",
+    "resume": "ادامه",
+    "drop": "قطع اتصال",
+    "cancel": "لغو",
+    "loading": "در حال بارگذاری دمو…",
+    "load": "شروع دمو",
+    "progress": "پیشرفت آپلود",
+    "log": "گزارش پروتکل",
+    "emptyLog": "درخواست‌ها اینجا نمایش داده می‌شوند.",
+    "idle": "آماده",
+    "uploading": "در حال آپلود",
+    "paused": "متوقف",
+    "retrying": "اتصال قطع شد، تلاش مجدد",
+    "done": "کامل شد: همه بایت‌ها تأیید شدند",
+    "hint": "وسط آپلود اتصال را قطع کنید و ببینید چطور HEAD آفست سرور را می‌پرسد و PATCH از همان بایت ادامه می‌دهد."
   }
 }
