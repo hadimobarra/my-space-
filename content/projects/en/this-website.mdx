@@ -33,9 +33,9 @@ The previous version looked fine and scored badly. Every section was a client co
 | Homepage | Before | After |
 |---|---|---|
 | JavaScript, gzipped | 282 KB | 155 KB |
-| Lighthouse performance, mobile | 67–72 | 91–93 |
+| Lighthouse performance, mobile | 67–72 | 79–93 |
 | Lighthouse accessibility | 96 | 100 |
-| Largest Contentful Paint, simulated | 4.2–4.3 s | 2.6–2.9 s |
-| Total Blocking Time | 400–680 ms | 230–240 ms |
+| Largest Contentful Paint, simulated | 4.2–4.3 s | 1.7–2.7 s |
+| Total Blocking Time | 400–680 ms | 280–700 ms |
 
-Three Lighthouse mobile runs each, on the same machine in November 2026. The earlier version was measured on GitHub Pages and the new one on a local server, so treat the timings as indicative. The JavaScript sizes compare directly.
+Lighthouse mobile runs from one machine in November 2026, both versions on GitHub Pages: three runs before, eight after. Content appears in about half the time. Blocking time did not clearly improve: what remains is React hydration and the first layout of a long page, which is the next thing to work on.
