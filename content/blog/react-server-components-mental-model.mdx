@@ -2,6 +2,7 @@
 title: "A Mental Model for React Server Components and Streaming"
 description: "Server Components, Client Components, the RSC payload, Suspense streaming and Server Actions — explained as one coherent model, with the composition patterns and pitfalls that matter in a real Next.js codebase."
 date: "2026-03-09"
+updated: "2026-11-24"
 tags: ["React", "Next.js", "Architecture"]
 ---
 
@@ -48,6 +49,10 @@ export function LikeButton({ postId, initialLikes }: { postId: string; initialLi
 ```
 
 The database client, the query and the mapping code never reach the browser. Only `LikeButton`'s code does.
+
+```embed
+rsc-flow
+```
 
 ## `"use client"` marks a boundary, not a component
 
@@ -165,3 +170,10 @@ export async function createPost(formData: FormData) {
 ## Conclusion
 
 Server Components render to a serialisable stream. Client Components are references in that stream that hydrate in the browser. `"use client"` marks a bundle boundary, and composition through `children` lets server content live inside interactive shells. Suspense streams the slow parts, and Server Actions handle mutations as public endpoints. Keep `"use client"` at the leaves, fetch in parallel and validate every action, and RSC will give you smaller bundles and faster pages.
+
+## Further reading
+
+- [Server Components in the React docs](https://react.dev/reference/rsc/server-components)
+- [Server and Client Components in the Next.js docs](https://nextjs.org/docs/app/getting-started/server-and-client-components)
+- [Shipping a static Next.js site](/blog/nextjs-best-practices/)
+- [React architecture](/blog/react-architecture/)

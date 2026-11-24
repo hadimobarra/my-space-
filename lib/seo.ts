@@ -10,8 +10,6 @@ export function absoluteUrl(path: string) {
   return new URL(path, siteConfig.url).toString();
 }
 
-const RSS = { "application/rss+xml": absoluteUrl("/rss.xml") };
-
 interface PageMetadataInput {
   locale: Locale;
   /** Locale-less path with a trailing slash, e.g. "/blog/". */
@@ -23,7 +21,7 @@ interface PageMetadataInput {
   image?: string;
   /** False for pages that exist in one language only. */
   translated?: boolean;
-  article?: { publishedTime: string; tags: string[] };
+  article?: { publishedTime: string; modifiedTime?: string; tags: string[] };
 }
 
 /**
@@ -59,7 +57,7 @@ export function pageMetadata({
             "x-default": absoluteUrl(localePath("en", path)),
           }
         : undefined,
-      types: RSS,
+      types: { "application/rss+xml": absoluteUrl(localePath(locale, "/rss.xml")) },
     },
     openGraph: {
       title: fullTitle,
@@ -69,7 +67,7 @@ export function pageMetadata({
       locale: localeConfig[locale].og,
       images,
       ...(article
-        ? { type: "article" as const, publishedTime: article.publishedTime, tags: article.tags, authors: [siteConfig.url] }
+        ? { type: "article" as const, publishedTime: article.publishedTime, modifiedTime: article.modifiedTime, tags: article.tags, authors: [siteConfig.url] }
         : { type: "website" as const }),
     },
     twitter: { card: "summary_large_image", title: fullTitle, description, images: images.map((i) => i.url) },

@@ -29,7 +29,8 @@ export function Footer({ locale }: { locale: Locale }) {
       links: [
         { label: t.footer.allArticles, href: to("/blog/") },
         { label: t.footer.resume, href: to("/resume/") },
-        { label: "RSS", href: "/rss.xml", external: true },
+        { label: t.nav.now, href: to("/now/") },
+        { label: "RSS", href: to("/rss.xml"), external: true },
         { label: t.footer.source, href: siteConfig.links.source, external: true },
       ],
     },

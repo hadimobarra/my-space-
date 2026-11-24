@@ -2,6 +2,7 @@
 title: "Taming INP: A Practical Guide to Interaction to Next Paint"
 description: "INP replaced FID as a Core Web Vital. Learn how it's measured, how to find the slow interactions in your app, and the concrete techniques that cut it: yielding, deferring non-urgent work, React transitions and smaller DOMs."
 date: "2026-07-14"
+updated: "2026-11-24"
 tags: ["Performance", "Core Web Vitals", "React"]
 ---
 
@@ -18,6 +19,10 @@ That latency has three parts:
 Thresholds: **≤ 200ms is good**, **> 500ms is poor**, measured at the 75th percentile of page loads.
 
 Because INP covers the whole visit and not just the first input, it punishes exactly the things heavy single-page apps do: big re-renders, synchronous state updates and long tasks during hydration.
+
+```embed
+inp-parts
+```
 
 ## Step 1: measure in the field
 
@@ -61,18 +66,25 @@ function yieldToMain() {
   return new Promise((resolve) => setTimeout(resolve, 0));
 }
 
+// Runs in a new task after the next frame
+function nextFrame() {
+  return new Promise((resolve) => requestAnimationFrame(() => setTimeout(resolve, 0)));
+}
+
 button.addEventListener("click", async () => {
   // 1. Immediate visual feedback
   button.classList.add("is-loading");
 
-  // 2. Let the browser paint that feedback
-  await yieldToMain();
+  // 2. Wait until that feedback has been painted
+  await nextFrame();
 
   // 3. Non-urgent work happens after the paint
   recalculateRecommendations();
   sendAnalytics("click");
 });
 ```
+
+Why not just `yieldToMain()` in step 2? Because yielding *allows* a frame without guaranteeing one. Continuations from `scheduler.yield()` run with priority, and the browser may resume your work before it paints. When I built the demo below with yields alone, the next frame arrived only after all the work was done. Wait for the frame first, then yield to keep *input* responsive.
 
 Analytics, logging and prefetching almost never need to block the frame. Move them behind a yield or into `requestIdleCallback`.
 
@@ -96,6 +108,10 @@ async function filterLargeList(items, predicate) {
 ```
 
 If the work is pure computation (parsing, sorting, diffing), move it **off the main thread** entirely into a Web Worker.
+
+```embed
+inp-demo
+```
 
 ## Step 4: React-specific techniques
 
@@ -168,3 +184,11 @@ cards.forEach((el, i) => (el.style.height = widths[i] * 0.5 + "px"));
 ## Conclusion
 
 INP rewards apps that respond first and compute later. Show feedback in the next frame, yield before non-urgent work, keep long tasks off the main thread, and let React's transitions keep input urgent. These habits fix a metric and also make the app feel faster.
+
+## Further reading
+
+- [Interaction to Next Paint on web.dev](https://web.dev/articles/inp)
+- [web-vitals library](https://github.com/GoogleChrome/web-vitals)
+- [useTransition in the React docs](https://react.dev/reference/react/useTransition)
+- [Inside the JavaScript event loop](/blog/javascript-event-loop-deep-dive/)
+- [A front-end performance workflow](/blog/frontend-performance/)

@@ -4,7 +4,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { gzipSync } from "node:zlib";
 
 const BUDGET_KB = 170;
-const PAGES = ["index.html", "fa/index.html", "blog/index.html", "blog/javascript-event-loop-deep-dive/index.html", "projects/resumable-uploads/index.html", "resume/index.html"];
+const PAGES = ["index.html", "fa/index.html", "blog/index.html", "blog/javascript-event-loop-deep-dive/index.html", "blog/build-signals-from-scratch/index.html", "blog/resumable-uploads-tus/index.html", "projects/resumable-uploads/index.html", "resume/index.html"];
 
 let failed = false;
 for (const page of PAGES) {

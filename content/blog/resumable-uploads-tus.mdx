@@ -1,0 +1,133 @@
+---
+title: "Resumable Uploads: What Happens When the Connection Drops"
+description: "A large upload will be interrupted. This article walks through the TUS protocol request by request, with a live demo you can break, and the client-side decisions that make resuming reliable."
+date: "2026-11-24"
+tags: ["Data Platforms", "JavaScript"]
+---
+
+## The problem with one big request
+
+Uploading a file is one line of code, until the file is large. A 3 GB CSV over a 20 Mbit/s connection takes about twenty minutes. Somewhere in those minutes a laptop sleeps, a VPN reconnects or a proxy times out. With a single `POST`, all progress is lost.
+
+I built an upload module for a data platform, designed for files of several gigabytes. This article covers the ideas behind it. The demo is a separate example that uses the same libraries.
+
+## Why "just split it into chunks" isn't enough
+
+The obvious fix is to slice the file and send the pieces. Then the questions begin. Which pieces arrived? What if a piece arrived but its response didn't? Who deletes the pieces of an upload nobody finished?
+
+Those are protocol questions, and answering them privately means maintaining both ends forever. [TUS](https://tus.io/protocols/resumable-upload) is an open protocol that answers them, with clients and servers in many languages. The IETF is standardizing the same idea as [resumable uploads for HTTP](https://datatracker.ietf.org/doc/draft-ietf-httpbis-resumable-upload/).
+
+## Three requests
+
+```embed
+tus-sequence
+```
+
+**Create.** The client announces the size and gets a URL for this upload.
+
+```http
+POST /files HTTP/1.1
+Tus-Resumable: 1.0.0
+Upload-Length: 50331648
+
+HTTP/1.1 201 Created
+Location: /files/24e533e
+```
+
+**Send.** A `PATCH` carries bytes, and says where they start.
+
+```http
+PATCH /files/24e533e HTTP/1.1
+Tus-Resumable: 1.0.0
+Upload-Offset: 0
+Content-Type: application/offset+octet-stream
+```
+
+**Ask.** After any interruption, `HEAD` returns what the server actually stored.
+
+```http
+HEAD /files/24e533e HTTP/1.1
+Tus-Resumable: 1.0.0
+
+HTTP/1.1 200 OK
+Upload-Offset: 12163470
+```
+
+The next `PATCH` starts at that offset. If the client gets it wrong, the server answers `409 Conflict` instead of corrupting the file.
+
+## Try to break it
+
+The demo runs the real `tus-js-client` through Uppy, against a small TUS server that lives in this tab. Start an upload and drop the connection halfway.
+
+```embed
+upload-demo
+```
+
+Look at the log after a drop. The number in the last `HEAD` and the number in the following `PATCH` are always the same. A [test](https://github.com/hadimobarra/my-space-/blob/main/tests/features.spec.ts) checks exactly that before every deploy of this site.
+
+## Decisions on the client
+
+### The server is the only source of truth
+
+A progress bar shows bytes *sent*. Bytes sent aren't bytes stored: some were in flight when the connection died. Never resume from the progress value. Ask.
+
+### Never load the file into memory
+
+`File` is a `Blob`, and `Blob.slice()` is lazy. It returns a view without reading anything, so a resumed upload of a 3 GB file costs almost no memory:
+
+```js
+const offset = Number(response.headers.get("Upload-Offset"));
+const rest = file.slice(offset); // no bytes read yet
+await fetch(uploadUrl, {
+  method: "PATCH",
+  headers: {
+    "Tus-Resumable": "1.0.0",
+    "Upload-Offset": String(offset),
+    "Content-Type": "application/offset+octet-stream",
+  },
+  body: rest,
+});
+```
+
+The mistake to avoid is `await file.arrayBuffer()`, which reads all of it.
+
+### Retry with growing delays, and know when to stop
+
+Retrying immediately makes an overloaded server worse. Growing delays give the network time, and a limit gives the user an answer:
+
+```js
+new Uppy().use(Tus, {
+  endpoint: "/files",
+  retryDelays: [0, 1000, 3000, 5000, 10000],
+});
+```
+
+Not every failure deserves a retry. A `403` will be a `403` again in five seconds. Network errors, `409`, `423` and `5xx` are worth retrying; other `4xx` responses aren't.
+
+### Pausing is not failing
+
+A user who presses pause and a network that disappears look similar to the code, but mean different things. One should wait without limit. The other should retry. Keep them as separate states in the interface too, so nobody wonders whether anything is happening:
+
+| State | Who ends it | What to show |
+|---|---|---|
+| Uploading | the server | progress |
+| Paused | the user | a resume button |
+| Retrying | a timer | that it will continue by itself |
+| Failed | the user | the reason, and a retry button |
+
+### Do you need chunks at all?
+
+TUS doesn't require them. One `PATCH` can carry the whole remainder, and the server keeps what it received if it breaks. Set `chunkSize` only when something in between forces you to, such as a proxy with a body limit. Small chunks add a round trip each.
+
+## What the server has to do
+
+- Store the offset durably *before* acknowledging it.
+- Reject a `PATCH` whose offset doesn't match.
+- Expire unfinished uploads, or storage fills with halves of files.
+- Check that the user resuming an upload is the one who created it. The URL alone must not be a permission.
+
+## Conclusion
+
+Resuming isn't a feature you add to an upload. It's a question, "how much do you have?", asked of the only party that knows. Once the protocol asks it, pause, retry and recovery stop being special cases.
+
+The [case study](/projects/resumable-uploads/) has the product side. For another place where the main thread matters during heavy file work, see [Web Workers in practice](/blog/web-workers-off-main-thread/).

@@ -2,8 +2,8 @@
 title: "Inside the JavaScript Event Loop: Tasks, Microtasks and the Rendering Steps"
 description: "A precise mental model of how the browser schedules your code — tasks, microtasks, requestAnimationFrame and rendering — and how to use it to write UIs that never freeze."
 date: "2026-10-21"
+updated: "2026-11-24"
 tags: ["JavaScript", "Browser Internals", "Performance"]
-featured: true
 ---
 
 ## Why the event loop still trips up senior engineers
@@ -47,6 +47,10 @@ Three rules fall out of this pseudo-code, and nearly every event-loop puzzle red
 2. **Microtasks drain completely.** If a microtask schedules another microtask, that one runs too, before anything else.
 3. **Rendering is opportunistic.** The browser decides when a frame is due; your code can only *ask* to run right before it, via `requestAnimationFrame`.
 
+```embed
+loop-turn
+```
+
 ## Tasks vs microtasks
 
 **Tasks** (often called macrotasks) come from: `setTimeout`/`setInterval`, user input events, `MessageChannel` messages, network callbacks, and parsing HTML.
@@ -81,6 +85,10 @@ Output:
 ```
 
 The whole script is itself a task. When it finishes, the microtask queue holds `A` and `5`. Running `A` enqueues `B` at the *end* of the queue, so `5` goes first. Only after the queue is empty does the loop pick the next task — the timeout.
+
+```embed
+event-loop-stepper
+```
 
 ## `await` is just a microtask boundary
 
@@ -155,6 +163,8 @@ async function processAll(items) {
 }
 ```
 
+Yielding makes a frame *possible*. It doesn't force one, so when something must be visible before the work starts, wait for a frame explicitly. The [INP article](/blog/taming-inp-interaction-to-next-paint/) has a demo of the difference.
+
 `scheduler.yield()` has a nice property over `setTimeout`: the continuation is placed at the *front* of the task queue, so your work resumes before other, lower-priority tasks that were queued in the meantime.
 
 ## Where `requestAnimationFrame` fits
@@ -219,3 +229,11 @@ When something runs in the "wrong" order, ask:
 ## Conclusion
 
 Learn the loop as three rules — one task per turn, microtasks drain fully, rendering is opportunistic — and most "weird async bugs" become predictable. That predictability is what lets you break long work into chunks, keep Interaction to Next Paint low, and write animations that stay smooth on every refresh rate.
+
+## Further reading
+
+- [Event loops in the HTML Standard](https://html.spec.whatwg.org/multipage/webappapis.html#event-loops)
+- [Scheduler.yield() on MDN](https://developer.mozilla.org/en-US/docs/Web/API/Scheduler/yield)
+- [Optimize long tasks on web.dev](https://web.dev/articles/optimize-long-tasks)
+- [Taming INP](/blog/taming-inp-interaction-to-next-paint/)
+- [The browser rendering pipeline](/blog/browser-rendering-pipeline-60fps/)

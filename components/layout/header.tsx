@@ -23,7 +23,7 @@ export interface HeaderLabels extends Record<NavId, string> {
   primary: string;
 }
 
-export function Header({ locale, labels }: { locale: Locale; labels: HeaderLabels }) {
+export function Header({ locale, labels, translatedPosts }: { locale: Locale; labels: HeaderLabels; translatedPosts: string[] }) {
   const pathname = usePathname();
   const home = localePath(locale);
   const path = locale === "fa" ? pathname.slice(3) || "/" : pathname;
@@ -46,7 +46,7 @@ export function Header({ locale, labels }: { locale: Locale; labels: HeaderLabel
     : path.startsWith("/resume") ? "resume"
     : "";
 
-  const { locale: otherLocale, href: otherHref } = switchLocalePath(pathname);
+  const { locale: otherLocale, href: otherHref } = switchLocalePath(pathname, translatedPosts);
 
   // Hide on scroll down, reveal on scroll up
   useEffect(() => {

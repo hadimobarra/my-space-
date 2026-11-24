@@ -2,7 +2,8 @@
 title: "Building a Fine-Grained Reactivity System (Signals) From Scratch"
 description: "Signals power Solid, Preact, Angular and Vue's reactivity. Build one in under 100 lines to understand dependency tracking, computed values, effects and glitch-free updates."
 date: "2026-09-30"
-tags: ["JavaScript", "Reactivity", "Architecture"]
+updated: "2026-11-24"
+tags: ["JavaScript", "Architecture"]
 ---
 
 ## Why signals are everywhere
@@ -10,6 +11,10 @@ tags: ["JavaScript", "Reactivity", "Architecture"]
 Solid, Preact Signals, Angular, Vue, Svelte 5 runes and the TC39 Signals proposal all share one idea: **track exactly which computations read which values, and re-run only those when a value changes.** Instead of re-rendering a component tree and diffing, a signal-based UI updates the one text node that depends on the changed value.
 
 The best way to understand it is to build one. We'll write `signal`, `computed` and `effect` in plain JavaScript.
+
+```embed
+signal-graph
+```
 
 ## Step 1: a signal is a value with subscribers
 
@@ -196,6 +201,10 @@ batch(() => {
 
 Now the diamond logs `4 3` exactly once. Because `computed` values are lazy and only recompute when read, the effect always sees a consistent snapshot. Production libraries go further, tracking per-node versions or colours ("clean / check / dirty") so that a computed whose inputs changed but whose *output* didn't stops propagation early.
 
+```embed
+signals-playground
+```
+
 ## How this maps to real frameworks
 
 | Concept | Our version | Solid | Preact Signals | Vue |
@@ -216,3 +225,10 @@ The JSX compiler in Solid wraps each dynamic expression in an effect, which is w
 ## Conclusion
 
 Signals come down to a global "current observer" pointer, sets of subscribers, lazy cached derivations and a scheduler that avoids glitches. With those four ideas you can read the source of Solid or Preact Signals and recognise every part, and you'll understand why the TC39 proposal aims to standardise exactly this core.
+
+## Further reading
+
+- [TC39 Signals proposal](https://github.com/tc39/proposal-signals)
+- [SolidJS documentation](https://docs.solidjs.com/)
+- [Proxy and Reflect](/blog/proxy-and-reflect-metaprogramming/)
+- [Hunting memory leaks](/blog/hunting-memory-leaks-javascript/)

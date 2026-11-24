@@ -1,0 +1,100 @@
+---
+title: "Why Safari Exported Blank Charts in Apache Superset"
+description: "A chart export that worked everywhere except Safari led through SVG foreignObject, WebGL drawing buffers and tainted canvases. Here is the root cause, the fix that was merged, and the part I got wrong."
+date: "2026-11-24"
+tags: ["Open Source", "Debugging", "Browser Internals"]
+featured: true
+---
+
+## A bug that only existed in one engine
+
+In Apache Superset you can download a chart or a whole dashboard as an image. On Safari the file came out blank, or partly blank. The [issue](https://github.com/apache/superset/issues/28713) had been open since May 2024. Chrome and Firefox were fine.
+
+A bug that follows the engine instead of the data is a useful hint. The application code is the same everywhere, so something below it must differ. The job is to find out which step.
+
+## How a DOM node becomes a PNG
+
+Browsers have no "screenshot this element" API for pages, so libraries emulate one. Superset uses `dom-to-image-more`, which works like this:
+
+```embed
+safari-export
+```
+
+1. Clone the DOM node and copy its computed styles inline.
+2. Put the clone into an SVG, inside a `<foreignObject>`. That element exists to embed HTML in SVG.
+3. Load the SVG as an image and draw it to a canvas.
+4. Read the canvas with `toDataURL()`.
+
+Step 2 is where WebKit stops. It applies a stricter security model to [`foreignObject`](https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/foreignObject) content and refuses to paint it, so the canvas in step 3 stays empty. Nothing throws. `toDataURL()` happily encodes an empty canvas.
+
+The library's own README lists Safari as unsupported for this reason. That changes the shape of the problem: there is no missing option to find. No setting in this library can work.
+
+## Choosing a fix you can defend
+
+There were three candidates.
+
+| Option | Problem |
+|---|---|
+| Replace the library for everyone | Puts working exports on Chrome and Firefox at risk |
+| Tell Safari users it isn't supported | The issue had been open for two years already |
+| Use a different rasterizer on Safari only | Two code paths to maintain |
+
+I chose the third. `html2canvas` reads the DOM and paints it itself, without `foreignObject`. It was already installed as a dependency of another package, so promoting it added nothing new to the tree. And it loads only where it's needed:
+
+```ts title="downloadAsImage.tsx" {3}
+if (isSafari()) {
+  // Stays out of the core bundle: only Safari ever downloads it
+  const { default: html2canvas } = await import('html2canvas');
+  const canvas = await html2canvas(element, captureOptions);
+  triggerDownload(canvas.toDataURL(type, quality), description, isPng);
+  return;
+}
+```
+
+The [pull request](https://github.com/apache/superset/pull/44529) started out this small. Review showed how much was missing.
+
+## Problem two: content that isn't visible yet
+
+Superset tables are virtualized: only the rows on screen exist in the DOM. The existing path switches ag-grid to its print layout before capturing, then restores it. My first version returned early and skipped all of that, so long tables would have been cut off. The final version keeps the whole lifecycle and replaces only the rasterizing step.
+
+A related bug was more subtle. I measured the element, then expanded its clipped content inside the clone. The canvas was therefore sized for the collapsed version. `html2canvas` reads its dimensions after the `onclone` callback, so the fix is to widen them there:
+
+```ts title="downloadAsImage.tsx" {4-5}
+onclone: (_document, clone) => {
+  processCloneForVisibility(clone, isDashboardCapture);
+  preserveCanvasContent(elementToPrint, clone, getInstanceByDom);
+  captureOptions.width = Math.max(captureOptions.width ?? 0, clone.scrollWidth);
+  captureOptions.height = Math.max(captureOptions.height ?? 0, clone.scrollHeight);
+},
+```
+
+`Math.max` keeps the on-screen size as a floor, so a clone that can't be measured never makes the result smaller.
+
+## Problem three: WebGL canvases read back empty
+
+A cloned `<canvas>` is blank, because cloning copies the element and not its pixels. For 2D canvases you copy the pixels with `drawImage`. WebGL adds a catch: after a frame is presented, the browser may clear the drawing buffer. Read it later and you get nothing.
+
+The fix is a context option, [`preserveDrawingBuffer`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext). It has a cost, so it's set only on Safari.
+
+deck.gl needed one more step. It drew its layers into a second canvas laid over the map, with its own context and its own unpreserved buffer. A chart would have exported the map without the data. In interleaved mode deck.gl renders into the base map's context instead, so one preserved buffer holds everything.
+
+## Problem four: images you aren't allowed to read
+
+An image from another origin without CORS headers *taints* a canvas. A [tainted canvas](https://developer.mozilla.org/en-US/docs/Web/HTML/How_to/CORS_enabled_image) refuses `toDataURL()`, so one logo could break the entire export. A review bot flagged that such images would be missing. I kept `useCORS: true` and tainting off: the inaccessible image is left out, and everything else exports. That is also what the old path did.
+
+## What I got wrong
+
+I don't have access to a Mac, and jsdom can't render WebGL. My tests prove that `interleaved` reaches the component on Safari. They can't prove that a heatmap appears.
+
+A reviewer tested on real Safari and found that interleaved mode exposed a version mismatch in the lockfile: the deck.gl map adapter called a method that the installed deck.gl core didn't have. Superset's main branch has since moved both packages to the same version.
+
+> A test that checks configuration tells you the switch was flipped. It doesn't tell you the light came on.
+
+## What to take from it
+
+- **Silent failures deserve suspicion.** An empty canvas is valid data to every later step.
+- **Read the library's support table early.** It rules out every option that could never have worked.
+- **Contain the change.** Browsers that already worked kept their exact path.
+- **Ask who can run it.** If you can't test the engine you're fixing, arrange that before you open the PR.
+
+The shorter version of this story is in the [case study](/projects/superset-safari-export/), and the human side is in [Getting a first PR merged into a large project](/blog/first-pr-in-a-large-project/).
