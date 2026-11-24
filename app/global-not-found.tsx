@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { RootDocument } from "@/components/layout/root-document";
 import { getDictionary } from "@/lib/dictionary";
-import { latinFonts } from "@/lib/fonts/latin";
 
 const { notFound } = getDictionary("en");
 
@@ -12,7 +11,7 @@ export const metadata: Metadata = { title: `${notFound.title} | Hadi Mobarra`, r
 export default function GlobalNotFound() {
   const button = "inline-flex items-center h-11 px-6 rounded-full text-sm font-semibold";
   return (
-    <RootDocument locale="en" fontClassName={latinFonts}>
+    <RootDocument locale="en">
       <div className="min-h-[70vh] flex flex-col items-center justify-center text-center section-padding pt-28 pb-16">
         <p className="text-7xl font-bold tracking-tighter gradient-text mb-4">404</p>
         <h1 className="text-2xl font-bold mb-3">{notFound.title}</h1>

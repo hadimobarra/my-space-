@@ -24,7 +24,7 @@ The previous version looked fine and scored badly. Every section was a client co
 
 **Islands only where there is state.** The header, search, contact form, blog filter and table of contents are client components. The command menu and the upload demo load on first use.
 
-**Fonts without cross-language preloads.** Preloading made each page fetch both languages' fonts, about 110 KB. Size-matched fallbacks made the preload unnecessary.
+**Fonts that can't shift the layout.** The framework's font loader made each page preload both languages' fonts, about 110 KB. The fonts are now self-hosted and each page preloads only its own. My first fix dropped preloading altogether; Lighthouse in CI failed it, because text moved when the font arrived on machines without a matching fallback. `font-display: optional` rules that out.
 
 **Checks in CI.** Every deploy has to pass type checks, a JavaScript budget, Playwright tests, axe in light and dark themes, link and metadata checks, and Lighthouse.
 
@@ -33,9 +33,9 @@ The previous version looked fine and scored badly. Every section was a client co
 | Homepage | Before | After |
 |---|---|---|
 | JavaScript, gzipped | 282 KB | 155 KB |
-| Lighthouse performance, mobile | 67–72 | 94–97 |
+| Lighthouse performance, mobile | 67–72 | 91–93 |
 | Lighthouse accessibility | 96 | 100 |
-| Largest Contentful Paint, simulated | 4.2–4.3 s | 2.3–2.9 s |
-| Total Blocking Time | 400–680 ms | 80–140 ms |
+| Largest Contentful Paint, simulated | 4.2–4.3 s | 2.6–2.9 s |
+| Total Blocking Time | 400–680 ms | 230–240 ms |
 
 Three Lighthouse mobile runs each, on the same machine in November 2026. The earlier version was measured on GitHub Pages and the new one on a local server, so treat the timings as indicative. The JavaScript sizes compare directly.
