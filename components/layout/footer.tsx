@@ -37,6 +37,7 @@ export function Footer({ locale }: { locale: Locale }) {
     {
       title: t.nav.more,
       links: [
+        { label: t.nav.rtl, href: to("/rtl/") },
         { label: t.nav.hire, href: to("/hire/") },
         { label: t.nav.catalog, href: to("/catalog/") },
         { label: t.nav.fit, href: to("/fit/") },
