@@ -3,7 +3,7 @@
 import { execFileSync } from "node:child_process";
 
 const indexes = [
-  { language: "en", glob: "{blog,projects}/**/*.html" },
+  { language: "en", glob: "{blog,projects,notes,glossary}/**/*.html" },
   { language: "fa", glob: "fa/**/*.html" },
 ];
 

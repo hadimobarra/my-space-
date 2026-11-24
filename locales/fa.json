@@ -13,7 +13,18 @@
     "toggleTheme": "تغییر تم",
     "skipToContent": "رفتن به محتوا",
     "primary": "ناوبری اصلی",
-    "now": "اکنون"
+    "now": "اکنون",
+    "notes": "یادداشت‌ها",
+    "catalog": "کاتالوگ",
+    "glossary": "واژه‌نامه فارسی داده",
+    "corrections": "اصلاحات",
+    "ai": "استفاده از هوش مصنوعی",
+    "hire": "همکاری با من",
+    "questions": "پرسش‌های باز",
+    "weeks": "مسیر به هفته",
+    "fit": "تناسب شغلی",
+    "more": "بیشتر",
+    "random": "مقاله تصادفی"
   },
   "hero": {
     "greeting": "سلام، من",
@@ -39,8 +50,8 @@
     "para2": "تخصص من رابط‌های کاربری <strong>حاکمیت داده، کاتالوگ داده و ETL</strong> است. در <strong>Apache Superset</strong> مشارکت upstream دارم و روی <strong>OpenMetadata</strong> قابلیت‌های سفارشی ساخته‌ام، از جمله ویرایشگر پایپ‌لاین ETL و بومی‌سازی کامل فارسی (RTL). رابط‌هایی دسترس‌پذیر و پرسرعت با <strong>React</strong>، <strong>TypeScript</strong> و مدیریت state مدرن می‌سازم.",
     "para3": "در تیم‌های چابک و توزیع‌شده خوب کار می‌کنم و از مالکیت کامل قابلیت‌ها لذت می‌برم: معماری کتابخانه‌های کامپوننت، بهینه‌سازی عملکرد (code-splitting، lazy loading، memoization) و بومی‌سازی i18n/RTL. برای <strong>همکاری دورکاری تمام‌وقت یا پروژه‌ای</strong> آماده‌ام و در منطقه زمانی UTC+3:30 کار می‌کنم.",
     "stats": {
-      "projects": "پروژه تحویل‌شده",
-      "technologies": "فناوری استفاده‌شده",
+      "projects": "ادعای دارای سند عمومی",
+      "technologies": "درخواست ادغام‌شده upstream",
       "experience": "سال تجربه",
       "contributions": "پروژه متن‌باز مهم (Superset، OpenMetadata)"
     }
@@ -246,7 +257,7 @@
     "commentsNote": "دیدگاه‌ها با GitHub Discussions کار می‌کنند و فقط با درخواست شما بارگذاری می‌شوند.",
     "discuss": "گفت‌وگو در GitHub",
     "subscribeTitle": "مقاله‌های تازه با ایمیل",
-    "subscribeText": "برای هر مقاله یک ایمیل، نه بیشتر.",
+    "subscribeText": "فقط وقتی چیزی ارزش فرستادن داشته باشد.",
     "subscribeButton": "عضویت",
     "emailLabel": "نشانی ایمیل",
     "allArticlesIn": "{count} مقاله",

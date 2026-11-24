@@ -4,10 +4,12 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { clsx } from "clsx";
 import { useTheme } from "next-themes";
-import { Briefcase, CornerDownLeft, FileText, Github, Hash, Languages, Linkedin, Mail, Moon, Search, type LucideIcon } from "lucide-react";
+import { Briefcase, CornerDownLeft, FileText, Github, Hash, Languages, Linkedin, Mail, Moon, Search, Shuffle, type LucideIcon } from "lucide-react";
 import { localePath, switchLocalePath, type Locale } from "@/lib/locale";
 import { useSiteSearch } from "@/components/shared/use-site-search";
 import { siteConfig } from "@/lib/site";
+
+const EXTRA = ["now", "notes", "catalog", "fit", "hire", "corrections", "ai", "glossary", "questions", "weeks"] as const;
 
 interface Item {
   href: string;
@@ -26,7 +28,7 @@ export interface CommandMenuProps {
     navigate: string;
     select: string;
     groups: { navigation: string; articles: string; actions: string; projects: string };
-    nav: { about: string; projects: string; experience: string; skills: string; blog: string; contact: string; resume: string; now: string };
+    nav: { about: string; projects: string; experience: string; skills: string; blog: string; contact: string; resume: string } & Record<(typeof EXTRA)[number], string> & { random: string };
   };
   posts: Item[];
   projects: Item[];
@@ -74,12 +76,13 @@ export function CommandMenu({ locale, labels, posts, projects, translatedPosts, 
       section("skills"),
       { id: "resume", label: nav.resume, group: groups.navigation, icon: FileText, run: go("/resume/") },
       { id: "blog", label: labels.allPosts, group: groups.navigation, icon: FileText, run: go("/blog/") },
-      { id: "now", label: nav.now, group: groups.navigation, icon: FileText, run: go("/now/") },
+      ...EXTRA.map((id) => ({ id, label: nav[id], group: groups.navigation, icon: FileText, run: go(`/${id}/`) })),
       section("contact"),
       ...projects.map((p) => ({ id: p.href, label: p.title, group: groups.projects, icon: Briefcase, run: () => router.push(p.href) })),
       ...posts.map((p) => ({
         id: p.href, label: p.title, group: groups.articles, icon: FileText, run: () => visit(p.href),
       })),
+      { id: "random", label: nav.random, group: groups.actions, icon: Shuffle, run: () => visit(posts[Math.floor(Math.random() * posts.length)].href) },
       { id: "theme", label: labels.toggleTheme, group: groups.actions, icon: Moon, run: () => setTheme(resolvedTheme === "dark" ? "light" : "dark") },
       { id: "lang", label: labels.toggleLanguage, group: groups.actions, icon: Languages, run: () => window.location.assign(switchLocalePath(pathname, translatedPosts).href) },
       { id: "gh", label: "GitHub", group: groups.actions, icon: Github, run: () => window.open(siteConfig.links.github, "_blank", "noopener") },

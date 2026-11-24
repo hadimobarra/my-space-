@@ -13,7 +13,18 @@
     "toggleTheme": "Toggle theme",
     "skipToContent": "Skip to content",
     "primary": "Primary",
-    "now": "Now"
+    "now": "Now",
+    "notes": "Notes",
+    "catalog": "Catalog",
+    "glossary": "Persian data glossary",
+    "corrections": "Corrections",
+    "ai": "How I use AI",
+    "hire": "Hire me",
+    "questions": "Open questions",
+    "weeks": "Career in weeks",
+    "fit": "Job fit",
+    "more": "More",
+    "random": "Random article"
   },
   "hero": {
     "greeting": "Hello, I'm",
@@ -39,8 +50,8 @@
     "para2": "I specialize in <strong>data-governance, data-catalog and ETL interfaces</strong>. I'm an upstream contributor to <strong>Apache Superset</strong> and have built custom features on <strong>OpenMetadata</strong>, including an ETL pipeline editor and full Persian (RTL) localization. I ship accessible, performant interfaces with <strong>React</strong>, <strong>TypeScript</strong> and modern state management.",
     "para3": "I work well in agile, distributed teams and enjoy owning features end to end: architecting component libraries, optimizing performance (code-splitting, lazy loading, memoization) and leading i18n/RTL work. I'm open to <strong>remote full-time or contract roles</strong> and work in UTC+3:30, overlapping with European business hours.",
     "stats": {
-      "projects": "Projects Delivered",
-      "technologies": "Technologies Used",
+      "projects": "Claims with public proof",
+      "technologies": "Merged upstream pull requests",
       "experience": "Years of Experience",
       "contributions": "Major OSS projects (Superset, OpenMetadata)"
     }
@@ -246,7 +257,7 @@
     "commentsNote": "Comments use GitHub Discussions and load only when you ask for them.",
     "discuss": "Discuss on GitHub",
     "subscribeTitle": "New articles by email",
-    "subscribeText": "One email per article, nothing else.",
+    "subscribeText": "Only when there is something worth sending.",
     "subscribeButton": "Subscribe",
     "emailLabel": "Email address",
     "allArticlesIn": "{count} articles",
