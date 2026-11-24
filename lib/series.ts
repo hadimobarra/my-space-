@@ -19,6 +19,7 @@ const definitions: { slug: string; title: string; description: string; posts: st
       "never-trust-json-parse-in-render",
       "translating-json-schema-forms",
       "rtl-is-not-a-translation-step",
+      "persian-in-data-tools",
       "first-pr-in-a-large-project",
     ],
   },
