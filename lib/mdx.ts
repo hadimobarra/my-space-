@@ -9,26 +9,28 @@ import rehypeStringify from "rehype-stringify";
 import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import readingTime from "reading-time";
-import { rehypeCodeBlocks } from "./rehype-code-blocks";
-
-const postsDirectory = path.join(process.cwd(), "content/blog");
+import type { Locale } from "./locale";
+import { rehypeCodeBlocks, rehypeEmbeds } from "./rehype-code-blocks";
 
 export interface BlogFrontmatter {
   title: string;
   description: string;
   date: string;
+  /** Date of the last meaningful revision. */
+  updated?: string;
   tags: string[];
   featured?: boolean;
 }
 
 export interface BlogPostData {
   slug: string;
+  locale: Locale;
   frontmatter: BlogFrontmatter;
   content: string;
   readingTime: number;
 }
 
-/** Post data without the body — safe and cheap to pass to client components. */
+/** Post data without the body. */
 export type PostMeta = Omit<BlogPostData, "content">;
 
 export interface Heading {
@@ -37,64 +39,47 @@ export interface Heading {
   level: 2 | 3;
 }
 
-export function getAllPostSlugs(): string[] {
-  if (!fs.existsSync(postsDirectory)) return [];
-  const filenames = fs.readdirSync(postsDirectory);
-  return filenames
-    .filter((name) => name.endsWith(".mdx") || name.endsWith(".md"))
-    .map((name) => name.replace(/\.(mdx|md)$/, ""));
+/** English articles live in content/blog, translations in content/blog/fa under the same file name. */
+const postsDirectory = (locale: Locale) => path.join(process.cwd(), "content/blog", locale === "en" ? "" : locale);
+
+export const postSourcePath = (slug: string, locale: Locale) => `content/blog/${locale === "en" ? "" : `${locale}/`}${slug}.mdx`;
+
+export function getAllPostSlugs(locale: Locale = "en"): string[] {
+  return fs.readdirSync(postsDirectory(locale)).filter((f) => f.endsWith(".mdx")).map((f) => f.replace(/\.mdx$/, ""));
 }
 
-export function getPostBySlug(slug: string): BlogPostData | null {
-  const mdxPath = path.join(postsDirectory, `${slug}.mdx`);
-  const mdPath = path.join(postsDirectory, `${slug}.md`);
+const cache = new Map<string, BlogPostData>();
 
-  let filePath: string | null = null;
-  if (fs.existsSync(mdxPath)) filePath = mdxPath;
-  else if (fs.existsSync(mdPath)) filePath = mdPath;
-  else return null;
+export function getPostBySlug(slug: string, locale: Locale = "en"): BlogPostData | null {
+  const key = `${locale}/${slug}`;
+  const cached = process.env.NODE_ENV === "production" && cache.get(key);
+  if (cached) return cached;
+  const file = path.join(postsDirectory(locale), `${slug}.mdx`);
+  if (!fs.existsSync(file)) return null;
 
-  const fileContents = fs.readFileSync(filePath, "utf8");
-  const { data, content } = matter(fileContents);
-  const stats = readingTime(content);
-
-  return {
-    slug,
-    frontmatter: data as BlogFrontmatter,
-    content,
-    readingTime: Math.ceil(stats.minutes),
-  };
+  const { data, content } = matter(fs.readFileSync(file, "utf8"));
+  const post = { slug, locale, frontmatter: data as BlogFrontmatter, content, readingTime: Math.ceil(readingTime(content).minutes) };
+  cache.set(key, post);
+  return post;
 }
 
-export function getAllPosts(): BlogPostData[] {
-  const slugs = getAllPostSlugs();
-  const posts = slugs
-    .map((slug) => getPostBySlug(slug))
+export function getAllPosts(locale: Locale = "en"): BlogPostData[] {
+  return getAllPostSlugs(locale)
+    .map((slug) => getPostBySlug(slug, locale))
     .filter((p): p is BlogPostData => p !== null)
-    .sort(
-      (a, b) =>
-        new Date(b.frontmatter.date).getTime() -
-        new Date(a.frontmatter.date).getTime()
-    );
-  return posts;
+    .sort((a, b) => b.frontmatter.date.localeCompare(a.frontmatter.date) || a.slug.localeCompare(b.slug));
 }
 
-export async function renderMdxToHtml(mdxContent: string, copyLabel = "Copy code"): Promise<string> {
-  const result = await unified()
-    .use(remarkParse)
-    .use(remarkGfm)
-    .use(remarkRehype)
-    .use(rehypeSlug)
-    .use(rehypeHighlight, { detect: true })
-    .use(rehypeCodeBlocks, { copyLabel })
-    .use(rehypeStringify)
-    .process(mdxContent);
-
-  return result.toString();
+export function getAllPostMeta(locale: Locale = "en"): PostMeta[] {
+  return getAllPosts(locale).map(({ slug, locale, frontmatter, readingTime }) => ({ slug, locale, frontmatter, readingTime }));
 }
 
-export function getAllPostMeta(): PostMeta[] {
-  return getAllPosts().map(({ slug, frontmatter, readingTime }) => ({ slug, frontmatter, readingTime }));
+/** What a blog index shows: posts in the reader's language first, then English ones without a translation. */
+export function getPostListing(locale: Locale): PostMeta[] {
+  if (locale === "en") return getAllPostMeta();
+  const own = getAllPostMeta(locale);
+  const translated = new Set(own.map((p) => p.slug));
+  return [...own, ...getAllPostMeta().filter((p) => !translated.has(p.slug))];
 }
 
 /** Older/newer neighbours in date order (posts are sorted newest first). */
@@ -110,16 +95,34 @@ export function getRelatedPosts(slug: string, limit = 3): PostMeta[] {
   const posts = getAllPostMeta();
   const current = posts.find((p) => p.slug === slug);
   if (!current) return [];
-  const tags = new Set(current.frontmatter.tags.map((t) => t.toLowerCase()));
+  const tags = new Set(current.frontmatter.tags);
+  const shared = (p: PostMeta) => p.frontmatter.tags.filter((t) => tags.has(t)).length;
   return posts
     .filter((p) => p.slug !== slug)
-    .map((p) => ({
-      post: p,
-      score: p.frontmatter.tags.filter((t) => tags.has(t.toLowerCase())).length,
-    }))
-    .sort((a, b) => b.score - a.score)
-    .slice(0, limit)
-    .map((x) => x.post);
+    .sort((a, b) => shared(b) - shared(a))
+    .slice(0, limit);
+}
+
+export async function renderMdxToHtml(mdxContent: string, copyLabel = "Copy code"): Promise<string> {
+  const result = await unified()
+    .use(remarkParse)
+    .use(remarkGfm)
+    .use(remarkRehype)
+    .use(rehypeSlug)
+    .use(rehypeEmbeds)
+    .use(rehypeHighlight, { detect: true, plainText: ["text", "txt"] })
+    .use(rehypeCodeBlocks, { copyLabel })
+    .use(rehypeStringify)
+    .process(mdxContent);
+
+  return result.toString();
+}
+
+const EMBED = /<embed-slot name="([\w-]+)"><\/embed-slot>/g;
+
+/** Article HTML cut at its ```embed blocks: [html, name, html, name, …, html]. */
+export function splitEmbeds(html: string): string[] {
+  return html.split(EMBED);
 }
 
 /** Pull h2/h3 headings (with rehype-slug ids) out of rendered HTML for a TOC. */

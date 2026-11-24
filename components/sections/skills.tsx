@@ -1,8 +1,6 @@
-import { Cpu } from "lucide-react";
 import { BrandIcon } from "@/components/shared/brand-icon";
 import { SectionWrapper } from "@/components/shared/section-wrapper";
 import { SpotlightCard } from "@/components/shared/spotlight-card";
-import { brandIcons } from "@/lib/brand-icons";
 import type { Dictionary } from "@/lib/dictionary";
 
 export function Skills({ t }: { t: Dictionary }) {
@@ -15,7 +13,7 @@ export function Skills({ t }: { t: Dictionary }) {
             <ul className="flex flex-wrap gap-2">
               {group.items.map((name) => (
                 <li key={name} className="flex items-center gap-2 px-3 py-1.5 text-[13px] font-medium rounded-lg bg-surface-alt/80 border border-border/60">
-                  {name in brandIcons ? <BrandIcon name={name} size={14} /> : <Cpu size={13} aria-hidden className="text-muted" />}
+                  <BrandIcon name={name} size={14} />
                   <span dir="auto">{name}</span>
                 </li>
               ))}

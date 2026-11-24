@@ -2,7 +2,8 @@
 title: "Type-Level Programming in TypeScript: Conditional, Mapped and Template Literal Types"
 description: "Treat TypeScript's type system as a small functional language. Learn conditional types and infer, distributive behaviour, key remapping, recursive types and template literals, then build a type-safe router and a deep-path getter."
 date: "2026-06-02"
-tags: ["TypeScript", "Type System", "Advanced"]
+updated: "2026-11-24"
+tags: ["TypeScript"]
 ---
 
 ## Types are a programming language
@@ -96,6 +97,10 @@ type Split<S extends string, D extends string> =
 type Parts = Split<"a.b.c", ".">; // ["a", "b", "c"]
 ```
 
+```embed
+type-pipeline
+```
+
 ## Project 1: a type-safe router
 
 Let's extract route parameters from a path string, so `params` is fully typed:
@@ -178,3 +183,9 @@ type J = Join<["a", "b", "c"], "-">; // "a-b-c"
 ## Conclusion
 
 Conditional types are branching, `infer` is pattern matching, mapped types are loops, and template literals are string processing. Use them at the **edges** of your system — routers, API clients, form libraries, config loaders — where a strong type stops whole categories of bugs, and keep everyday application types simple.
+
+## Further reading
+
+- [Creating types from types, TypeScript handbook](https://www.typescriptlang.org/docs/handbook/2/types-from-types.html)
+- [type-challenges](https://github.com/type-challenges/type-challenges)
+- [Never trust JSON.parse in a render](/blog/never-trust-json-parse-in-render/)

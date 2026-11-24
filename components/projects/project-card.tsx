@@ -13,6 +13,7 @@ export function ProjectCard({ project, locale, t, headingLevel: Heading = "h3" }
     <SpotlightCard
       as={Link}
       href={localePath(locale, `/projects/${project.slug}/`)}
+      prefetch={false}
       data-track={`case-study-${project.slug}`}
       className="reveal group h-full flex flex-col overflow-hidden"
     >

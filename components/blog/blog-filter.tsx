@@ -3,10 +3,12 @@
 import { useState, type ReactNode } from "react";
 import { clsx } from "clsx";
 import { Search, X } from "lucide-react";
+import { useSiteSearch } from "@/components/shared/use-site-search";
 import { fill } from "@/lib/locale";
 
 interface FilterItem {
   slug: string;
+  href: string;
   /** Lower-case text the search runs on. */
   search: string;
   tags: string[];
@@ -28,8 +30,9 @@ export function BlogFilter({ items, tags, featured, labels }: BlogFilterProps) {
 
   const q = query.trim().toLowerCase();
   const filtering = Boolean(q || activeTag);
+  const inText = new Set(useSiteSearch(query, 20).map((hit) => hit.url));
   const visible = items.filter(
-    (item) => (!activeTag || item.tags.includes(activeTag)) && (!q || item.search.includes(q)) && (filtering || item.slug !== featured.slug)
+    (item) => (!activeTag || item.tags.includes(activeTag)) && (!q || item.search.includes(q) || inText.has(item.href)) && (filtering || item.slug !== featured.slug)
   );
 
   const reset = () => {

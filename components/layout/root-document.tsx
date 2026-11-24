@@ -7,8 +7,8 @@ import { CommandMenuLoader } from "./command-menu-loader";
 import { Analytics } from "@/components/shared/analytics";
 import { PointerEffects } from "@/components/shared/pointer-effects";
 import { getDictionary } from "@/lib/dictionary";
-import { localeConfig, type Locale } from "@/lib/locale";
-import { getAllPostMeta } from "@/lib/mdx";
+import { localeConfig, localePath, type Locale } from "@/lib/locale";
+import { getAllPostSlugs, getPostListing } from "@/lib/mdx";
 import { getProjects } from "@/lib/projects";
 import { personJsonLd, websiteJsonLd } from "@/lib/seo";
 
@@ -32,6 +32,7 @@ export function RootDocument({ locale, children }: { locale: Locale; children: R
           <div aria-hidden className="scroll-progress" />
           <Header
             locale={locale}
+            translatedPosts={getAllPostSlugs("fa")}
             labels={{
               about: t.nav.about,
               projects: t.nav.projects,
@@ -49,9 +50,10 @@ export function RootDocument({ locale, children }: { locale: Locale; children: R
           />
           <CommandMenuLoader
             locale={locale}
-            labels={{ ...t.commandMenu, nav: t.nav }}
-            posts={getAllPostMeta().map((p) => ({ slug: p.slug, title: p.frontmatter.title }))}
-            projects={getProjects(locale).map((p) => ({ slug: p.slug, title: p.frontmatter.title }))}
+            labels={{ ...t.commandMenu, inArticles: t.blog.inArticles, nav: t.nav }}
+            translatedPosts={getAllPostSlugs("fa")}
+            posts={getPostListing(locale).map((p) => ({ href: localePath(p.locale, `/blog/${p.slug}/`), title: p.frontmatter.title }))}
+            projects={getProjects(locale).map((p) => ({ href: localePath(locale, `/projects/${p.slug}/`), title: p.frontmatter.title }))}
           />
           <main id="main" tabIndex={-1} className="flex-1 outline-none">
             {children}

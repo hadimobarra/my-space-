@@ -37,6 +37,8 @@ jobs:
         env:
           NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY: ${{ secrets.WEB3FORMS_ACCESS_KEY }}
           NEXT_PUBLIC_BOOKING_URL: ${{ vars.BOOKING_URL }}
+          NEXT_PUBLIC_GISCUS_CATEGORY_ID: ${{ vars.GISCUS_CATEGORY_ID }}
+          NEXT_PUBLIC_BUTTONDOWN_USER: ${{ vars.BUTTONDOWN_USER }}
           NEXT_PUBLIC_GOATCOUNTER_CODE: ${{ vars.GOATCOUNTER_CODE }}
 
       - run: npm run typecheck

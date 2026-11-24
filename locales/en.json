@@ -12,7 +12,8 @@
     "openMenu": "Toggle menu",
     "toggleTheme": "Toggle theme",
     "skipToContent": "Skip to content",
-    "primary": "Primary"
+    "primary": "Primary",
+    "now": "Now"
   },
   "hero": {
     "greeting": "Hello, I'm",
@@ -229,7 +230,27 @@
     "resultsCount": "{count} articles",
     "shareX": "Share on X",
     "shareLinkedIn": "Share on LinkedIn",
-    "codeCopied": "Code copied"
+    "codeCopied": "Code copied",
+    "updated": "Updated",
+    "editOnGithub": "Edit on GitHub",
+    "topics": "Topics",
+    "topicsSubtitle": "Articles grouped by subject.",
+    "series": "Learning path",
+    "allSeries": "Learning paths",
+    "seriesSubtitle": "Articles in reading order, from first principles to practice.",
+    "part": "Part {n} of {total}",
+    "otherLanguage": "این مقاله به فارسی",
+    "inArticles": "Found in the text",
+    "comments": "Comments",
+    "loadComments": "Load comments",
+    "commentsNote": "Comments use GitHub Discussions and load only when you ask for them.",
+    "discuss": "Discuss on GitHub",
+    "subscribeTitle": "New articles by email",
+    "subscribeText": "One email per article, nothing else.",
+    "subscribeButton": "Subscribe",
+    "emailLabel": "Email address",
+    "allArticlesIn": "{count} articles",
+    "english": "English"
   },
   "openSource": {
     "title": "Open Source",
@@ -340,7 +361,8 @@
     "description": "Front-End Engineer with 4+ years building data-intensive React and TypeScript apps: data catalogs, ETL interfaces and dashboards. Apache Superset contributor. Open to remote roles.",
     "blogDescription": "Deep dives into JavaScript internals, React architecture, TypeScript and web performance, written from production experience.",
     "projectsDescription": "Case studies: an Apache Superset Safari fix, resumable multi-GB uploads, OpenMetadata features and an enterprise data catalog.",
-    "resumeDescription": "Résumé of Hadi Mobarra, Front-End Engineer: React and TypeScript for data platforms. Printable, with PDF download."
+    "resumeDescription": "Résumé of Hadi Mobarra, Front-End Engineer: React and TypeScript for data platforms. Printable, with PDF download.",
+    "nowDescription": "What Hadi Mobarra is working on: data platform interfaces, open-source pull requests in review and recent articles."
   },
   "hire": {
     "title": "Working together",
@@ -406,5 +428,24 @@
     "retrying": "Connection lost, retrying",
     "done": "Complete: every byte acknowledged",
     "hint": "Drop the connection mid-upload and watch HEAD ask the server for its offset, then PATCH continue from that byte."
+  },
+  "now": {
+    "title": "Now",
+    "subtitle": "What I'm working on at the moment.",
+    "updated": "Last reviewed",
+    "workTitle": "Work",
+    "work": [
+      "Front-end engineer at Adin, building data catalog and ETL interfaces.",
+      "Open to remote roles, full-time or contract, from Tehran (UTC+3:30)."
+    ],
+    "reviewTitle": "Open source in review",
+    "reviewEmpty": "Nothing is waiting for review right now.",
+    "writingTitle": "Latest writing",
+    "siteTitle": "How this site is built",
+    "site": [
+      "Next.js static export on GitHub Pages, React server components, TypeScript and Tailwind CSS.",
+      "Playwright, axe and Lighthouse run before every deploy.",
+      "Search by Pagefind, running entirely in your browser."
+    ]
   }
 }

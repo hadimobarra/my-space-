@@ -2,6 +2,7 @@
 title: "Hunting Memory Leaks in JavaScript Applications"
 description: "How garbage collection really decides what to keep, the five leak patterns behind most SPA memory issues, and a repeatable DevTools workflow using heap snapshots, allocation timelines and WeakRef-aware design."
 date: "2025-09-29"
+updated: "2026-11-24"
 tags: ["JavaScript", "Performance", "Debugging"]
 ---
 
@@ -24,6 +25,10 @@ user = null;
 ```
 
 To find a leak, you must find the **retaining path**: the chain of references from a root to the object that shouldn't be there anymore.
+
+```embed
+leak-chain
+```
 
 ## The five usual suspects
 
@@ -180,3 +185,11 @@ They're useful for caches of expensive, recreatable objects and for **verifying*
 ## Conclusion
 
 Most leaks come from one of five patterns: listeners, timers, detached DOM, unbounded caches and over-capturing closures. Confirm the leak with the performance monitor, isolate it with the three-snapshot technique, and follow the retainer chain to the exact line. With cleanup tied to clear lifetimes, long-running apps stay fast after hours of use.
+
+## Further reading
+
+- [Fix memory problems, Chrome DevTools](https://developer.chrome.com/docs/devtools/memory-problems)
+- [WeakRef on MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakRef)
+- [AbortController on MDN](https://developer.mozilla.org/en-US/docs/Web/API/AbortController)
+- [Build signals from scratch](/blog/build-signals-from-scratch/)
+- [Web Workers in practice](/blog/web-workers-off-main-thread/)

@@ -12,7 +12,8 @@
     "openMenu": "باز و بسته کردن منو",
     "toggleTheme": "تغییر تم",
     "skipToContent": "رفتن به محتوا",
-    "primary": "ناوبری اصلی"
+    "primary": "ناوبری اصلی",
+    "now": "اکنون"
   },
   "hero": {
     "greeting": "سلام، من",
@@ -224,12 +225,32 @@
     "previousPost": "قبلی",
     "nextPost": "بعدی",
     "relatedPosts": "ادامه مطالعه",
-    "langNote": "مقاله‌ها به زبان انگلیسی هستند.",
+    "langNote": "بیشتر مقاله‌ها به زبان انگلیسی هستند.",
     "clearSearch": "پاک کردن جستجو",
     "resultsCount": "{count} مقاله",
     "shareX": "اشتراک در X",
     "shareLinkedIn": "اشتراک در LinkedIn",
-    "codeCopied": "کد کپی شد"
+    "codeCopied": "کد کپی شد",
+    "updated": "به‌روزرسانی",
+    "editOnGithub": "ویرایش در GitHub",
+    "topics": "موضوعات",
+    "topicsSubtitle": "مقاله‌ها بر اساس موضوع.",
+    "series": "مسیر یادگیری",
+    "allSeries": "مسیرهای یادگیری",
+    "seriesSubtitle": "مقاله‌ها به ترتیب مطالعه، از اصول پایه تا عمل.",
+    "part": "بخش {n} از {total}",
+    "otherLanguage": "This article in English",
+    "inArticles": "یافت‌شده در متن",
+    "comments": "دیدگاه‌ها",
+    "loadComments": "نمایش دیدگاه‌ها",
+    "commentsNote": "دیدگاه‌ها با GitHub Discussions کار می‌کنند و فقط با درخواست شما بارگذاری می‌شوند.",
+    "discuss": "گفت‌وگو در GitHub",
+    "subscribeTitle": "مقاله‌های تازه با ایمیل",
+    "subscribeText": "برای هر مقاله یک ایمیل، نه بیشتر.",
+    "subscribeButton": "عضویت",
+    "emailLabel": "نشانی ایمیل",
+    "allArticlesIn": "{count} مقاله",
+    "english": "انگلیسی"
   },
   "openSource": {
     "title": "متن‌باز",
@@ -340,7 +361,8 @@
     "description": "مهندس فرانت‌اند با بیش از ۴ سال تجربه در ساخت برنامه‌های داده‌محور با React و TypeScript: کاتالوگ داده، رابط‌های ETL و داشبورد. مشارکت‌کننده Apache Superset. آماده همکاری دورکاری.",
     "blogDescription": "بررسی عمیق سازوکار درونی جاوااسکریپت، معماری ری‌اکت، تایپ‌اسکریپت و پرفورمنس وب، بر پایه تجربه در محصولات واقعی.",
     "projectsDescription": "مطالعات موردی: رفع باگ Safari در Apache Superset، آپلود ازسرگیری‌پذیر چند گیگابایتی، قابلیت‌های OpenMetadata و کاتالوگ داده سازمانی.",
-    "resumeDescription": "رزومه هادی مبرا، مهندس فرانت‌اند: React و TypeScript برای پلتفرم‌های داده. قابل چاپ و همراه با نسخه PDF."
+    "resumeDescription": "رزومه هادی مبرا، مهندس فرانت‌اند: React و TypeScript برای پلتفرم‌های داده. قابل چاپ و همراه با نسخه PDF.",
+    "nowDescription": "هادی مبرا این روزها روی چه کار می‌کند: رابط‌های پلتفرم داده، مشارکت‌های متن‌باز در حال بازبینی و نوشته‌های تازه."
   },
   "hire": {
     "title": "همکاری با من",
@@ -406,5 +428,24 @@
     "retrying": "اتصال قطع شد، تلاش مجدد",
     "done": "کامل شد: همه بایت‌ها تأیید شدند",
     "hint": "وسط آپلود اتصال را قطع کنید و ببینید چطور HEAD آفست سرور را می‌پرسد و PATCH از همان بایت ادامه می‌دهد."
+  },
+  "now": {
+    "title": "اکنون",
+    "subtitle": "این روزها روی چه چیزی کار می‌کنم.",
+    "updated": "آخرین بازبینی",
+    "workTitle": "کار",
+    "work": [
+      "مهندس فرانت‌اند در آدین، ساخت رابط‌های کاتالوگ داده و ETL.",
+      "آماده همکاری دورکاری تمام‌وقت یا پروژه‌ای از تهران (UTC+3:30)."
+    ],
+    "reviewTitle": "مشارکت‌های متن‌باز در حال بازبینی",
+    "reviewEmpty": "اکنون چیزی در انتظار بازبینی نیست.",
+    "writingTitle": "تازه‌ترین نوشته‌ها",
+    "siteTitle": "این سایت چگونه ساخته شده",
+    "site": [
+      "خروجی ایستای Next.js روی GitHub Pages، با React server components، TypeScript و Tailwind CSS.",
+      "Playwright، axe و Lighthouse پیش از هر انتشار اجرا می‌شوند.",
+      "جست‌وجو با Pagefind که کاملاً در مرورگر شما اجرا می‌شود."
+    ]
   }
 }

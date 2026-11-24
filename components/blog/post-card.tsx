@@ -3,7 +3,7 @@ import Link from "next/link";
 import { SpotlightCard } from "@/components/shared/spotlight-card";
 import type { Dictionary } from "@/lib/dictionary";
 import { formatDate, formatNumber } from "@/lib/format";
-import type { Locale } from "@/lib/locale";
+import { localeConfig, localePath, type Locale } from "@/lib/locale";
 import type { PostMeta } from "@/lib/mdx";
 import { cn } from "@/lib/utils";
 import { PostCover } from "./post-cover";
@@ -21,9 +21,11 @@ export function PostCard({ post, locale, t, featured = false, headingLevel: Head
 
   return (
     <SpotlightCard
-      // Articles live under the English root layout, so a link from Persian pages is a full page load.
-      as={locale === "en" ? Link : "a"}
-      href={`/blog/${post.slug}/`}
+      // The other language has its own root layout, so that link is a full page load.
+      as={locale === post.locale ? Link : "a"}
+      href={localePath(post.locale, `/blog/${post.slug}/`)}
+      // Cards are many; the route payload is fetched on hover instead of on sight.
+      {...(locale === post.locale && { prefetch: false })}
       className={cn("reveal group flex overflow-hidden h-full", featured ? "flex-col md:flex-row" : "flex-col")}
     >
       <PostCover slug={post.slug} label={tags[0] ?? "Post"} large={featured} className={featured ? "h-56 md:h-auto md:w-1/2 shrink-0" : "h-40"} />
@@ -36,7 +38,7 @@ export function PostCard({ post, locale, t, featured = false, headingLevel: Head
             <span key={tag} className="px-2.5 py-1 rounded-full text-[11px] font-medium bg-primary/10 text-primary-dark dark:text-primary">{tag}</span>
           ))}
         </div>
-        <div lang="en" dir="ltr">
+        <div lang={post.locale} dir={localeConfig[post.locale].dir}>
           <Heading className={cn("font-bold tracking-tight mb-2 group-hover:text-primary transition-colors", featured ? "text-2xl md:text-3xl leading-tight" : "text-lg leading-snug line-clamp-2")}>
             {title}
           </Heading>

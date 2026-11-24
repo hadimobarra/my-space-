@@ -99,3 +99,95 @@ test("upload demo resumes from the server's offset after a dropped connection", 
   await expect(progress).toHaveAttribute("aria-valuenow", "100");
   expect(outside).toEqual([]);
 });
+
+test("full-text search finds words that appear only in an article's body", async ({ page }) => {
+  await page.goto("/blog/", { waitUntil: "networkidle" });
+  await page.getByRole("textbox").fill("preserveDrawingBuffer");
+  await expect(page.locator("main h2").filter({ hasText: "Why Safari Exported Blank Charts" })).toBeVisible();
+
+  await page.keyboard.press("Control+k");
+  await page.getByRole("combobox").fill("preserveDrawingBuffer");
+  await page.getByRole("option", { name: /Why Safari Exported Blank Charts/ }).click();
+  await expect(page).toHaveURL("/blog/safari-blank-chart-exports/");
+});
+
+test("Persian search covers Persian and English articles", async ({ page }) => {
+  await page.goto("/fa/blog/", { waitUntil: "networkidle" });
+  await page.getByRole("textbox").fill("یونیکد");
+  await expect(page.locator("main h2", { hasText: "راست‌به‌چپ" })).toBeVisible();
+  await page.getByRole("textbox").fill("preserveDrawingBuffer");
+  await expect(page.locator("main h2", { hasText: "Why Safari" })).toBeVisible();
+});
+
+test("event loop demo ends with the order the article claims", async ({ page }) => {
+  await page.goto("/blog/javascript-event-loop-deep-dive/", { waitUntil: "networkidle" });
+  const demo = page.getByRole("region", { name: "Step through the event loop" });
+  const next = demo.getByRole("button", { name: "Next step" });
+  while (await next.isEnabled()) await next.click();
+  const order = await demo.locator("li", { hasText: /^(script|end|A|5|B|timeout)$/ }).allInnerTexts();
+  expect(order.slice(-6)).toEqual(["script", "end", "A", "5", "B", "timeout"]);
+
+  // The same code, run by a real engine
+  const real = await page.evaluate(
+    () =>
+      new Promise<string[]>((resolve) => {
+        const log: string[] = [];
+        log.push("script");
+        setTimeout(() => {
+          log.push("timeout");
+          resolve(log);
+        }, 0);
+        Promise.resolve().then(() => log.push("A")).then(() => log.push("B"));
+        queueMicrotask(() => log.push("5"));
+        log.push("end");
+      })
+  );
+  expect(real).toEqual(order.slice(-6));
+});
+
+test("signals demo runs only what depends on a change", async ({ page }) => {
+  await page.goto("/blog/build-signals-from-scratch/", { waitUntil: "networkidle" });
+  const demo = page.getByRole("region", { name: "Signals playground" });
+  const rows = demo.locator("li");
+  await expect(rows).toContainText([/40.*computed ran 1×/, /ran 1×/, /gift.*ran 1×/]);
+  await demo.getByRole("button", { name: "price + 5" }).click();
+  await expect(rows).toContainText([/50.*computed ran 2×/, /ran 2×/, /ran 1×/]);
+  await demo.getByRole("button", { name: "change note" }).click();
+  await expect(rows).toContainText([/computed ran 2×/, /ran 2×/, /express.*ran 2×/]);
+  await demo.getByRole("button", { name: "same value" }).click();
+  await expect(rows).toContainText([/computed ran 2×/, /ran 2×/, /ran 2×/]);
+});
+
+test("INP demo shows that yielding reaches the next frame sooner", async ({ page }) => {
+  await page.goto("/blog/taming-inp-interaction-to-next-paint/", { waitUntil: "networkidle" });
+  const demo = page.getByRole("region", { name: "Feel the difference" });
+  const result = async (index: number) => {
+    const text = await demo.getByRole("status").nth(index).filter({ hasText: /\d+ ms/ }).innerText();
+    return Number(text.match(/(\d+) ms/)![1]);
+  };
+  await demo.getByRole("button", { name: /Block/ }).click();
+  const blocked = await result(0);
+  await demo.getByRole("button", { name: /Paint first/ }).click();
+  const chunked = await result(1);
+  expect(blocked).toBeGreaterThanOrEqual(400);
+  expect(chunked).toBeLessThan(blocked / 2);
+});
+
+test("RTL demo: logical properties move the accent to the reading edge", async ({ page }) => {
+  await page.goto("/blog/rtl-is-not-a-translation-step/", { waitUntil: "networkidle" });
+  const demo = page.getByRole("region", { name: "Physical or logical?" });
+  const box = demo.getByTestId("rtl-preview").locator("> div");
+  const widths = () => box.evaluate((el) => [getComputedStyle(el).borderLeftWidth, getComputedStyle(el).borderRightWidth]);
+  expect(await widths()).toEqual(["4px", "0px"]); // physical: wrong side in RTL
+  await demo.getByRole("button", { name: "Logical properties" }).click();
+  expect(await widths()).toEqual(["0px", "4px"]);
+});
+
+test("feeds carry full article text", async ({ request }) => {
+  for (const [path, phrase] of [["/rss.xml", "preserveDrawingBuffer"], ["/fa/rss.xml", "یونیکد"]]) {
+    const xml = await (await request.get(path)).text();
+    expect(xml).toContain("<content:encoded>");
+    expect(xml).toContain(phrase);
+    expect(xml).not.toContain("<embed-slot");
+  }
+});
