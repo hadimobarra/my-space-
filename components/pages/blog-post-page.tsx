@@ -1,46 +1,62 @@
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Calendar, Clock, Link2, Linkedin } from "lucide-react";
+import { ArrowLeft, ArrowRight, Calendar, Clock, History, Link2, Linkedin, Pencil } from "lucide-react";
 import { SiX } from "react-icons/si";
+import { ArticleBody } from "@/components/blog/article-body";
 import { CodeCopy } from "@/components/blog/code-copy";
+import { Comments } from "@/components/blog/comments";
 import { PostCard } from "@/components/blog/post-card";
 import { PostCover } from "@/components/blog/post-cover";
+import { SeriesNav } from "@/components/blog/series-nav";
+import { Subscribe } from "@/components/blog/subscribe";
 import { TableOfContents } from "@/components/blog/table-of-contents";
 import { Avatar } from "@/components/shared/avatar";
 import { CopyButton } from "@/components/shared/copy-button";
 import { getDictionary } from "@/lib/dictionary";
-import { formatDate } from "@/lib/format";
-import { extractHeadings, getAdjacentPosts, getPostBySlug, getRelatedPosts, renderMdxToHtml } from "@/lib/mdx";
+import { formatDate, formatNumber } from "@/lib/format";
+import { localePath, type Locale } from "@/lib/locale";
+import { extractHeadings, getAdjacentPosts, getAllPostSlugs, getPostBySlug, getPostListing, getRelatedPosts, postSourcePath, renderMdxToHtml } from "@/lib/mdx";
 import { absoluteUrl, pageMetadata, siteConfig } from "@/lib/seo";
+import { getSeriesOf } from "@/lib/series";
+import { getTopics } from "@/lib/topics";
 
-export function blogPostMetadata(slug: string) {
-  const post = getPostBySlug(slug);
+const isTranslated = (slug: string) => getAllPostSlugs("fa").includes(slug);
+
+export function blogPostMetadata(locale: Locale, slug: string) {
+  const post = getPostBySlug(slug, locale);
   if (!post) return {};
-  const { title, description, date, tags } = post.frontmatter;
+  const { title, description, date, updated, tags } = post.frontmatter;
   return pageMetadata({
-    locale: "en",
+    locale,
     path: `/blog/${slug}/`,
     title,
     description,
     image: `/og/blog/${slug}.png`,
-    translated: false,
-    article: { publishedTime: date, tags },
+    translated: isTranslated(slug),
+    article: { publishedTime: date, modifiedTime: updated, tags },
   });
 }
 
 const shareClass =
   "w-9 h-9 rounded-full border border-border bg-card flex items-center justify-center text-muted hover:text-primary hover:border-primary/40 transition-colors";
+const tagClass = "px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary-dark dark:text-primary";
 
-export async function BlogPostPage({ slug }: { slug: string }) {
-  const post = getPostBySlug(slug);
+export async function BlogPostPage({ locale, slug }: { locale: Locale; slug: string }) {
+  const post = getPostBySlug(slug, locale);
   if (!post) return null;
 
-  const t = getDictionary("en");
-  const { title, description, date, tags } = post.frontmatter;
-  const url = absoluteUrl(`/blog/${slug}/`);
+  const t = getDictionary(locale);
+  const { title, description, date, updated, tags } = post.frontmatter;
+  const path = localePath(locale, `/blog/${slug}/`);
+  const url = absoluteUrl(path);
+  const blogHome = localePath(locale, "/blog/");
   const html = await renderMdxToHtml(post.content, t.blog.copyCode);
   const headings = extractHeadings(html);
-  const { prev, next } = getAdjacentPosts(slug);
-  const related = getRelatedPosts(slug);
+  const series = locale === "en" ? getSeriesOf(slug) : undefined;
+  const { prev, next } = locale === "en" ? getAdjacentPosts(slug) : { prev: null, next: null };
+  const related = locale === "en" ? getRelatedPosts(slug) : getPostListing("fa").filter((p) => p.slug !== slug).slice(0, 3);
+  // Topic pages are in English only
+  const topics = new Map(locale === "en" ? getTopics().map((topic) => [topic.tag, `/blog/topics/${topic.slug}/`]) : []);
+  const showUpdated = updated && updated !== date;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -48,7 +64,8 @@ export async function BlogPostPage({ slug }: { slug: string }) {
     headline: title,
     description,
     datePublished: date,
-    inLanguage: "en",
+    dateModified: updated ?? date,
+    inLanguage: locale,
     image: absoluteUrl(`/og/blog/${slug}.png`),
     keywords: tags.join(", "),
     author: { "@id": `${siteConfig.url}/#person` },
@@ -70,6 +87,15 @@ export async function BlogPostPage({ slug }: { slug: string }) {
     </div>
   );
 
+  const tagList = tags.map((tag) => {
+    const href = topics.get(tag);
+    return (
+      <li key={tag}>
+        {href ? <Link href={href} className={`${tagClass} hover:bg-primary/20 transition-colors`}>{tag}</Link> : <span className={tagClass}>{tag}</span>}
+      </li>
+    );
+  });
+
   return (
     <div className="relative pt-28 pb-16 section-padding">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
@@ -79,47 +105,55 @@ export async function BlogPostPage({ slug }: { slug: string }) {
       </div>
 
       <div className="container-wide">
-        <Link href="/blog/" className="group inline-flex items-center gap-2 text-sm text-muted hover:text-foreground transition-colors mb-8">
-          <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" />
+        <Link href={blogHome} className="group inline-flex items-center gap-2 text-sm text-muted hover:text-foreground transition-colors mb-8">
+          <ArrowLeft size={16} className="rtl:rotate-180" />
           {t.blog.backToBlog}
         </Link>
 
         <header className="max-w-3xl mb-10">
-          <ul className="flex flex-wrap gap-2 mb-5">
-            {tags.map((tag) => (
-              <li key={tag} className="px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary-dark dark:text-primary">{tag}</li>
-            ))}
-          </ul>
+          <ul className="flex flex-wrap gap-2 mb-5">{tagList}</ul>
           <h1 className="text-3xl md:text-5xl font-bold tracking-tight leading-[1.1] mb-5">{title}</h1>
           <p className="text-lg md:text-xl text-muted leading-relaxed mb-8">{description}</p>
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <Avatar alt="" className="h-10 w-10" />
+              <Avatar alt="" className="h-10 w-10 shrink-0" />
               <div>
-                <p className="text-sm font-semibold">{siteConfig.author}</p>
-                <p className="flex items-center gap-3 text-xs text-muted">
-                  <span className="flex items-center gap-1"><Calendar size={12} aria-hidden /> <time dateTime={date}>{formatDate(date)}</time></span>
-                  <span className="flex items-center gap-1"><Clock size={12} aria-hidden /> {post.readingTime} {t.blog.minRead}</span>
+                <p className="text-sm font-semibold">{t.hero.name}</p>
+                <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted">
+                  <span className="flex items-center gap-1"><Calendar size={12} aria-hidden /> <time dateTime={date}>{formatDate(date, locale)}</time></span>
+                  {showUpdated && (
+                    <span className="flex items-center gap-1"><History size={12} aria-hidden /> {t.blog.updated} <time dateTime={updated}>{formatDate(updated, locale)}</time></span>
+                  )}
+                  <span className="flex items-center gap-1"><Clock size={12} aria-hidden /> {formatNumber(post.readingTime, locale)} {t.blog.minRead}</span>
                 </p>
               </div>
             </div>
             {share}
           </div>
+          {isTranslated(slug) && (
+            <p className="mt-5 text-sm">
+              <a href={localePath(locale === "en" ? "fa" : "en", `/blog/${slug}/`)} lang={locale === "en" ? "fa" : "en"} hrefLang={locale === "en" ? "fa" : "en"} className="font-medium text-primary underline underline-offset-4">
+                {t.blog.otherLanguage}
+              </a>
+            </p>
+          )}
         </header>
 
-        <PostCover slug={slug} label={tags[0] ?? "Post"} large className="h-48 md:h-72 rounded-3xl mb-14 shadow-2xl shadow-primary/10" />
+        <PostCover slug={slug} label={tags[0] ?? "Post"} large className="h-40 md:h-56 rounded-3xl mb-12 shadow-2xl shadow-primary/10" />
 
         <div className="grid lg:grid-cols-[minmax(0,1fr)_240px] gap-12 xl:gap-20">
           <article className="min-w-0 max-w-3xl">
-            <div className="prose-article" dangerouslySetInnerHTML={{ __html: html }} />
+            {series && <SeriesNav series={series} slug={slug} t={t} />}
+            <div data-pagefind-body>
+              <p hidden data-pagefind-meta="title">{title}</p>
+              <ArticleBody html={html} locale={locale} />
+            </div>
             <CodeCopy copiedLabel={t.blog.codeCopied} />
 
             <div className="mt-16 pt-8 border-t border-border flex flex-wrap items-center justify-between gap-4">
-              <p className="flex flex-wrap gap-2">
-                {tags.map((tag) => (
-                  <span key={tag} className="px-3 py-1 rounded-full text-xs font-medium border border-border text-muted">#{tag}</span>
-                ))}
-              </p>
+              <a href={`${siteConfig.links.source}/edit/main/${postSourcePath(slug, locale)}`} data-track="edit-article" className="inline-flex items-center gap-2 text-sm text-muted hover:text-primary transition-colors print:hidden">
+                <Pencil size={14} aria-hidden /> {t.blog.editOnGithub}
+              </a>
               {share}
             </div>
 
@@ -127,11 +161,13 @@ export async function BlogPostPage({ slug }: { slug: string }) {
               <Avatar alt="" className="h-14 w-14 shrink-0" />
               <div>
                 <p className="text-xs uppercase tracking-wider text-muted mb-1">{t.blog.writtenBy}</p>
-                <p className="text-lg font-semibold mb-2">{siteConfig.author}</p>
+                <p className="text-lg font-semibold mb-2">{t.hero.name}</p>
                 <p className="text-sm text-muted leading-relaxed mb-4">{t.blog.authorBio}</p>
-                <Link href="/#contact" className="text-sm font-medium text-primary underline underline-offset-4">{t.blog.getInTouch}</Link>
+                <Link href={localePath(locale, "/#contact")} className="text-sm font-medium text-primary underline underline-offset-4">{t.blog.getInTouch}</Link>
               </div>
             </div>
+
+            <Comments locale={locale} term={`blog/${slug}`} title={title} labels={{ comments: t.blog.comments, loadComments: t.blog.loadComments, commentsNote: t.blog.commentsNote, discuss: t.blog.discuss }} />
 
             {(prev || next) && (
               <nav aria-label={t.blog.relatedPosts} className="mt-10 grid sm:grid-cols-2 gap-4 print:hidden">
@@ -152,7 +188,7 @@ export async function BlogPostPage({ slug }: { slug: string }) {
           </article>
 
           <aside className="hidden lg:block print:hidden">
-            <div className="sticky top-28"><TableOfContents headings={headings} label={t.blog.onThisPage} /></div>
+            <div className="sticky top-28 max-h-[calc(100vh-9rem)] overflow-y-auto"><TableOfContents headings={headings} label={t.blog.onThisPage} /></div>
           </aside>
         </div>
 
@@ -160,10 +196,11 @@ export async function BlogPostPage({ slug }: { slug: string }) {
           <section className="mt-24 print:hidden">
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-8">{t.blog.relatedPosts}</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {related.map((p) => <PostCard key={p.slug} post={p} locale="en" t={t} />)}
+              {related.map((p) => <PostCard key={p.slug} post={p} locale={locale} t={t} />)}
             </div>
           </section>
         )}
+        <Subscribe locale={locale} t={t} />
       </div>
     </div>
   );

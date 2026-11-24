@@ -7,6 +7,8 @@
         "http://127.0.0.1:4173/",
         "http://127.0.0.1:4173/fa/",
         "http://127.0.0.1:4173/blog/javascript-event-loop-deep-dive/",
+        "http://127.0.0.1:4173/blog/safari-blank-chart-exports/",
+        "http://127.0.0.1:4173/fa/blog/rtl-is-not-a-translation-step/",
         "http://127.0.0.1:4173/projects/superset-safari-export/"
       ],
       "numberOfRuns": 3

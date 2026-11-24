@@ -13,11 +13,12 @@ export function localePath(locale: Locale, path = "/"): string {
   return locale === "en" ? path : `/fa${path}`;
 }
 
-/** The same page in the other language. Articles are English-only, so they map to the Persian blog index. */
-export function switchLocalePath(pathname: string): { locale: Locale; href: string } {
+/** The same page in the other language. Blog pages without a translation map to the Persian blog index. */
+export function switchLocalePath(pathname: string, translatedPosts: string[]): { locale: Locale; href: string } {
   const isFa = pathname === "/fa" || pathname.startsWith("/fa/");
   if (isFa) return { locale: "en", href: pathname.slice(3) || "/" };
-  return { locale: "fa", href: `/fa${pathname.startsWith("/blog/") ? "/blog/" : pathname}` };
+  const blogPage = pathname.match(/^\/blog\/(.+?)\/?$/)?.[1];
+  return { locale: "fa", href: blogPage && !translatedPosts.includes(blogPage) ? "/fa/blog/" : `/fa${pathname}` };
 }
 
 /** Fill {placeholders} in a dictionary string. */

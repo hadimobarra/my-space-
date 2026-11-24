@@ -3,6 +3,8 @@ import { absoluteUrl } from "@/lib/seo";
 import { getAllPosts } from "@/lib/mdx";
 import { getProjectSlugs } from "@/lib/projects";
 import { locales, localePath } from "@/lib/locale";
+import { seriesSlugs } from "@/lib/series";
+import { getTopics } from "@/lib/topics";
 import { github } from "@/lib/github";
 
 export const dynamic = "force-static";
@@ -18,6 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...getProjectSlugs().map((slug) => ({ path: `/projects/${slug}/`, priority: 0.8 })),
     { path: "/blog/", priority: 0.8, lastModified: newestPost },
     { path: "/resume/", priority: 0.7 },
+    { path: "/now/", priority: 0.5 },
   ];
 
   return [
@@ -30,10 +33,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
         },
       }))
     ),
-    ...posts.map((post) => ({
-      url: absoluteUrl(`/blog/${post.slug}/`),
-      lastModified: new Date(post.frontmatter.date),
-      priority: 0.6,
+    ...locales.flatMap((locale) =>
+      getAllPosts(locale).map((post) => ({
+        url: absoluteUrl(localePath(locale, `/blog/${post.slug}/`)),
+        lastModified: new Date(post.frontmatter.updated ?? post.frontmatter.date),
+        priority: 0.6,
+      }))
+    ),
+    ...["/blog/topics/", ...getTopics().map((t) => `/blog/topics/${t.slug}/`), ...seriesSlugs.map((s) => `/blog/series/${s}/`)].map((path) => ({
+      url: absoluteUrl(path),
+      priority: 0.5,
     })),
   ];
 }

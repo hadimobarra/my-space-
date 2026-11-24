@@ -1,12 +1,16 @@
-import { BookOpen, Rss } from "lucide-react";
+import Link from "next/link";
+import { BookOpen, Route } from "lucide-react";
 import { BlogFilter } from "@/components/blog/blog-filter";
 import { PostCard } from "@/components/blog/post-card";
+import { Subscribe } from "@/components/blog/subscribe";
 import { PageHeader } from "@/components/shared/page-header";
 import { getDictionary } from "@/lib/dictionary";
 import { formatNumber } from "@/lib/format";
-import type { Locale } from "@/lib/locale";
-import { getAllPostMeta } from "@/lib/mdx";
+import { fill, localePath, type Locale } from "@/lib/locale";
+import { getPostListing } from "@/lib/mdx";
 import { pageMetadata } from "@/lib/seo";
+import { getAllSeries } from "@/lib/series";
+import { getTopics } from "@/lib/topics";
 
 export function blogIndexMetadata(locale: Locale) {
   const t = getDictionary(locale);
@@ -15,13 +19,9 @@ export function blogIndexMetadata(locale: Locale) {
 
 export function BlogIndexPage({ locale }: { locale: Locale }) {
   const t = getDictionary(locale);
-  const posts = getAllPostMeta();
+  const posts = getPostListing(locale);
   const featured = posts.find((p) => p.frontmatter.featured) ?? posts[0];
   const minutes = posts.reduce((sum, p) => sum + p.readingTime, 0);
-
-  const counts = new Map<string, number>();
-  posts.forEach((p) => p.frontmatter.tags.forEach((tag) => counts.set(tag, (counts.get(tag) ?? 0) + 1)));
-  const tags = [...counts].sort((a, b) => b[1] - a[1]).map(([tag]) => tag);
 
   return (
     <>
@@ -38,10 +38,11 @@ export function BlogIndexPage({ locale }: { locale: Locale }) {
       <div className="pb-24 section-padding">
         <div className="container-wide">
           <BlogFilter
-            tags={tags}
+            tags={getTopics().map((topic) => topic.tag)}
             featured={{ slug: featured.slug, card: <PostCard post={featured} locale={locale} t={t} featured headingLevel="h2" /> }}
             items={posts.map((post) => ({
               slug: post.slug,
+              href: localePath(post.locale, `/blog/${post.slug}/`),
               tags: post.frontmatter.tags,
               search: [post.frontmatter.title, post.frontmatter.description, ...post.frontmatter.tags].join(" ").toLowerCase(),
               card: <PostCard post={post} locale={locale} t={t} headingLevel="h2" />,
@@ -55,11 +56,29 @@ export function BlogIndexPage({ locale }: { locale: Locale }) {
               resultsCount: t.blog.resultsCount,
             }}
           />
-          <div className="mt-16 flex justify-center">
-            <a href="/rss.xml" data-track="rss" className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border text-xs font-medium text-muted hover:text-primary hover:border-primary/30 transition-colors">
-              <Rss size={13} /> {t.blog.subscribe}
-            </a>
-          </div>
+
+          {locale === "en" && (
+            <section aria-labelledby="paths" className="mt-24">
+              <h2 id="paths" className="text-2xl md:text-3xl font-bold tracking-tight mb-2">{t.blog.allSeries}</h2>
+              <p className="text-muted mb-8">
+                {t.blog.seriesSubtitle} <Link href="/blog/topics/" className="text-primary underline underline-offset-4">{t.blog.topics}</Link>
+              </p>
+              <ul className="grid sm:grid-cols-2 gap-5">
+                {getAllSeries().map((series) => (
+                  <li key={series.slug}>
+                    <Link href={`/blog/series/${series.slug}/`} className="group block h-full glass-card rounded-2xl p-6 hover:border-primary/40 transition-colors">
+                      <span className="flex items-center gap-2 text-xs text-muted mb-2">
+                        <Route size={14} className="text-primary" aria-hidden /> {fill(t.blog.allArticlesIn, { count: series.posts.length })}
+                      </span>
+                      <span className="block text-lg font-semibold mb-1.5 group-hover:text-primary transition-colors">{series.title}</span>
+                      <span className="block text-sm text-muted leading-relaxed">{series.description}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+          <Subscribe locale={locale} t={t} />
         </div>
       </div>
     </>

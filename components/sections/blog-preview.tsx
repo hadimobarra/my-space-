@@ -5,21 +5,17 @@ import { SectionWrapper } from "@/components/shared/section-wrapper";
 import type { Dictionary } from "@/lib/dictionary";
 import { formatNumber } from "@/lib/format";
 import { localePath, type Locale } from "@/lib/locale";
-import { getAllPostMeta } from "@/lib/mdx";
+import { getPostListing } from "@/lib/mdx";
 
 export function BlogPreview({ locale, t }: { locale: Locale; t: Dictionary }) {
-  const posts = getAllPostMeta();
-  const featured = posts.find((p) => p.frontmatter.featured) ?? posts[0];
-  const others = posts.filter((p) => p.slug !== featured?.slug).slice(0, 3);
-  if (!featured) return null;
+  const posts = getPostListing(locale);
+  const featured = posts.filter((p) => p.frontmatter.featured);
+  const shown = [...featured, ...posts.filter((p) => !p.frontmatter.featured)].slice(0, 3);
 
   return (
     <SectionWrapper id="blog" eyebrow={t.eyebrows.blog} title={t.blog.title} subtitle={`${t.blog.subtitle}${t.blog.langNote ? `. ${t.blog.langNote}` : ""}`}>
-      <div className="mb-6">
-        <PostCard post={featured} locale={locale} t={t} featured />
-      </div>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {others.map((post) => <PostCard key={post.slug} post={post} locale={locale} t={t} />)}
+        {shown.map((post) => <PostCard key={post.slug} post={post} locale={locale} t={t} />)}
       </div>
       <div className="text-center mt-12">
         <Link

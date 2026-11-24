@@ -1,0 +1,125 @@
+---
+title: "RTL Is Not a Translation Step"
+description: "Right-to-left support isn't a mirrored stylesheet added at the end. Logical properties, text isolation, icons, fonts and numbers: the parts of an interface that change direction, and the parts that must not."
+date: "2026-11-24"
+tags: ["RTL & i18n", "CSS"]
+---
+
+## The usual mistake
+
+A product is finished in English. Then someone asks for Persian or Arabic, so the strings go to a translator and a `dir="rtl"` goes on the page. Half of the layout flips, the other half doesn't, and file paths read backwards.
+
+I led the Persian localization of a data platform, and this site is bilingual too. The lesson from both is the same: translation changes words, while direction changes layout. They are different jobs.
+
+## Write direction-neutral CSS from the start
+
+Physical properties name sides of the screen. Logical properties name sides of the *text*. Only one of them survives a direction change.
+
+| Physical | Logical |
+|---|---|
+| `margin-left` | `margin-inline-start` |
+| `padding-right` | `padding-inline-end` |
+| `border-left` | `border-inline-start` |
+| `left: 0` | `inset-inline-start: 0` |
+| `text-align: left` | `text-align: start` |
+| `border-top-left-radius` | `border-start-start-radius` |
+
+Flexbox and grid already follow direction. A row starts on the right in an RTL page without any change. Most broken layouts come from a physical margin left inside a logical container.
+
+Try it. Compare the two styles, then switch the direction:
+
+```embed
+rtl-playground
+```
+
+If you use Tailwind, the same idea is `ms-*`, `me-*`, `ps-*`, `pe-*`, `start-*` and `end-*`. Adding a lint rule against the physical versions is cheaper than a review comment on every pull request.
+
+## Text has its own direction
+
+The Unicode [bidirectional algorithm](https://www.unicode.org/reports/tr9/) decides the order of mixed text. Letters have a strong direction. Punctuation, spaces and slashes are neutral and take their direction from their neighbours. That's why a path like `/data/2026/report (final).csv` falls apart inside a Persian sentence: its slashes and brackets get adopted by the Persian text around them.
+
+The fix is isolation. Tell the algorithm that a run of text is an island:
+
+```html
+<!-- direction known -->
+<bdi dir="ltr">/data/2026/report (final).csv</bdi>
+
+<!-- direction unknown: user names, titles, search terms -->
+<bdi>{userName}</bdi>
+<p dir="auto">{comment}</p>
+```
+
+In a data product, isolate these by default: column names, SQL, file paths, URLs, email addresses, versions and keyboard shortcuts. Code blocks and terminals stay left-to-right inside a right-to-left page. Set `dir="ltr"` on them.
+
+For form fields, `dir="auto"` follows whatever the user types. An email field should be `dir="ltr"` always, even when its label is Persian.
+
+## Not everything mirrors
+
+| Mirror | Don't mirror |
+|---|---|
+| Back and forward arrows | Play and pause |
+| Breadcrumb separators | Clocks and circular progress |
+| Progress bars, sliders | Logos |
+| Indentation, tree views | Charts with a time axis (ask your users) |
+| Send icon | Checkmarks, search |
+
+A direction variant keeps this in one place:
+
+```css
+[dir="rtl"] .icon-directional {
+  transform: scaleX(-1);
+}
+```
+
+Use `scaleX(-1)` rather than `rotate(180deg)` for anything asymmetric. A rotated paper-plane icon is upside down.
+
+## Transforms don't know about direction
+
+Logical properties cover layout, not transforms. `translateX(20px)` moves right in every language, so a drawer that slides in from the start needs a sign:
+
+```css
+.drawer { --dir: 1; transform: translateX(calc(-100% * var(--dir))); }
+[dir="rtl"] .drawer { --dir: -1; }
+```
+
+The same goes for scroll positions in JavaScript. In RTL containers `scrollLeft` starts at 0 and becomes *negative*. Carousel code with `scrollLeft += width` needs the same sign.
+
+## Fonts and spacing
+
+Persian and Arabic letters join. Negative letter-spacing, popular for large headings, breaks the joins and looks like a rendering bug. On this site one rule prevents it:
+
+```css
+html[lang="fa"] body *:not(:lang(en)):not([dir="ltr"]) {
+  letter-spacing: 0 !important;
+}
+```
+
+Also check line height. Arabic-script letters have tall marks and deep descenders, and a heading set at `line-height: 1` will clip them. `text-transform: uppercase` does nothing in these scripts, so a design that relies on capitals for hierarchy needs another signal.
+
+## Numbers, dates and plurals
+
+Digits are a locale choice. Let the platform make it:
+
+```js
+new Intl.NumberFormat("fa-IR").format(15859);  // ۱۵٬۸۵۹
+new Intl.DateTimeFormat("fa-IR").format(date); // Solar Hijri calendar
+```
+
+Decide where *not* to localize. Identifiers, version numbers and code should keep Latin digits, because people copy them.
+
+Never assemble sentences from fragments. `"Page " + n + " of " + total` can't be reordered by a translator. Use one string with placeholders.
+
+## Test it like a layout, not like a translation
+
+- **Screenshots in both directions** for each component. Most bugs are visible at a glance.
+- **Pseudo-RTL in English.** Set `dir="rtl"` on the English build. You find layout bugs before any translation exists.
+- **Mixed content.** Test with a Persian sentence that contains a path, a number and an English product name.
+- **Keyboard.** In a right-to-left tab list, the left arrow goes to the next tab.
+
+On this site, the same automated tests check pages in both languages for horizontal overflow and accessibility problems.
+
+## Conclusion
+
+If the layout is written in terms of start and end, RTL is mostly a configuration value. If it's written in terms of left and right, RTL is a rewrite. The choice is made long before anyone asks for a second language.
+
+Further reading: [MDN on logical properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Logical_properties_and_values), the [W3C's guide to inline bidi markup](https://www.w3.org/International/articles/inline-bidi-markup/), and [Translating forms generated from JSON Schema](/blog/translating-json-schema-forms/).

@@ -1,42 +1,130 @@
 ---
-title: "Next.js Best Practices for Building Scalable Applications"
-description: "Learn the essential best practices for building production-ready Next.js applications that scale well and remain maintainable."
+title: "Shipping a Static Next.js Site: Seven Things the Docs Won't Warn You About"
+description: "Metadata that silently disappears, two root layouts, social images without extensions, icons paid for twice. Lessons from rebuilding this bilingual site with Next.js 16 and static export."
 date: "2024-12-15"
-tags: ["Next.js", "React", "Web Development"]
+updated: "2026-11-24"
+tags: ["Next.js", "React", "Performance"]
 ---
 
-## Introduction
+## The setup
 
-Next.js has become one of the most popular frameworks for building React applications. Its powerful features like server-side rendering, static generation, and API routes make it an excellent choice for building scalable web applications.
+This site is a Next.js 16 App Router project with `output: "export"`. The build produces plain files for GitHub Pages: no server, no edge functions, no image optimizer. It has two languages, a blog and a set of case studies.
 
-## 1. Use the App Router
+```embed
+export-pipeline
+```
 
-Next.js 13+ introduced the App Router, which provides a more intuitive way to organize your application. Use the `app/` directory for new projects.
+Static export is a great fit for content sites. These are the things that surprised me.
 
-## 2. Leverage Server Components
+## 1. Metadata is replaced, not merged
 
-By default, components in the App Router are Server Components. This means they run on the server and reduce the JavaScript sent to the client.
+A layout sets a default social image. A page sets its own title for sharing:
 
-## 3. Optimize Images
+```ts title="app/blog/[slug]/page.tsx"
+export async function generateMetadata() {
+  return {
+    openGraph: { title: "My article", type: "article" },
+  };
+}
+```
 
-Use the `next/image` component for automatic image optimization. It provides lazy loading, responsive images, and WebP format support.
+The page now has *no* image. Next.js merges metadata shallowly: the page's `openGraph` object [replaces](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#merging) the layout's. The same goes for `alternates`, so one article-specific canonical URL also removed the RSS link from every article here. Nothing warns you, and the page looks perfect until someone shares it.
 
-## 4. Implement Proper Caching
+The inverse hurts too. Pages that *don't* set `alternates` inherit it. The blog index was telling search engines that its canonical URL was the homepage.
 
-Next.js provides multiple caching strategies. Use `generateStaticParams` for static generation and ISR for dynamic content that needs periodic updates.
+The fix is one function that builds complete metadata, used by every page:
 
-## 5. Use TypeScript
+```ts title="lib/seo.ts"
+export function pageMetadata({ locale, path, title, description, image }: Input): Metadata {
+  const url = absoluteUrl(localePath(locale, path));
+  return {
+    title,
+    description,
+    alternates: { canonical: url, languages: alternatesFor(path), types: rssFor(locale) },
+    openGraph: { title, description, url, images: [image] },
+    twitter: { card: "summary_large_image", title, description, images: [image] },
+  };
+}
+```
 
-TypeScript provides type safety and better developer experience. Always use TypeScript in your Next.js projects.
+## 2. Two languages want two root layouts
 
-## 6. Environment Variables
+`lang` and `dir` belong on `<html>`, and only a root layout renders it. Route groups allow several:
 
-Use `.env.local` for local development and `.env.production` for production. Prefix client-side variables with `NEXT_PUBLIC_`.
+```text
+app/
+  (en)/layout.tsx        → <html lang="en" dir="ltr">
+  (en)/blog/page.tsx     → /blog/
+  (fa)/layout.tsx        → <html lang="fa" dir="rtl">
+  (fa)/fa/blog/page.tsx  → /fa/blog/
+```
 
-## 7. Error Handling
+Both layouts are five lines around a shared component. Two consequences to plan for:
 
-Implement proper error boundaries and custom error pages. Use the `error.js` and `not-found.js` files in the App Router.
+- Navigating between them is a full page load, so use a plain `<a>` for the language switch.
+- There is no single layout for the 404 page. You need `global-not-found.tsx`, which is [behind a flag](https://nextjs.org/docs/app/api-reference/file-conventions/not-found) in Next.js 16.
 
-## Conclusion
+## 3. Don't use `opengraph-image.tsx` with static export
 
-Following these best practices will help you build scalable, maintainable Next.js applications that perform well in production.
+The file convention produces a file called `opengraph-image`, without an extension. A static host picks the content type from the extension, so it can't know it's a PNG. A route handler gives you control over the name:
+
+```ts title="app/og/[kind]/[file]/route.tsx" {3}
+export const dynamic = "force-static";
+
+export const generateStaticParams = () => posts.map((p) => ({ kind: "blog", file: `${p.slug}.png` }));
+
+export async function GET(_: Request, { params }: Context) {
+  const { file } = await params;
+  return new ImageResponse(<Card post={find(file)} />, { width: 1200, height: 630 });
+}
+```
+
+## 4. Server components are paid for twice
+
+A server component adds no JavaScript. Its output still travels twice: as HTML, and again inside the React payload that hydration needs.
+
+For text that compresses well, it hardly matters. For inline SVG it does. About thirty brand icons pushed the homepage from 40 to 78 KB of compressed HTML. Moving them into one external sprite brought it back:
+
+```tsx
+<svg aria-hidden width={16} height={16}>
+  <use href="/brand-icons.svg#react" />
+</svg>
+```
+
+## 5. Pass server-rendered nodes into client components
+
+The blog index filters cards in the browser. That doesn't mean the cards must be client components. The server renders them, and the client decides which to show:
+
+```tsx {4}
+<BlogFilter
+  items={posts.map((post) => ({
+    search: post.title.toLowerCase(),
+    card: <PostCard post={post} />, // rendered on the server
+  }))}
+/>
+```
+
+More on this in [the mental model for server components](/blog/react-server-components-mental-model/).
+
+## 6. Check what your bundler merges
+
+I used `next/font` in both layouts, one font per language. The build merged their CSS into one chunk, and preloading works per chunk. Every English page preloaded the Persian fonts, and the other way around.
+
+Nothing in the code looked wrong. The network panel showed it immediately. I ended up hosting the fonts myself, with an explicit preload per language. The [longer version](/blog/less-javascript-same-blocking-time/) includes the wrong fix I tried first.
+
+## 7. Test the output, not the app
+
+With static export, the `out` folder *is* the product. So test that: serve it the way the host does, and check files directly.
+
+```ts title="tests/seo.spec.ts"
+test("sitemap lists existing canonical URLs only", () => {
+  const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(([, url]) => url);
+  expect(urls.sort()).toEqual(htmlFiles.map((f) => `${SITE}${f.path}`).sort());
+});
+```
+
+Similar tests check that every internal link and anchor resolves, that each page has an existing social image, and that language links point back at each other. They run in seconds and need no browser.
+
+## What I would choose again
+
+Static export, server components by default, a single metadata function, and tests on the output. The framework is good at this. The surprises all come from the same place: *conventions do something on your behalf, and you only see the result in the build.* Look at the build.

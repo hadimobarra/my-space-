@@ -1,0 +1,106 @@
+---
+title: "I Cut This Site's JavaScript by 45%, and Blocking Time Didn't Move"
+description: "Removing 127 KB of JavaScript halved the time to largest paint and did almost nothing for Total Blocking Time. What I measured, what I ruled out, and a font mistake that CI caught."
+date: "2026-11-24"
+tags: ["Performance", "Next.js", "Core Web Vitals"]
+---
+
+## The plan that should have worked
+
+The previous version of this site shipped 282 KB of gzipped JavaScript on the homepage. Every section was a client component, because each used an animation library and an i18n library. The plan was obvious: move to server components, animate with CSS, ship less.
+
+It worked, partly. Here are the numbers, all from GitHub Pages with Lighthouse's mobile preset on the same machine, three runs before and eight after:
+
+| Homepage | Before | After |
+|---|---|---|
+| JavaScript, gzipped | 282 KB | 155 KB |
+| Performance score | 67–72 | 79–93 |
+| Largest Contentful Paint | 4.2–4.3 s | 1.7–2.7 s |
+| Total Blocking Time | 400–680 ms | 280–700 ms |
+
+Look at the last row. With 127 KB less JavaScript, you would expect it to fall the most.
+
+## What was removed
+
+- **The animation library.** Reveal effects are now [scroll-driven CSS animations](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Scroll-driven_animations).
+- **The translation runtime.** Text is resolved while the page is built.
+- **State and toast libraries.** What was left needed `useState`.
+- **Hydration of static sections.** Cards and lists are plain HTML.
+
+```css title="globals.css"
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 0px entry 200px;
+  }
+}
+```
+
+Content is visible by default and the animation is added on top. The old page started at `opacity: 0` and waited for scripts. That is why LCP improved so much: the text no longer depends on JavaScript to appear.
+
+## Why blocking time stayed
+
+Total Blocking Time adds up the part of each long task beyond 50 ms. It doesn't care how many kilobytes were sent, only how long the main thread was busy at a stretch. So I profiled a local build with a four-times CPU slowdown.
+
+The first suspects were decorative: large blurs, backdrop filters, a noise texture, endless animations. I switched each off in turn and measured again:
+
+| Variant | Blocking time |
+|---|---|
+| Baseline | 534 ms |
+| No reveal animations | 555 ms |
+| No backdrop filters | 600 ms |
+| No blurred shapes | 557 ms |
+| No noise or masks | 521 ms |
+| No infinite animations | 719 ms |
+| `content-visibility` on sections | 520 ms |
+
+Each is an average of three runs. Nothing got clearly faster. The one outlier got slower, because it spent longer recalculating styles, most likely due to the rule I injected for the test. The effects that looked expensive cost almost nothing here.
+
+The long tasks were these:
+
+1. **The first style and layout of a long page.** Nine sections with many cards is a big tree.
+2. **Starting React and hydrating.** This is mostly the framework's own cost, and it's the same with two islands or twelve.
+
+Neither is proportional to the code I removed.
+
+> Bytes and blocking are different budgets. Removing code buys you download and parse time. It buys main-thread time only if that code was in the long tasks.
+
+## The font mistake
+
+Along the way I found that every page preloaded the fonts of both languages, about 110 KB. The bundler had merged the CSS of two layouts. I turned preloading off, and my scores went up:
+
+```ts
+const sans = Geist({ subsets: ["latin"], preload: false });
+```
+
+Then Lighthouse failed in CI, with a layout shift of 0.14 on a site that had none on my machine. The size-adjusted fallback is based on Arial. My machine has a match for it; the CI runner evidently doesn't, and neither does an Android phone. There, the text moved when the real font arrived.
+
+The real fix was to host the fonts myself, preload only the page's own language, and use `font-display: optional`, which never swaps after the first paint. Layout shift went back to zero, and stayed there.
+
+Loosening the check would have been one number in a config file. It would also have shipped a regression to every phone without that font.
+
+## Then I shortened the page
+
+Less to lay out should attack the largest task directly. So I trimmed the homepage from 1,273 to 1,005 elements, a fifth of the page, and compared old and new builds on a local server, alternating between them, five runs each:
+
+| | Blocking time, five runs | Median |
+|---|---|---|
+| 1,273 elements | 73, 122, 125, 131, 187 ms | 125 ms |
+| 1,005 elements | 86, 127, 134, 148, 246 ms | 134 ms |
+
+No difference. A second reasonable theory, and a second one the numbers didn't support. The page is smaller, which is fine, but it isn't faster in this metric.
+
+## What I would do next
+
+- **Delay hydration** of islands far below the fold, since starting the framework is what remains.
+- **Measure real users.** Lab numbers on one laptop swing widely: eight runs of the same page gave 280 to 700 ms.
+
+## What I'd tell someone starting the same work
+
+1. Write down the metric you expect to move, before you change anything.
+2. Profile first. I removed the right code for LCP and not the code behind TBT.
+3. Run each measurement several times and publish the range. A single good run is an anecdote.
+4. Keep the check that embarrasses you.
+
+Related: [Taming INP](/blog/taming-inp-interaction-to-next-paint/), [A performance workflow that survives real users](/blog/frontend-performance/) and the [case study of this site](/projects/this-website/).

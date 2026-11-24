@@ -6,10 +6,11 @@ import { clsx } from "clsx";
 import { useTheme } from "next-themes";
 import { Briefcase, CornerDownLeft, FileText, Github, Hash, Languages, Linkedin, Mail, Moon, Search, type LucideIcon } from "lucide-react";
 import { localePath, switchLocalePath, type Locale } from "@/lib/locale";
+import { useSiteSearch } from "@/components/shared/use-site-search";
 import { siteConfig } from "@/lib/site";
 
 interface Item {
-  slug: string;
+  href: string;
   title: string;
 }
 
@@ -21,13 +22,15 @@ export interface CommandMenuProps {
     toggleLanguage: string;
     allPosts: string;
     empty: string;
+    inArticles: string;
     navigate: string;
     select: string;
     groups: { navigation: string; articles: string; actions: string; projects: string };
-    nav: { about: string; projects: string; experience: string; skills: string; blog: string; contact: string; resume: string };
+    nav: { about: string; projects: string; experience: string; skills: string; blog: string; contact: string; resume: string; now: string };
   };
   posts: Item[];
   projects: Item[];
+  translatedPosts: string[];
   onClose: () => void;
 }
 
@@ -39,7 +42,7 @@ interface Command {
   run: () => void;
 }
 
-export function CommandMenu({ locale, labels, posts, projects, onClose }: CommandMenuProps) {
+export function CommandMenu({ locale, labels, posts, projects, translatedPosts, onClose }: CommandMenuProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { resolvedTheme, setTheme } = useTheme();
@@ -58,6 +61,9 @@ export function CommandMenu({ locale, labels, posts, projects, onClose }: Comman
   const commands = useMemo<Command[]>(() => {
     const { groups, nav } = labels;
     const go = (path: string) => () => router.push(localePath(locale, path));
+    const visit = (href: string) =>
+      // The other language has its own root layout, so it needs a full page load.
+      href.startsWith("/fa/") === (locale === "fa") ? router.push(href) : window.location.assign(href);
     const section = (id: "about" | "projects" | "experience" | "skills" | "contact"): Command => ({
       id, label: nav[id], group: groups.navigation, icon: Hash, run: go(`/#${id}`),
     });
@@ -68,23 +74,32 @@ export function CommandMenu({ locale, labels, posts, projects, onClose }: Comman
       section("skills"),
       { id: "resume", label: nav.resume, group: groups.navigation, icon: FileText, run: go("/resume/") },
       { id: "blog", label: labels.allPosts, group: groups.navigation, icon: FileText, run: go("/blog/") },
+      { id: "now", label: nav.now, group: groups.navigation, icon: FileText, run: go("/now/") },
       section("contact"),
-      ...projects.map((p) => ({ id: `c-${p.slug}`, label: p.title, group: groups.projects, icon: Briefcase, run: go(`/projects/${p.slug}/`) })),
+      ...projects.map((p) => ({ id: p.href, label: p.title, group: groups.projects, icon: Briefcase, run: () => router.push(p.href) })),
       ...posts.map((p) => ({
-        id: `p-${p.slug}`, label: p.title, group: groups.articles, icon: FileText,
-        // Articles exist in English only
-        run: () => (locale === "en" ? router.push(`/blog/${p.slug}/`) : window.location.assign(`/blog/${p.slug}/`)),
+        id: p.href, label: p.title, group: groups.articles, icon: FileText, run: () => visit(p.href),
       })),
       { id: "theme", label: labels.toggleTheme, group: groups.actions, icon: Moon, run: () => setTheme(resolvedTheme === "dark" ? "light" : "dark") },
-      { id: "lang", label: labels.toggleLanguage, group: groups.actions, icon: Languages, run: () => window.location.assign(switchLocalePath(pathname).href) },
+      { id: "lang", label: labels.toggleLanguage, group: groups.actions, icon: Languages, run: () => window.location.assign(switchLocalePath(pathname, translatedPosts).href) },
       { id: "gh", label: "GitHub", group: groups.actions, icon: Github, run: () => window.open(siteConfig.links.github, "_blank", "noopener") },
       { id: "li", label: "LinkedIn", group: groups.actions, icon: Linkedin, run: () => window.open(siteConfig.links.linkedin, "_blank", "noopener") },
       { id: "mail", label: siteConfig.links.email, group: groups.actions, icon: Mail, run: () => window.location.assign(`mailto:${siteConfig.links.email}`) },
     ];
-  }, [labels, locale, pathname, posts, projects, resolvedTheme, router, setTheme]);
+  }, [labels, locale, pathname, posts, projects, resolvedTheme, router, setTheme, translatedPosts]);
 
   const q = query.trim().toLowerCase();
-  const filtered = q ? commands.filter((c) => `${c.label} ${c.group}`.toLowerCase().includes(q)) : commands;
+  const matches = q ? commands.filter((c) => `${c.label} ${c.group}`.toLowerCase().includes(q)) : commands;
+
+  // Full-text hits for pages the titles didn't already match
+  const hits = useSiteSearch(query, 6);
+  const listed = new Set(matches.map((c) => c.id));
+  const filtered: Command[] = [
+    ...matches,
+    ...hits
+      .filter((hit) => !listed.has(hit.url))
+      .map((hit) => ({ id: hit.url, label: hit.title, group: labels.inArticles, icon: Search, run: () => window.location.assign(hit.url) })),
+  ];
 
   const run = (command?: Command) => {
     if (!command) return;

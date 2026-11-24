@@ -2,7 +2,8 @@
 title: "Async Iterators, Generators and Web Streams in Practice"
 description: "Process data incrementally instead of all at once. A practical tour of generators, async iteration, backpressure, and the Web Streams API — with examples for paginated APIs, streaming fetch responses and LLM-style token streams."
 date: "2026-01-26"
-tags: ["JavaScript", "Async", "Streams"]
+updated: "2026-11-24"
+tags: ["JavaScript", "Browser Internals"]
 ---
 
 ## Why incremental processing matters
@@ -159,6 +160,10 @@ function useStreamedText(url, body) {
 
 `AbortController` is the cancellation signal for the whole pipeline: aborting the fetch cancels the stream, which ends the `for await` loop.
 
+```embed
+stream-pipeline
+```
+
 ## Producing streams
 
 You can create streams from any source, including an async generator:
@@ -210,3 +215,11 @@ export async function GET() {
 ## Conclusion
 
 When you model data as a sequence over time, users see the first result sooner, memory stays flat regardless of input size, and cancellation works naturally. Generators make sequences easy to write, async iteration makes them easy to consume, and Web Streams connect them to the network on every modern JavaScript runtime.
+
+## Further reading
+
+- [Streams API on MDN](https://developer.mozilla.org/en-US/docs/Web/API/Streams_API)
+- [for await...of on MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of)
+- [Streams Standard](https://streams.spec.whatwg.org/)
+- [Resumable uploads: what happens when the connection drops](/blog/resumable-uploads-tus/)
+- [Inside the JavaScript event loop](/blog/javascript-event-loop-deep-dive/)

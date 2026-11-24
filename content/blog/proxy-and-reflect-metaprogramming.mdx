@@ -2,7 +2,8 @@
 title: "Metaprogramming in JavaScript with Proxy and Reflect"
 description: "Intercept property access, validation, and function calls with Proxy traps. Learn the invariants, the role of Reflect and receivers, and build a tiny reactive store, a validation layer and a negative-index array."
 date: "2026-08-18"
-tags: ["JavaScript", "Metaprogramming", "Advanced"]
+updated: "2026-11-24"
+tags: ["JavaScript", "Architecture"]
 ---
 
 ## What a Proxy actually is
@@ -23,6 +24,10 @@ proxy.greeting; // logs "read greeting", returns "hello"
 ```
 
 That's the whole API surface. The interesting part is using it correctly.
+
+```embed
+proxy-trap
+```
 
 ## Why you should always forward with `Reflect`
 
@@ -199,3 +204,10 @@ p.inc(); // TypeError: Cannot read private member #count
 ## Conclusion
 
 Use `Reflect` to forward every trap with its receiver, respect the invariants, and keep proxies out of hot paths. Follow those rules and proxies give you validation layers, observable state, API versioning shims and sandboxing without changing the code that uses the object.
+
+## Further reading
+
+- [Proxy on MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy)
+- [Reflect on MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect)
+- [Vue: Reactivity in depth](https://vuejs.org/guide/extras/reactivity-in-depth)
+- [Build signals from scratch](/blog/build-signals-from-scratch/)
