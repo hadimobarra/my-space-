@@ -12,7 +12,7 @@ const copy = {
 };
 
 const icons = { yes: Check, partly: Minus, no: X, unknown: HelpCircle };
-const colors = { yes: "text-accent", partly: "text-amber-700 dark:text-amber-400", no: "text-rose-700 dark:text-rose-400", unknown: "text-muted" };
+const colors = { yes: "text-[#046c4e] dark:text-accent", partly: "text-amber-700 dark:text-amber-400", no: "text-rose-700 dark:text-rose-400", unknown: "text-muted" };
 
 export const rtlMetadata = (locale: Locale) => pageMetadata({ locale, path: "/rtl/", title: copy[locale].title, description: copy[locale].description });
 
