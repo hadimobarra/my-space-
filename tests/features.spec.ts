@@ -63,9 +63,9 @@ test("working hours are shown in the visitor's time zone", async ({ browser, bas
   await context.close();
 });
 
-test("upload demo resumes from the server's offset after a dropped connection", async ({ page }) => {
+test("upload demo resumes from the server's offset after a dropped connection", async ({ page, baseURL }) => {
   const outside: string[] = [];
-  page.on("request", (r) => new URL(r.url()).hostname !== "127.0.0.1" && !r.url().startsWith("blob:") && outside.push(r.url()));
+  page.on("request", (r) => new URL(r.url()).origin !== new URL(baseURL!).origin && !r.url().startsWith("blob:") && outside.push(r.url()));
 
   await page.goto("/projects/resumable-uploads/", { waitUntil: "networkidle" });
   await page.getByRole("button", { name: "Start the demo" }).click();
