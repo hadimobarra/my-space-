@@ -29,9 +29,28 @@ export function Footer({ locale }: { locale: Locale }) {
       links: [
         { label: t.footer.allArticles, href: to("/blog/") },
         { label: t.footer.resume, href: to("/resume/") },
-        { label: t.nav.now, href: to("/now/") },
+        { label: t.nav.notes, href: to("/notes/") },
         { label: "RSS", href: to("/rss.xml"), external: true },
         { label: t.footer.source, href: siteConfig.links.source, external: true },
+      ],
+    },
+    {
+      title: t.nav.more,
+      links: [
+        { label: t.nav.hire, href: to("/hire/") },
+        { label: t.nav.catalog, href: to("/catalog/") },
+        { label: t.nav.fit, href: to("/fit/") },
+        { label: t.nav.corrections, href: to("/corrections/") },
+        { label: t.nav.ai, href: to("/ai/") },
+      ],
+    },
+    {
+      title: t.nav.now,
+      links: [
+        { label: t.nav.now, href: to("/now/") },
+        { label: t.nav.questions, href: to("/questions/") },
+        { label: t.nav.weeks, href: to("/weeks/") },
+        { label: t.nav.glossary, href: to("/glossary/") },
       ],
     },
   ];
@@ -44,7 +63,7 @@ export function Footer({ locale }: { locale: Locale }) {
       </div>
 
       <div className="container-wide section-padding pt-20 pb-10">
-        <div className="grid lg:grid-cols-[1.5fr_1fr_1fr] gap-12 mb-16">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr_1fr] gap-x-8 gap-y-12 mb-16">
           <div>
             <p className="text-3xl md:text-4xl font-bold tracking-tight mb-4 max-w-md">
               {t.footer.ctaTitle} <span className="gradient-text">{t.footer.ctaHighlight}</span>
