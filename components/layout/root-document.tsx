@@ -12,13 +12,19 @@ import { getAllPostMeta } from "@/lib/mdx";
 import { getProjects } from "@/lib/projects";
 import { personJsonLd, websiteJsonLd } from "@/lib/seo";
 
+const fonts: Record<Locale, string[]> = { en: ["geist-latin"], fa: ["vazirmatn-arabic", "vazirmatn-latin"] };
+
 /** The <html> shell shared by the English and Persian root layouts. */
-export function RootDocument({ locale, fontClassName, children }: { locale: Locale; fontClassName: string; children: ReactNode }) {
+export function RootDocument({ locale, children }: { locale: Locale; children: ReactNode }) {
   const t = getDictionary(locale);
 
   return (
-    <html lang={locale} dir={localeConfig[locale].dir} suppressHydrationWarning className={fontClassName}>
+    <html lang={locale} dir={localeConfig[locale].dir} suppressHydrationWarning>
       <body id="top" className="min-h-screen flex flex-col antialiased">
+        {/* React moves these to <head>. */}
+        {fonts[locale].map((font) => (
+          <link key={font} rel="preload" href={`/fonts/${font}.woff2`} as="font" type="font/woff2" crossOrigin="anonymous" />
+        ))}
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           <a href="#main" className="skip-link">
             {t.nav.skipToContent}
