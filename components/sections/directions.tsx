@@ -1,11 +1,12 @@
+import Link from "next/link";
 import { ChevronRight, Database, User } from "lucide-react";
 import { SectionWrapper } from "@/components/shared/section-wrapper";
 import { TwoDirections } from "@/components/site/two-directions";
-import { localeConfig, type Locale } from "@/lib/locale";
+import { localeConfig, localePath, type Locale } from "@/lib/locale";
 
 const copy = {
-  en: { eyebrow: "English ⇆ فارسی", title: "One interface, two directions", subtitle: "Drag the handle. Same component, same CSS: only the language and direction change.", label: "Compare the English and Persian versions" },
-  fa: { eyebrow: "فارسی ⇆ English", title: "یک رابط، دو جهت", subtitle: "دستگیره را بکشید. همان کامپوننت و همان CSS؛ فقط زبان و جهت عوض می‌شود.", label: "مقایسه نسخه فارسی و انگلیسی" },
+  en: { eyebrow: "English ⇆ فارسی", title: "One interface, two directions", subtitle: "Drag the handle. Same component, same CSS: only the language and direction change.", label: "Compare the English and Persian versions", link: "How do real data tools do it? See the RTL report card" },
+  fa: { eyebrow: "فارسی ⇆ English", title: "یک رابط، دو جهت", subtitle: "دستگیره را بکشید. همان کامپوننت و همان CSS؛ فقط زبان و جهت عوض می‌شود.", label: "مقایسه نسخه فارسی و انگلیسی", link: "ابزارهای واقعی داده چگونه‌اند؟ کارنامه راست‌به‌چپ" },
 };
 
 const sample = {
@@ -50,6 +51,7 @@ export function Directions({ locale }: { locale: Locale }) {
   return (
     <SectionWrapper id="directions" eyebrow={t.eyebrow} title={t.title} subtitle={t.subtitle} className="bg-surface/60">
       <div className="max-w-4xl mx-auto"><TwoDirections label={t.label} left={<Panel locale="en" />} right={<Panel locale="fa" />} /></div>
+      <p className="text-center mt-8"><Link href={localePath(locale, "/rtl/")} className="font-semibold text-primary underline underline-offset-4">{t.link}</Link></p>
     </SectionWrapper>
   );
 }

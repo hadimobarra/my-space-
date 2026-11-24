@@ -20,7 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...getProjectSlugs().map((slug) => ({ path: `/projects/${slug}/`, priority: 0.8 })),
     { path: "/blog/", priority: 0.8, lastModified: newestPost },
     { path: "/resume/", priority: 0.7 },
-    ...["hire", "catalog", "notes", "fit", "glossary", "corrections", "ai", "questions", "weeks", "now"].map((p) => ({ path: `/${p}/`, priority: 0.5 })),
+    ...["rtl", "hire", "catalog", "notes", "fit", "glossary", "corrections", "ai", "questions", "weeks", "now"].map((p) => ({ path: `/${p}/`, priority: 0.5 })),
   ];
 
   return [

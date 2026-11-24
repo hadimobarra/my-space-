@@ -9,7 +9,7 @@ import { localePath, switchLocalePath, type Locale } from "@/lib/locale";
 import { useSiteSearch } from "@/components/shared/use-site-search";
 import { siteConfig } from "@/lib/site";
 
-const EXTRA = ["now", "notes", "catalog", "fit", "hire", "corrections", "ai", "glossary", "questions", "weeks"] as const;
+const EXTRA = ["rtl", "now", "notes", "catalog", "fit", "hire", "corrections", "ai", "glossary", "questions", "weeks"] as const;
 
 interface Item {
   href: string;

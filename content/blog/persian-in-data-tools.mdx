@@ -1,0 +1,50 @@
+---
+title: "What Persian Users See in Two Open-Source Data Tools"
+description: "I ran Apache Superset and OpenMetadata in Persian and measured what changed. The layout doesn't turn around, some translations mean something else, and one language code may explain the strangest results."
+date: "2026-11-24"
+tags: ["RTL & i18n", "Data Platforms", "Open Source"]
+---
+
+## Two tools, one question
+
+More than two billion people use Arabic-script languages, according to [a recent study of chart tools](https://kclpure.kcl.ac.uk/ws/files/383439862/2026_VIS_RTL_Interviews_tools_revised_-2.pdf). It tested seven tools, and none of them was Apache Superset or OpenMetadata, the two I contribute to. So I ran both in Persian, with a small Persian dataset, and measured what happened. The [report card](/rtl/) has every result and screenshot.
+
+## The layout doesn't turn around
+
+After switching to Persian, neither Superset 6.1.0 nor OpenMetadata 1.12.14 set a direction on the page. The navigation stayed on the left. Every Persian text sat in a left-to-right container, which shows in small ways: the full stop moves to the wrong end of a sentence, and a long title loses its *first* letters instead of its last.
+
+This is known. Superset's [RTL issue](https://github.com/apache/superset/issues/25258) is closed as mostly done, and a [pull request](https://github.com/apache/superset/pull/34629) that aimed to finish it was closed unmerged after the theme code it depended on had changed several times. OpenMetadata fixed a [direction regression](https://github.com/open-metadata/OpenMetadata/issues/37397) this month, after the version I tested.
+
+## Translated isn't the same as correct
+
+Superset's Persian file has 5,957 entries. 2,473 of them are marked *fuzzy*, which means unreviewed: 1,569 come from a machine translation that says so in a comment, and 904 were guessed from similar sentences. Release 6.1.0 includes fuzzy entries when it builds translations. The guesses can be far off:
+
+| English | What the Persian says |
+|---|---|
+| Enter the user's password | Enter the alert name |
+| The password reset was successful | This dashboard was saved successfully |
+| (Removed) | Dear assistant, your task doesn't contain any text for translation |
+
+The last one isn't fuzzy. It's a reply from a chatbot, saved as a translation.
+
+## A language code that may explain a mystery
+
+OpenMetadata's Persian file contains Spanish ("Acción requerida"), Portuguese ("Salvar alterações"), Turkish, Pashto, Arabic and, in a few places, pirate English:
+
+> Shiver me timbers! Error fetchin' the treasures…
+
+These are checked against the file as it was on 24 November 2026. The file is called `pr-pr.json`. The code for Persian is `fa`. My guess, and it is a guess, is that tools filling in missing strings read `pr-PR` as Puerto Rico, as Portuguese, or as pirate. Of its 7,243 entries, 188 contain no Persian, and 322 are identical to English.
+
+## How to check your own project
+
+1. **Use standard codes.** `fa`, `ar`, `he`. Tools make decisions based on them.
+2. **Set `lang` and `dir` on the document** when the language changes.
+3. **Look for one translation shared by several sources.** In Superset, that found 461 entries worth reading.
+4. **Check the script.** A Persian file should contain Persian letters.
+5. **Don't ship what's marked unreviewed**, or show which strings are.
+
+The [scripts](https://github.com/hadimobarra/my-space-/tree/main/rtl-report) need only Python and a browser.
+
+## What this is not
+
+It's a pilot: two tools, desktop only, default settings, no keyboard or screen reader testing. Both projects are free, and both have accepted fixes from me. If you work on either one, the review lists are there to use.
