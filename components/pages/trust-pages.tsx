@@ -120,13 +120,13 @@ export function CorrectionsPage({ locale }: { locale: Locale }) {
 const aiCopy = {
   en: { title: "How I use AI", description: "Which parts of this site an AI assistant worked on, and how that is checked.", intro: "Trust is easier when you know how something was made.",
     sections: [
-      ["What AI did", ["An AI assistant, Claude, co-wrote the code of this site. The commit history says so, commit by commit.", "It also drafted the articles and case studies published so far, from my pull requests, my résumé and measurements.", "It helped with translations between English and Persian."]],
+      ["What AI did", ["An AI assistant, Claude, co-wrote the code of this site.", "It also drafted the articles and case studies published so far, from my pull requests, my résumé and measurements.", "It helped with translations between English and Persian."]],
       ["How it's checked", ["Technical claims link to sources: pull requests, issues, specifications and test results.", "Numbers are measured, with the method next to them. Wrong ones are listed under Corrections.", "Automated tests run before every deploy, including tests of the demos the articles rely on."]],
       ["What it doesn't do", ["It doesn't invent experience, employers, numbers or recommendations.", "The recommendations on the homepage were written by the people who signed them.", "Nothing you type into the job-fit checker or the search is sent to an AI, or anywhere else."]],
     ] as [string, string[]][], own: "Articles rewritten in my own words", none: "None yet. They will be listed here.", history: "Commit history", corrections: "Corrections" },
   fa: { title: "استفاده من از هوش مصنوعی", description: "کدام بخش‌های این سایت با دستیار هوش مصنوعی ساخته شده و چگونه بررسی می‌شود.", intro: "وقتی بدانید چیزی چگونه ساخته شده، اعتماد آسان‌تر است.",
     sections: [
-      ["کاری که هوش مصنوعی کرد", ["دستیار هوش مصنوعی Claude در نوشتن کد این سایت مشارکت داشته است؛ تاریخچه کامیت‌ها این را ثبت کرده.", "مقاله‌ها و مطالعات موردی منتشرشده تا امروز را نیز از روی درخواست‌های ادغام، رزومه و اندازه‌گیری‌های من پیش‌نویس کرده است.", "در ترجمه بین انگلیسی و فارسی کمک کرده است."]],
+      ["کاری که هوش مصنوعی کرد", ["دستیار هوش مصنوعی Claude در نوشتن کد این سایت مشارکت داشته است.", "مقاله‌ها و مطالعات موردی منتشرشده تا امروز را نیز از روی درخواست‌های ادغام، رزومه و اندازه‌گیری‌های من پیش‌نویس کرده است.", "در ترجمه بین انگلیسی و فارسی کمک کرده است."]],
       ["چگونه بررسی می‌شود", ["ادعاهای فنی به منبع پیوند دارند: درخواست ادغام، ایشو، مشخصات فنی و نتیجه تست.", "اعداد اندازه‌گیری شده‌اند و روش کنارشان آمده است. موارد نادرست در صفحه اصلاحات فهرست می‌شوند.", "پیش از هر انتشار تست‌های خودکار اجرا می‌شوند، از جمله تست دموهایی که مقاله‌ها بر آن‌ها تکیه دارند."]],
       ["کاری که نمی‌کند", ["تجربه، کارفرما، عدد یا توصیه‌نامه ساختگی نمی‌سازد.", "توصیه‌نامه‌های صفحه اصلی را امضاکنندگانشان نوشته‌اند.", "آنچه در بررسی شغل یا جست‌وجو می‌نویسید به هوش مصنوعی یا جای دیگری فرستاده نمی‌شود."]],
     ] as [string, string[]][], own: "مقاله‌هایی که به قلم خودم بازنویسی شده‌اند", none: "هنوز هیچ‌کدام. اینجا فهرست خواهند شد.", history: "تاریخچه کامیت‌ها", corrections: "اصلاحات" },
